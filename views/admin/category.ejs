@@ -1,0 +1,78 @@
+<%- include('../../views/partials/adminheader') %>
+ <div class="side">
+    <aside>
+        <ul>
+            <li><a href="/admin/dashboard">Dashboard</a></li>
+            <li class="active"><a href="/admin/Products">Products</a> </li>
+            <li><a href="/admin/Users">Users</a></li>
+            <li><a href="#">Coupons</a></li>
+            <li><a href="#">Order</a></li>
+            <li><a href="/admin/Offers">Offers</a></li>
+            <li><a href="/admin/category">Category</a></li>
+            <li class="sign-out">Sign Out</li>
+           
+        </ul>
+    </aside>
+    <main>
+        <!-- Header Navigation Bar -->
+         <h2>Category List</h2>
+        <div class="list-header">  
+           <div class="search-add">
+            <form  action="/admin/category" method="get">
+                <input type="text" name="Search" placeholder="Search user..." />
+                <button type="submit" class="btn btn-primary mb-2">Search</button>
+             </form>
+               <button class="add-new"><a class="nav-link" href="/admin/addcategory">Add New</a></button>
+           </div>
+        </div>
+       <table>
+           <thead>
+               <tr>
+                <th>Category Name</th>
+                <th>Category description</th>
+                <th>Status</th>
+                <th>Action</th>
+               </tr>
+           </thead>
+           <tbody>
+             <%category.forEach((category,index)=>{%>
+               <tr>
+                    <td><%=category.name%></td>
+                    <td><%=category.description%></td>
+                    <td>
+
+                        <%if(category.status===true){%>
+                        Active
+                        <%}else{%>
+                        Inactive 
+                        <%}%>
+                       
+                    </td>                      
+                   <td>
+                    <!-- href="/admin/editCategory?id=<%=category._id%>" -->
+                       <button class="edit-btn"><a class="nav-link" href="/admin/editCategory/<%=category._id%>">Edit</a></button>
+                       <form action="/admin/deleteCategory/<%=category._id%>" method="POST" style="display:inline;">
+                        <button class="delete-btn">Delete</button>
+                    </form>
+                      
+                   </td>
+               </tr>
+               <%})%>
+           </tbody>
+       </table>
+       <!-- Pagination -->
+       <div class="pagination">
+         <% if (currentPage > 1) { %>
+              <a href="?page=<%= currentPage - 1 %>">&laquo; Previous</a>
+                <% } %> <% for (let i = 1; i <= totalPages; i++) { %> <% if (i ===
+                 currentPage) { %>
+                <span class="current-page"><%= i %></span>
+                <% } else { %>
+                <a href="?page=<%= i %>"><%= i %></a>
+                <% } %> <% } %> <% if (currentPage < totalPages) { %>
+                <a href="?page=<%= currentPage + 1 %>">Next &raquo;</a>
+                <% } %>
+    </div>
+   </main>
+</div>
+<%- include('../../views/partials/adminfooter') %>

@@ -1,0 +1,78 @@
+<%- include('../../views/partials/adminheader') %>
+ <div class="side">
+    <aside>
+        <ul>
+            <li><a href="/admin/dashboard">Dashboard</a></li>
+            <li><a href="/admin/Products">Products</a> </li>
+            <li class="active"><a href="/admin/Users">Users</a></li>
+            <li><a href="#">Coupons</a></li>
+            <li><a href="#">Order</a></li>
+            <li><a href="/admin/Offers">Offers</a></li>
+            <li><a href="/admin/category">Category</a></li>
+            <li class="sign-out">Sign Out</li>
+           
+        </ul>
+    </aside>
+    <main>
+        <!-- Header Navigation Bar -->
+         <h2>Users</h2>
+        <div class="list-header">  
+           <div class="search-add">
+            <form  action="/admin/users" method="get">
+               <input type="text" name="Search" placeholder="Search user..." />
+               <button type="submit" class="btn btn-primary mb-2">Search</button>
+            </form>
+           </div>
+        </div>
+       <table>
+           <thead>
+               <tr>
+                <th>User Name</th>
+                <th>Email</th>
+                <th>Phone Number</th>
+                <th>Status</th>
+                <th>Action</th>
+               </tr>
+           </thead>
+           <tbody>
+            <% for(let i=0; i<data.length;i++){ %>
+               <tr>
+                <td><%=data[i].name%></td>
+                <td><%= data[i].email%></td>
+                <td><%= data[i].phone%></td>
+                <td> 
+                    <% if(data[i].isblock===false){%>
+                        Active account
+                  <%  } else{%>
+                        Blocked account
+                 <% }%>  </td>
+                  
+                   <td>
+                    <% if(data[i].isblock===false){%>
+                       <button class="delete-btn">
+                        <a class="nav-link"  href="/admin/blockCustomer?id=<%=data[i].id%>">Block</a></button>
+                        <%}else{%>
+                       <button class="edit-btn">
+                        <a class="nav-link" href="/admin/unblockCustomer?id=<%=data[i].id%>">Unblock</a></button>
+                        <%}%>
+                   </td>
+               </tr>
+              <%}%>
+           </tbody>
+       </table>
+       <!-- Pagination -->
+       <div class="pagination">       
+             <% if (currentPage > 1) { %>
+              <a href="?page=<%= currentPage - 1 %>">&laquo; Previous</a>
+                <% } %> <% for (let i = 1; i <= totalPages; i++) { %> <% if (i ===
+                 currentPage) { %>
+                <span class="current-page"><%= i %></span>
+                <% } else { %>
+                <a href="?page=<%= i %>"><%= i %></a>
+                <% } %> <% } %> <% if (currentPage < totalPages) { %>
+                <a href="?page=<%= currentPage + 1 %>">Next &raquo;</a>
+                <% } %>
+    </div>
+   </main>
+</div>
+<%- include('../../views/partials/adminfooter') %>

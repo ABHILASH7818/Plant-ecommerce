@@ -1,0 +1,35 @@
+.product-row {
+    display: flex;
+   margin-top: 28px;
+   padding: 16px;
+   
+    /* flex-wrap: wrap; */
+}
+.filters {
+    width: 350px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    margin-right: 20px;
+    border: 0.2px solid black;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+.filter-group {
+    margin-bottom: 20px;
+}
+
+.filter-group label {
+    display: block;
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.filters h2 {
+    margin-bottom: 24px;
+}
+.sort-bar{
+    width: 160px;
+    margin: 20px ;
+}
+

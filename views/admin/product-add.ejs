@@ -1,0 +1,441 @@
+<%- include('../../views/partials/adminheader') %>
+<div class="side">
+    <aside>
+        <ul>
+            <li><a href="/admin/dashboard">Dashboard</a></li>
+            <li class="active"><a href="/admin/Products">Products</a> </li>
+            <li><a href="/admin/Users">Users</a></li>
+            <li><a href="#">Coupons</a></li>
+            <li><a href="#">Order</a></li>
+            <li><a href="/admin/Offers">Offers</a></li>
+            <li><a href="/admin/category">Category</a></li>
+            <li class="sign-out">Sign Out</li>
+           
+        </ul>
+    </aside>
+    <main>
+        <!-- Header Navigation Bar -->
+         <h2>Add Product</h2>
+         <section class="new-form-productaddsection">
+            <form  method="post" action="/admin/add-product" enctype="multipart/form-data" id="productform"  class="category-form">
+                <% if (typeof message!== 'undefined') { %>
+                    <p class="text-center m-auto" style="color:red;font-size:16px;"><%= message%></p>
+                <% } %> 
+                <div class="row">
+               <div  class="card mx-1 text-start">
+                
+                    <label for="product_name" class="form-label">Product Name</label>
+                    <input type="text" placeholder="Type here" name="name"
+                        class="form-control border" id="name">
+                    <div class="error danger-msg" id="name-error"></div>
+                
+
+               
+                    <label class="form-label">Full description</label>
+                    <textarea placeholder="Type here" id="descriptionid" name="description" class="form-control border"
+                        rows="2"></textarea>
+                    <div class="error danger-msg" id="description-error"></div>
+                
+
+                    
+                        <label class="form-label"> Price</label>
+                        <input placeholder="" name="price" type="text"
+                            class="form-control border" id="price">
+                            <div class="error danger-msg" id="price-error"></div>
+
+                            <label class="form-label"> Price</label>
+                        <input placeholder="" name="price" type="text"
+                            class="form-control border" id="price">
+                            <div class="error danger-msg" id="price-error"></div>
+                    
+                                <label class="form-label">Quantity</label>
+                                <input placeholder="" name="quantity" id="quantity" type="text" class="form-control border">
+                                <div class="error danger-msg" id="quantity-error"></div>
+
+                                <label class="form-label">Color</label>
+                                <input  name="color" id="color" type="text" class="form-control border">
+                            <div class="error danger-msg" id="color-error"></div>
+
+                        <label class="form-label">Category</label>
+                        <select class="form-select border" style="width: 150px;" name="category">
+                            
+                            <%for(let i=0;i<cat.length;i++){%>
+                                <option value="<%=cat[i].name%>">
+                                    <%=cat[i].name%>
+                                </option>
+                            <%}%>  
+                                                                                
+                        </select>
+                        <div id="category-error" class="error-message"></div>
+                        
+               </div>        
+
+                        <div class="card mb-2">
+                            <div class="card-header">
+                                <h4>Choose images</h4>
+                            </div>
+                            
+                                            <br> <div id="fileInput">
+                                                <!-- <input class="form-control" type="file" name="image" id="fileInput1"accept="image/png, image/jpeg, image/jpg"> -->
+                                                            <input type="file" name="image" id="fileInput1"  multiple required>
+        
+                                                            <input type="file" name="image" id="fileInput2"  multiple required>                                           
+                                                          
+                                                            <input type="file" name="image" id="fileInput3"  multiple required><br><br>
+                                                        </div>
+                                                    
+                                                            <div id="previewContainer" class="preview"></div><br>
+                       
+                                                    </div>
+                </div>
+                
+                <div class="form-buttons">
+                    <button type="submit" class="submit-button" id="frm-btn">Submit</button>
+                </div>
+            </form>
+        </section>
+   </main>
+</div>
+
+
+
+<script>
+
+function validateAndSubmit(){
+        if(validateForm){
+            document.forms[0].submit();    
+            }
+    }
+
+    let cropper;
+    const croppedImages = [];
+    const maxImages = 3;
+    const previewContainer = document.getElementById("previewContainer");
+
+    document.getElementById("fileInput").addEventListener("change", function (event) {
+        const files = event.target.files;
+        if (files.length + croppedImages.length > maxImages) {
+            alert("You can only upload up to " + maxImages + " images.");
+            return;
+        }
+        for (const file of files) {
+            previewImage(file);
+        }
+    });
+
+    function previewImage(file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const imageContainer = document.createElement("div");
+            imageContainer.style.position = "relative";
+            imageContainer.style.display = "inline-block";
+            imageContainer.style.margin = "5px";
+
+            const img = document.createElement("img");
+            img.src = e.target.result;
+            img.classList.add("preview-img");
+            img.style.maxWidth = "100px";
+            img.style.display = "block";
+
+            const deleteButton = document.createElement("button");
+            deleteButton.innerText = "X";
+            deleteButton.style.position = "absolute";
+            deleteButton.style.top = "0";
+            deleteButton.style.right = "0";
+            deleteButton.style.background = "red";
+            deleteButton.style.color = "white";
+            deleteButton.style.border = "none";
+            deleteButton.style.cursor = "pointer";
+
+            deleteButton.onclick = function () {
+                const index = croppedImages.indexOf(img.src);
+                if (index > -1) {
+                    croppedImages.splice(index, 1);
+                }
+                imageContainer.remove();
+            };
+
+            imageContainer.appendChild(img);
+            imageContainer.appendChild(deleteButton);
+            previewContainer.appendChild(imageContainer);
+
+            img.onclick = function () {
+                openCropper(e.target.result, img);
+            };
+
+            croppedImages.push(e.target.result); // Store base64 image data
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function openCropper(imageSrc, imgElement) {
+        const image = document.createElement("img");
+        image.src = imageSrc;
+        image.style.width = "100%";
+
+        const modal = document.createElement("div");
+        modal.style.position = "fixed";
+        modal.style.top = "0";
+        modal.style.left = "0";
+        modal.style.width = "100%";
+        modal.style.height = "100%";
+        modal.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
+        modal.style.display = "flex";
+        modal.style.justifyContent = "center";
+        modal.style.alignItems = "center";
+        modal.appendChild(image);
+
+        document.body.appendChild(modal);
+
+        cropper = new Cropper(image, {
+            aspectRatio: 1,
+            viewMode: 1,
+            scalable: false,
+        });
+
+        const cropButton = document.createElement("button");
+        cropButton.innerText = "Crop & Save";
+        cropButton.style.position = "absolute";
+        cropButton.style.bottom = "20px";
+        cropButton.style.padding = "10px 20px";
+        cropButton.onclick = function () {
+            const croppedCanvas = cropper.getCroppedCanvas();
+            imgElement.src = croppedCanvas.toDataURL(); // Update original image preview
+            cropper.destroy();
+            modal.remove();
+        };
+        modal.appendChild(cropButton);
+    }
+
+    // Handle form submission and gather data
+    document.getElementById("frm-btn").addEventListener("submit", function (event) {
+        event.preventDefault();
+
+
+         // Get form elements
+    const name = document.getElementById('name');
+    const description = document.getElementById('description');
+    const price = document.getElementById('price');
+    const quantity = document.getElementById('quantity');
+    const color= document.getElementById('color');
+
+    // Clear any previous error messages
+    clearErrors();
+
+    // Validate form
+    let isValid = true;
+
+    // Name Validation
+    if(!validateName(name.value)){
+        showError('name-error', 'Please enter a valid name');
+        isValid = false;
+    }
+
+    // Email Validation
+    if (!validateName(description.value)) {
+        showError('description-error', 'Email is required');
+        isValid = false;
+    // } 
+    // else if (!validateEmail(email.value)) {
+    //     showError('emailError', 'Please enter a valid email');
+    //     isValid = false;
+    }
+
+    // Phone Number Validation
+    if (!price.value.trim()) {
+        showError('price-error', 'price is required');
+        isValid = false;
+    // } else if (!validatePhone(phone.value)) {
+    //     showError('phone-error', 'Phone Number must be at least 10 digits');
+    //     isValid = false;
+    }
+
+    // Password Validation
+    if (!quantity.value.trim()) {
+        showError('quantity-error', 'Password is required');
+        isValid = false;
+    }
+    // } else if (!validatePassword(password.value)) {
+    //     showError('password-error', 'Password must be at least 8 characters long, include letter, at least one digit, and one special character (e.g., @, $, !, %, *, ?, &).');
+    //     isValid = false;
+    // }
+
+    // Confirm Password Validation
+    if (!color.value.trim()) {
+        showError('color-error', 'Confirm Password is required');
+        isValid = false;
+    }
+    // } else if (password.value !== confirmPassword.value) {
+    //     showError('confirm-error', 'Passwords do not match');
+    //     isValid = false;
+    // }
+
+
+const formData = new FormData(this);
+        croppedImages.forEach((imageData, index) => {
+            formData.append(`images[${index}]`, imageData);
+        });
+
+
+    // Show form error if needed
+    if (!isValid) {
+        document.getElementById('formError').textContent = 'Please correct the errors above.';
+    } else {
+        // Submit the form if valid
+        document.getElementById('productform').submit();
+    }
+
+  
+
+        
+
+        // fetch("/admin/add-product", {
+        //     method: "POST",
+        //     body: formData,
+        // })
+            // .then((response) => response.json())
+            // .then((data) => {
+            //     alert("Product added successfully!");
+            //     // Optional: Reset form or navigate
+            // })
+            // .catch((error) => console.error("Error:", error));
+    });
+
+
+
+
+// Function to show error message
+function showError(id, message) {
+    const errorElement = document.getElementById(id);
+    errorElement.textContent = message;
+    errorElement.style.display = 'block';
+}
+
+// Function to clear errors
+function clearErrors() {
+    const errors = document.querySelectorAll('.error');
+    errors.forEach(error => {
+        error.style.display = 'none';
+    });
+}
+//Name validation funtion 
+function validateName(name){
+    const nameRegex = /^[A-Za-z\s]+$/;
+    return nameRegex.test(name);
+}
+
+// Email validation function
+function validateEmail(email) {
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailRegex.test(email);
+}
+
+// Phone number validation function
+function validatePhone(phone) {
+    const phoneRegex = /^\d{10,}$/; // Ensure at least 10 digits
+    return phoneRegex.test(phone);
+}
+//Password validation funtion 
+function validatePassword(password){
+    const passwordRegex =/^(?=.*[A-Za-z\s])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return passwordRegex.test(password);
+}
+
+
+
+
+
+
+
+
+//     function validateForm() {
+//               clearErrorMessages();
+//               const name = document.getElementsByName('productName')[0].value;
+//               const description = document.getElementById('descriptionid').value;
+//               const brand = document.getElementsByName('brand')[0].value;
+//               const price = document.getElementsByName('regularPrice')[0].value;
+//               const saleprice = document.getElementsByName('salePrice')[0].value;
+//               const color = document.getElementsByName('color')[0].value;
+//               const category = document.getElementsByName('category')[0].value;
+//               const images = document.getElementById('input1')
+//               const quantity=document.getElementsByName('quantity')
+//               let isValid = true
+//               if (name.trim() === "") {
+//       displayErrorMessage('productName-error', 'Please enter a product name.');
+//       isValid = false;
+//    } else if (!/^[a-zA-Z\s]+$/.test(name.trim())) {
+//       displayErrorMessage('productName-error', 'Product name should contain only alphabetic characters.');
+//       isValid = false;
+//    }
+            
+//    if (description.trim() === "") {
+//       displayErrorMessage('description-error', 'Please enter a product description.');
+//       isValid = false;
+//    } else if (!/^[a-zA-Z\s]+$/.test(description.trim())) {
+//       displayErrorMessage('description-error', 'Product description should contain only alphabetic characters.');
+//       isValid = false;
+//    }
+  
+  
+           
+  
+  
+//               if ( parseInt(quantity) < 0) {
+//                   displayErrorMessage('quantity-error', 'Please enter a valid non-negative quantity.');
+//                   isValid = false;
+//               }
+  
+  
+  
+  
+//               if (!/^\d+(\.\d{1,2})?$/.test(price) || parseFloat(price) < 0) {
+//                   displayErrorMessage('regularPrice-error', 'Please enter a valid non-negative price.');
+//                   isValid = false;
+//               }
+  
+  
+  
+  
+//               if (!/^\d+(\.\d{1,2})?$/.test(saleprice) || parseFloat(saleprice) < 0) {
+//                   displayErrorMessage('salePrice-error', 'Please enter a valid non-negative price.');
+//                   isValid = false;
+//               }
+//               if (parseFloat(price) <= parseFloat(saleprice)) {
+//       displayErrorMessage('regularPrice-error', 'Regular price must be greater than sale price.');
+//       isValid = false;
+//    }
+  
+  
+//               if (color.trim() === "") {
+//                   displayErrorMessage('color-error', 'Please enter a color.');
+//                   isValid = false;
+//               }
+  
+  
+//               if (images.files.length === 0) {
+//                   displayErrorMessage("images-error",'Please select an image.');
+//                   isValid = false;
+//               }
+//               return isValid;
+//           }
+
+
+//           function displayErrorMessage(elementId, message) {
+//               var errorElement = document.getElementById(elementId);
+//               errorElement.innerText = message;
+//               errorElement.style.display = "block";
+//           }
+  
+  
+//           function clearErrorMessages() {
+//               const errorElements = document.getElementsByClassName('error-message');
+//               Array.from(errorElements).forEach(element => {
+//                   element.innerText = '';
+//               });
+//               const errorMessage = document.getElementById('errorMessage');
+  
+  
+//           } 
+
+</script>
+<%- include('../../views/partials/adminfooter') %>

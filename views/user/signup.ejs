@@ -1,0 +1,46 @@
+<%- include('../../views/partials/header') %>
+<section class="main-section container-fluid   ">
+    <div class="container d-flex row m-auto mx-5">
+        <div class="image-section  col-12 col-lg-6">
+            <img class="img-fluid" src="/images/loginimg.png" alt="Plant">
+        </div>
+        <div class=" form-section d-flex flex-column  col-12 col-lg-6 ">
+            <h2>Create an account</h2>
+            <p>Enter your details below</p>
+
+            <!-- <%if(locals.message && message.length>0){%>
+                <div class="alert alert-danger text-center">
+                  <%=message%>
+                </div>
+                <%}%>  -->
+
+            <form id="signupForm" action="/signup"method="post">
+                  <% if (typeof message!== 'undefined') { %>
+                <p class="text-center m-auto" style="color:red;font-size:16px;"><%= message%></p>
+            <% } %> 
+           
+              <input type="text"  name="name" id="name" placeholder="Name">
+              <div class="error danger-msg" id="name-error"></div>
+              <input type="email" name="email" id="email" placeholder="Email ">
+              <div class="error danger-msg" id="email-error"></div>
+              <input type="text"name="Phone" id="phone" placeholder=" Phone Number">
+              <div class="error danger-msg" id="phone-error"></div>
+              <input type="password" name="password"id="password" placeholder="Password">
+              <div class="error danger-msg" id="password-error"></div>
+              <input type="password" name="cpassword" id="cpassword" placeholder="Confirm Password">
+              <div class="error danger-msg" id="confirm-error"></div>
+              <button type="submit" id="signupBtn" class="btn btn-success">Create Account</button>
+             <a href="/auth/google"> <button type="button" class="btn-google">
+                 <img class="google-logo"  src="/images/Google-Logo-PNG-Image.png" alt="">   Sign up with Google</button></a>
+            <button type="button" class="btn-google">
+                <img class="facebook-logo"  src="/images/facebook-logo-.webp" alt="">   Sign up with Google</button>
+            </form>
+            
+  
+            <p class="already-login">Already have an account? <a href="#">Log in</a></p>
+      </div>
+    </div>
+  </section>
+ 
+  <%- include('../../views/partials/footer') %>
+ 

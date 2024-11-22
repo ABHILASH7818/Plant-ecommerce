@@ -1,0 +1,385 @@
+
+
+<%- include('../../views/partials/header') %>
+
+  <style>
+.product-details {
+  display: flex;
+  max-width: 1400px;
+  margin: 20px auto;
+  margin-top: 28px;
+  background: #fff;
+  /* border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); */
+  padding: 20px;
+}
+
+.Image-section {
+  flex: 1;
+  /* margin-right: 48px; */
+  padding-left: 10px;
+
+}
+ .main-image{
+    width: 80%;
+    
+}
+.main-image img {
+   
+  width: 100%;
+ 
+  border-radius: 8px;
+  /* cursor: zoom-in; */
+  /* transition: transform 0.3s ease; */
+ } 
+
+/* .main-image img:hover {
+   transform: scale(1.1); 
+ }   */
+
+.thumbnail-tramline {
+  display: flex;
+  /* justify-content: center; */
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.thumbnail-tramline img {
+  width: 60px;
+  height: 60px;
+  border-radius: 4px;
+  cursor: pointer;
+  object-fit: cover;
+  border: 2px solid transparent;
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.thumbnail-tramline img:hover {
+  transform: scale(1.1);
+  border-color: #007bff;
+}
+
+.product-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  /* margin-left: 20px; */
+}
+
+.product-info h1 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.brand span {
+  color: #007bff;
+}
+
+.rating {
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.price {
+  font-size: 20px;
+  margin-bottom: 15px;
+  color: #007bff;
+}
+
+.status {
+  color: green;
+  margin-bottom: 15px;
+}
+
+.features {
+  margin: 20px 0;
+  list-style: none;
+  padding: 0;
+}
+
+.features li {
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.Cart-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.Cart-actions input {
+  width: 40px;
+  text-align: center;
+}
+
+.Cart-actions .buy-now {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.add-to-cart {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.add-to-cart:hover {
+  background-color: #0056b3;
+}
+
+.wishlist {
+  background: none;
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  color: #333;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.wishlist:hover {
+  background-color: #f9f9f9;
+ 
+}
+
+.delivery-info {
+  margin: 20px 0;
+}
+
+.delivery-info p {
+  margin: 5px 0;
+}
+
+.extra-info p {
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.extra-info span {
+  font-weight: bold;
+}
+
+#imageZoom{
+            width: 500px;
+            height: 550px;
+            position: relative;
+        }
+        #imageZoom img{
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: 0 0;
+        }
+        #imageZoom::after{
+            display: var(--display);
+            content: '';
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            background-image: var(--url);
+            background-size: 200%;
+            background-position: var(--zoom-x) var(--zoom-y);
+            position: absolute;
+            left: 0;
+            top: 0;
+            pointer-events: none;
+        }
+
+        @media (max-width: 768px) {
+    .product-details {
+        flex-direction: column;
+        padding: 10px;
+    }
+    .Image-section, .product-info {
+        width: 100%;
+    }
+    .main-image img {
+        width: 90%;
+    }
+    .thumbnail-tramline {
+        justify-content: center;
+    }
+}
+
+
+  </style>
+</head>
+<body>
+  
+<div>
+  <div class=" container product-details">
+    <div class="Image-section">
+      <!-- <div  id="imageZoom" style="
+    --url: url(/uploads/<%=product.images[0]%>);
+      --zoom-x: 0%; --zoom-y: 0%;
+      --display: none" > -->
+      <div class="main-image">
+      <div id="imageZoom" style="--zoom-x: 0%; --zoom-y: 0%; --display: none; --url: url('/uploads/<%=product.images[0]%>');">
+        <img id="zoomedImage" src="/uploads/<%=product.images[0]%>" alt="plant">
+    </div>
+      </div>
+      <div class="thumbnail-tramline">
+        
+        <img src="/uploads/<%=product.images[0]%>" alt="Thumb " onclick="changeMainImage('/uploads/<%=product.images[0]%>')">
+        <img src="/uploads/<%=product.images[1]%>" alt="Thumb 2" onclick="changeMainImage('/uploads/<%=product.images[1]%>')">
+        <img src="/uploads/<%=product.images[2]%>" alt="Thumb 3" onclick="changeMainImage('/uploads/<%=product.images[2]%>')">
+       
+            
+    </div>
+    </div>
+
+    <div class="product-info">
+        <h1>Golden Money Plant<%=product.productName%></h1>
+        <p class="rating">⭐⭐⭐⭐⭐ <span>(150 Reviews)</span></p>
+        <p class="price">₹<%=product.price%></p>
+        <p class="status">In Stock</p>
+        <p class="description">One of the most popular houseplants, and our all-time bestseller, this easy-growing plant with its heart-shaped leaves is loved for its beautiful fenestrations.</p>
+
+      
+      <div class="Cart-actions">
+        <button onclick="decreaseQuantity()">-</button>
+        <input id="quantity" type="text" value="2" readonly />
+        <button onclick="increaseQuantity()">+</button>
+        <button class="add-to-cart">Add to Cart</button>
+        <button class="wishlist">wishlist</button>
+      </div>
+
+      <div class="delivery-info">
+        <p>🚚 Free Delivery</p>
+        <p>Return Delivery: <span>Free 30 Days Delivery Returns</span></p>
+        <p>Cash on Delivery Available</p>
+      </div>
+      <div class="extra-info">
+        <p>Availability: <span><%=product.stock%> Items in Stock</span></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const imageZoom = document.getElementById('imageZoom');
+        const zoomedImage = document.getElementById('zoomedImage');
+    
+        function changeMainImage(imageSrc) {
+            zoomedImage.src = imageSrc;
+            imageZoom.style.setProperty('--url', `url(${imageSrc})`);
+        }
+        
+        imageZoom.addEventListener('mousemove', (event) => {
+    const { offsetWidth: width, offsetHeight: height } = imageZoom;
+    const { offsetX: x, offsetY: y } = event;
+
+    const xPercent = (x / width) * 100; // Convert X position to percentage
+    const yPercent = (y / height) * 100; // Convert Y position to percentage
+
+    // Set CSS variables for zoom position
+    imageZoom.style.setProperty('--zoom-x', `${xPercent}%`);
+    imageZoom.style.setProperty('--zoom-y', `${yPercent}%`);
+    imageZoom.style.setProperty('--display', 'block');
+  });
+
+  imageZoom.addEventListener('mouseout', () => {
+    // Hide the zoom effect when the mouse leaves
+    imageZoom.style.setProperty('--display', 'none');
+  });
+
+
+    
+        // imageZoom.addEventListener('mousemove', (event) => {
+        //     imageZoom.style.setProperty('--display', 'block');
+        //     const pointer = {
+        //         x: (event.offsetX * 100) / imageZoom.offsetWidth,
+        //         y: (event.offsetY * 100) / imageZoom.offsetHeight,
+        //     };
+        //     imageZoom.style.setProperty('--zoom-x', pointer.x + '%');
+        //     imageZoom.style.setProperty('--zoom-y', pointer.y + '%');
+        // });
+    
+        // imageZoom.addEventListener('mouseout', () => {
+        //     imageZoom.style.setProperty('--display', 'none');
+        // });
+    
+        window.changeMainImage = changeMainImage; // Expose the function to be used in the onclick attributes.
+    
+        // Quantity handlers
+        const quantityInput = document.getElementById('quantity');
+        const stock = parseInt('<%=product.stock%>', 10);
+    
+        window.increaseQuantity = () => {
+            let currentQuantity = parseInt(quantityInput.value, 10);
+            if (currentQuantity < stock) {
+                quantityInput.value = currentQuantity + 1;
+            }
+        };
+    
+        window.decreaseQuantity = () => {
+            let currentQuantity = parseInt(quantityInput.value, 10);
+            if (currentQuantity > 1) {
+                quantityInput.value = currentQuantity - 1;
+            }
+        };
+    });
+    </script>
+    
+
+
+
+
+  <!-- <script>
+
+function changeMainImage(imageSrc) {
+    const zoomedImage = document.getElementById('zoomedImage');
+    const imageZoom = document.getElementById('imageZoom');
+    zoomedImage.src = imageSrc;
+    imageZoom.style.setProperty('--url', `url(${imageSrc})`);
+}
+let imageZoom = document.getElementById('imageZoom');
+        imageZoom.addEventListener('mousemove', (event) => {
+            imageZoom.style.setProperty('--display', 'block');
+            let pointer = {
+                x:  (event.offsetX * 100) / imageZoom.offsetWidth,
+                y:  (event.offsetY * 100) / imageZoom.offsetHeight
+            }
+            imageZoom.style.setProperty('--zoom-x', pointer.x + '%');
+            imageZoom.style.setProperty('--zoom-y', pointer.y + '%');
+        })
+        imageZoom.addEventListener('mouseout', () => {
+            imageZoom.style.setProperty('--display', 'none');
+        })
+
+        function increaseQuantity() {
+    const quantityInput = document.getElementById('quantity');
+    let currentQuantity = parseInt(quantityInput.value);
+    if (currentQuantity< '<%=product.stock%>') {
+        quantityInput.value = currentQuantity + 1;
+    }
+}
+
+// Decrease product quantity
+function decreaseQuantity() {
+  const quantityInput = document.getElementById('quantity');
+  let currentQuantity = parseInt(quantityInput.value);
+  if (currentQuantity > 1) {
+    quantityInput.value = currentQuantity - 1;
+  }
+}
+
+  </script> -->
+</body>
+</html>
+
+
+
