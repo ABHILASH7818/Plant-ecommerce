@@ -1,0 +1,161 @@
+<%- include('../../views/partials/header') %>
+
+ <!-- Main Content --> 
+  <di class="container username-section  d-flex "><p>Welcom <span style="color: red;"><%= user.name%></span></p></di>
+ <div class="profile-container">
+   
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <h3>Manage My Account</h3>
+      <ul>
+        <li><a href="/profile" ><i class="fas fa-user"></i> My Profile</a></li>
+        <li><a href="/address" class="active"><i class="fas fa-map-marker-alt"></i> Address</a></li>
+        <li><a href="/change-password" ><i class="fas fa-lock"></i> Change Password</a></li>
+        <li><a href="/order"><i class="fas fa-shopping-cart"></i> Orders</a></li>
+        <li><a href="#"><i class="fas fa-tags"></i> Coupons</a></li>
+        <li><a href="#"><i class="fas fa-wallet"></i> Wallet</a></li>
+      </ul>
+    </aside>
+    <section class="profile-section">
+        <h2>Manage Your Addresses</h2>
+        <div class="saved-addresses">
+          <h5>Saved Addresses</h5>
+          <div class="address-list" id="address-list">
+            <%userAddress.address.forEach((address)=>{%>
+            <div class="address-card ">
+                <div>
+                    <p><strong><%=address.name%></strong><br><%=address.phone%>, <%=address.street%>, <%=address.city%>,<br><%=address.state%>,<%=address.pinCode%></p>
+                </div>
+                <div>
+                    <a href="/editAddress/<%=address._id%>"><i class="fa-regular fa-pen-to-square"></i></a>
+                    <button style="border: none;"><a href="/deleteAddress/<%=address._id%>"><i class="fa-sharp fa-solid fa-trash" style="color: #e31c1c;"></i></a></button>
+                </div>
+
+            </div>
+            <%})%>
+          </div>
+        </div>
+         <button class="address-btn " id="add-address-btn"> <span>  Add New Address</span></button>
+        <div class="address-form hidden" id="address-form">
+            <form id="new-address-form" class="profile-form" action="/address" method="post">
+                <div class="form-group">
+                  <label for="name">Name</label>
+                  <input type="text" id="name" name="name"  placeholder="Enter Name" >
+                  <small class="error-message"></small>
+                </div>
+                <div class="form-group">
+                    <label for="phone">phone</label>
+                    <input type="text" id="phone" name="phone"  placeholder="Enter Phone Number" >
+                    <small class="error-message"></small>
+                  </div>
+                <div class="form-group">
+                  <label for="street">Address and street</label>
+                  <input type="text" id="street"name="street"  placeholder="Enter Address and street" >
+                  <small class="error-message"></small>
+                </div>
+                <div class="form-group">
+                  <label for="city">City</label>
+                  <input type="text" id="city" name="city"  placeholder="Enter Your city" >
+                  <small class="error-message"></small>
+                </div>
+                <div class="form-group">
+                    <label for="state">State</label>
+                    <input type="text" id="state" name="state"  placeholder="Enter Your state" >
+                    <small class="error-message"></small>
+                  </div>
+                  <div class="form-group">
+                    <label for="pin-code">PinCode</label>
+                    <input type="text" id="pin" name="pinCode"  placeholder="Enter Your pincode" >
+                    <small class="error-message"></small>
+                  </div>
+                <!-- <div class="form-group">
+                  <label for="gender">Gender</label>
+                  <select id="gender" disabled>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                  </select>
+                </div> -->
+                <div class="form-actions">
+                  <button type="submit" class="save-btn ">Save Address</button>
+                </div>
+             
+          </form>
+        </div>
+    </section>
+    
+      <script>
+        document.addEventListener('DOMContentLoaded', () => {
+  const addAddressBtn = document.getElementById('add-address-btn');
+  const addressForm = document.getElementById('address-form');
+  const newAddressForm = document.getElementById('new-address-form');
+  const addressList = document.getElementById('address-list');
+
+  // Toggle address form visibility
+  addAddressBtn.addEventListener('click', () => {
+    addressForm.classList.toggle('hidden');
+  });
+
+  newAddressForm.addEventListener('submit', (e) => {
+      let isValid = true;
+
+      // Clear previous error messages
+    document.querySelectorAll('.error').forEach(error => error.remove());
+
+      // Validate Name
+      const name = document.getElementById('name');
+      if (name.value.trim() === '') {
+        isValid = false;
+        showError(name, 'Name is required.');
+      }
+
+      // Validate Phone
+      const phone = document.getElementById('phone');
+      if (!/^\d{10}$/.test(phone.value.trim())) {
+        isValid = false;
+        showError(phone, 'Enter a valid 10-digit phone number.');
+      }
+
+      // Validate Address and Street
+      const street = document.getElementById('street');
+      if (street.value.trim() === '') {
+        isValid = false;
+        showError(street, 'Address and street are required.');
+      }
+
+      // Validate City
+      const city = document.getElementById('city');
+      if (city.value.trim() === '') {
+        isValid = false;
+        showError(city, 'City is required.');
+      }
+
+      // Validate State
+      const state = document.getElementById('state');
+      if (state.value.trim() === '') {
+        isValid = false;
+        showError(state, 'State is required.');
+      }
+
+      // Validate PinCode
+      const pin = document.getElementById('pin');
+      if (!/^\d{6}$/.test(pin.value.trim())) {
+        isValid = false;
+        showError(pin, 'Enter a valid 6-digit pin code.');
+      }
+
+      if (!isValid) {
+        e.preventDefault(); // Prevent form submission if validation fails
+      }
+    });
+
+    function showError(input, message) {
+      const error = document.createElement('small');
+      error.className = 'error';
+      error.style.color = 'red';
+      error.textContent = message;
+      input.parentElement.appendChild(error);
+    }
+});
+      </script>
+    </body>
+    </html>

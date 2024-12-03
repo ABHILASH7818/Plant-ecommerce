@@ -4,54 +4,50 @@
     <!-- Sidebar for Filters -->
  
     <aside class="filters">
+      <form class="filterform" method="get" action="/shopFilter">
         <h2>Filter Products</h2>
         
-         <!-- Category Filter -->
-         <div class="filter-group">
-            <label>Category</label>
-            <select class="form-select">
-                <option value="all">All Categories</option>
-                <option value="electronics">Electronics</option>
-                <option value="fashion">Fashion</option>
-                <option value="home">Home</option>
-            </select>
-        </div>
+         
 
          <!-- Category Filter -->
          <div class="filter-group">
             <label>Category</label>
             <select class="form-select">
                 <option value="all">All Categories</option>
-                <option value="electronics">Electronics</option>
-                <option value="fashion">Fashion</option>
-                <option value="home">Home</option>
+                <%for(let i=0;i<category.length;i++){%>
+                  <option value="<%=category[i].name%>">
+                      <%=category[i].name%>
+                  </option>
+              <%}%>  
             </select>
         </div>      
             
         <!-- Category Filter -->
         <div class="filter-group">
-            <label>Category</label>
-            <select class="form-select">
-                <option value="all">All Categories</option>
-                <option value="electronics">Electronics</option>
-                <option value="fashion">Fashion</option>
-                <option value="home">Home</option>
+            <label>Price</label>
+            <select name="minPrice" class="form-select">
+              <option value="">Min Price</option>
+              <option value="0">₹0</option>
+              <option value="100">₹100</option>
+              <option value="200">₹200</option>
+            </select><br>
+            <select name="maxPrice" class="form-select">
+              <option value="">Max Price</option>
+              <option value="100">₹100</option>
+              <option value="300">₹300</option>
+              <option value="500">₹500</option>
             </select>
         </div>
         
-        <!-- Price Filter -->
-        <div class="filter-group">
-            <h4>Price</h4>
-            <input type="range" min="0" max="1000" step="50" id="priceRange">
-            <label for="priceRange">Up to $<span id="priceValue">500</span></label>
-        </div>
-        <div><button type="button" class="btn btn-primary">Apply Filter</button></div>
+        <!--  -->
+        <div><button type="submit" class="btn btn-primary">Apply Filter</button></div>
+        </form>
     </aside>
 
     <!-- Main Content Area -->
     <div class="product-section">
         <!-- Sort Option -->
-        <div class="sort-bar">
+        <!-- <div class="sort-bar">
         
             <select class="form-select" id="sort">
                 <option value="popularity">Sort By</option>
@@ -60,121 +56,43 @@
                 <option value="price-high-to-low">Price: High to Low</option>
                 <option value="rating">Rating</option>
             </select>
-        </div>
+        </div> -->
 
         <!-- Products List -->
         <div class="product-list">
             <section class="product-category">
                 <div class="product container">
-                <div class="card" >
-                  <img src="61cnDvsRnOL._SL1000_ (1).jpg" class="card-img-top" alt="...">
+                  <%for(let i=0;i<product.length;i++){%>
+                    <div class="card" >
+                     
+                      <a href="/productDetails/<%= product[i]._id %>"   >
+                        <img src="/uploads/<%=product[i].images[0]%>" class="card-img-top" alt="...">
+                      </a>
                   <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                   <h6><i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
+                    <h5 class="card-title"><%=product[i].productName%></h5>
+                   <h6>
+                   Rating  -  <%=product[i].rating%>/5
+                    <!-- <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i> -->
+                    <!-- <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
                     <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-                    <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-                    <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-                    <i class="fa-regular fa-star-half-stroke" style="color: #FFD43B;"></i></h6>
-                    <span class="card-text">Price </span>
-                    <a  href="#" class=" class btn btn-primary"> <i class="fa-solid fa-cart-shopping"></i></a>
+                    <i class="fa-regular fa-star-half-stroke" style="color: #FFD43B;"></i> -->
+                  </h6>
+                    <span class="card-text">₹<%=product[i].price%></span>
+                 <form action="/add-to-cart/<%=product[i]._id%>" method="post"><button class=" class btn btn-primary cart-btn"> <i class="fa-solid fa-cart-shopping"></i></button></form>   
                   </div>
                 </div>
-                <div class="card" >
-                    <img src="61cnDvsRnOL._SL1000_ (1).jpg" class="card-img-top" alt="...">
-                    <div class="card-body">
-                      <h5 class="card-title">Card title</h5>
-                     <h6><i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-                      <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-                      <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-                      <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-                      <i class="fa-regular fa-star-half-stroke" style="color: #FFD43B;"></i></h6>
-                      <span class="card-text">Price </span>
-                      <a  href="#" class=" class btn btn-primary"> <i class="fa-solid fa-cart-shopping"></i></a>
-                    </div>
-                  </div>
-                  <div class="card" >
-                    <img src="61cnDvsRnOL._SL1000_ (1).jpg" class="card-img-top" alt="...">
-                    <div class="card-body">
-                      <h5 class="card-title">Card title</h5>
-                     <h6><i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-                      <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-                      <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-                      <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-                      <i class="fa-regular fa-star-half-stroke" style="color: #FFD43B;"></i></h6>
-                      <span class="card-text">Price </span>
-                      <a  href="#" class=" class btn btn-primary"> <i class="fa-solid fa-cart-shopping"></i></a>
-                    </div>
-                  </div>
-                  <div class="card" >
-                    <img src="61cnDvsRnOL._SL1000_ (1).jpg" class="card-img-top" alt="...">
-                    <div class="card-body">
-                      <h5 class="card-title">Card title</h5>
-                     <h6><i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-                      <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-                      <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-                      <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-                      <i class="fa-regular fa-star-half-stroke" style="color: #FFD43B;"></i></h6>
-                      <span class="card-text">Price </span>
-                      <a  href="#" class=" class btn btn-primary"> <i class="fa-solid fa-cart-shopping"></i></a>
-                    </div>
-                  </div>
-                <div class="card" >
-                  <img src="71iRMuC+-KL._SL1500_.jpg" class="card-img-top" alt="...">
-                  <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                    <h6><i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-                      <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-                      <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-                      <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-                      <i class="fa-regular fa-star-half-stroke" style="color: #FFD43B;"></i></h6>
-                    <span class="card-text"> Price</span>
-                    <a  href="#" class="cart btn btn-primary"><i class="fa-solid fa-cart-shopping"></i> </a>
-                  </div>
-                </div>
-                <div class="card" >
-                  <img src="51hE8+XEUBL._SL1080_.jpg" class="card-img-top" alt="...">
-                  <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                    <h6><i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-                      <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-                      <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-                      <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-                      <i class="fa-regular fa-star-half-stroke" style="color: #FFD43B;"></i></h6>
-                    <span class="card-text">Price</span>
-                    <a href="#" class="btn btn-primary"><i class="fa-solid fa-cart-shopping"></i></a>
-                  </div>
+                
+                  <%}%>
                 </div>
                 </div>
               </section>
         </div>
    </div>
+   
 </div>
+
    <nav aria-label="Page navigation">
-    <ul class="pagination justify-content-center">
-        
-
-        
-            <li class="page-item active">
-                <a class="page-link pagenstion-color" href="/shop?page=1&amp;sort=&amp;search=&amp;brand=&amp;category=&amp;minPrice=0&amp;maxPrice=2000&amp;rating=4">1</a>
-            </li>
-        
-            <li class="page-item ">
-                <a class="page-link pagenstion-color" href="/shop?page=2&amp;sort=&amp;search=&amp;brand=&amp;category=&amp;minPrice=0&amp;maxPrice=2000&amp;rating=4">2</a>
-            </li>
-        
-            <li class="page-item ">
-                <a class="page-link pagenstion-color" href="/shop?page=3&amp;sort=&amp;search=&amp;brand=&amp;category=&amp;minPrice=0&amp;maxPrice=2000&amp;rating=4">3</a>
-            </li>
-        
-
-        
-            <li class="page-item">
-                <a class="page-link pagenstion-color" href="/shop?page=2&amp;sort=&amp;search=&amp;brand=&amp;category=&amp;minPrice=0&amp;maxPrice=2000&amp;rating=4" aria-label="Next">
-                    <span aria-hidden="true">»</span>Next
-                </a>
-            </li>
-        
-    </ul>
+    
 </nav>
 </div>
           

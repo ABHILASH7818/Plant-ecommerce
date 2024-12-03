@@ -1,0 +1,71 @@
+<%- include('../../views/partials/adminheader') %>
+<div class="side">
+    <aside>
+        <ul>
+            <li><a href="/admin/dashboard">Dashboard</a></li>
+            <li ><a href="/admin/Products">Products</a> </li>
+            <li><a href="/admin/Users">Users</a></li>
+            <li><a href="#">Coupons</a></li>
+            <li class="active"><a href="/admin/order">Order</a></li>
+            <li><a href="/admin/Offers">Offers</a></li>
+            <li><a href="/admin/category">Category</a></li>
+            <li class="sign-out">Sign Out</li>
+           
+        </ul>
+    </aside>
+    <main>
+        <!-- Header Navigation Bar -->
+         <h2>Product List</h2>
+        <div class="list-header">  
+           <!-- <div class="search-add">
+               <input type="text" placeholder="Search offers..." />
+               <button class="add-new"><a class="nav-link" href="/admin/add-product">Add New</a></button>
+           </div> -->
+        </div>
+       <table>
+           <thead>
+               <tr>
+                <th>User Name</th>
+                <th>payment Method</th>
+                <th>Total Price</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Action</th>
+               </tr>
+           </thead>
+           <tbody>
+            <%for (let i=0;i<order.length;i++){%>
+               <tr>
+                <td><%=order[i].userId.name %></td>
+                <td><%=order[i].paymentMethod%></td>
+                <td><%=order[i].finalAmount%></td>
+                <td><%= new Date(order.creatAt).toLocaleDateString() %></td>
+                <td><%=order[i].status%></td>
+                   <td>
+                    <button class="edit-btn"><a class="nav-link" href="/admin/editProduct/<%=order[i]._id%>">Aprove</a></button>
+                       <form action="/admin/deleteProduct/<%=order._id%>" method="POST" style="display:inline;">
+                        <button class="delete-btn">Cancel</button>
+                       </form>
+                   </td>
+               </tr>
+              <%}%>
+               
+              
+           </tbody>
+       </table>
+       <!-- Pagination -->
+       <div class="pagination">
+        <% if (currentPage > 1) { %>
+             <a href="?page=<%= currentPage - 1 %>">&laquo; Previous</a>
+               <% } %> <% for (let i = 1; i <= totalPages; i++) { %> <% if (i ===
+                currentPage) { %>
+               <span class="current-page"><%= i %></span>
+               <% } else { %>
+               <a href="?page=<%= i %>"><%= i %></a>
+               <% } %> <% } %> <% if (currentPage < totalPages) { %>
+               <a href="?page=<%= currentPage + 1 %>">Next &raquo;</a>
+               <% } %>
+   </div>
+   </main>
+</div>
+<%- include('../../views/partials/adminfooter') %>

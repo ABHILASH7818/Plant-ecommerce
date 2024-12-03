@@ -1,0 +1,113 @@
+<%- include('../../views/partials/header') %>
+
+ <!-- Main Content -->
+ <di class="container username-section  d-flex "><p>Welcom <span style="color: red;"><%= user.name%></span></p></di>
+ <div class="profile-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <h3>Manage My Account</h3>
+      <ul>
+        <li><a href="/profile" ><i class="fas fa-user"></i> My Profile</a></li>
+        <li><a href="/address" class="active"><i class="fas fa-map-marker-alt"></i> Address</a></li>
+        <li><a href="/change-password" ><i class="fas fa-lock"></i> Change Password</a></li>
+        <li><a href="/order"><i class="fas fa-shopping-cart"></i> Orders</a></li>
+        <li><a href="#"><i class="fas fa-tags"></i> Coupons</a></li>
+        <li><a href="#"><i class="fas fa-wallet"></i> Wallet</a></li>
+      </ul>
+    </aside>
+
+    <!-- Profile Form -->
+    <section class="profile-section">
+      <h2>Edit Profile </h2>
+      <form  id="signupForm" class="profile-form" action="/edit-profile" method="post">
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input type="text"  name="name" id="name" value="<%= user.name%>" placeholder="Name">
+          <small class="error-message"></small>
+        </div>
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" name="email" id="email" value="<%=user.email%>" placeholder="Email Address">
+          <small class="error-message"></small>
+        </div>
+        <div class="form-group">
+          <label for="phone">Phone Number</label>
+          <input type="text"name="phone" id="phone" value="<%= user.phone%>" placeholder=" Phone Number">
+          <small class="error-message"></small>
+        </div>
+        <!-- <div class="form-group">
+          <label for="gender">Gender</label>
+          <select id="gender" disabled>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+          </select>
+        </div> -->
+        <div class="form-actions">
+          <button type="button" class="cancel-btn">Cancel</button>
+          <button type="submit" id="signupBtn" class="save-btn">Save Changes</button>
+        </div>
+      </form>
+    </section>
+  </div>
+ 
+    <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = document.querySelector('.profile-form');
+    const nameInput = document.getElementById('name');
+    const emailInput = document.getElementById('email');
+    const phoneInput = document.getElementById('phone');
+
+    form.addEventListener('submit', (e) => {
+      let isValid = true;
+      const name = nameInput.value.trim();
+      const email = emailInput.value.trim();
+      const phone = phoneInput.value.trim();
+
+      // Clear previous error messages
+      document.querySelectorAll('.error').forEach(error => error.remove());
+
+      // Name validation
+      if (name === '') {
+        isValid = false;
+        showError(nameInput, 'Name is required.');
+      } else if (name.length < 3) {
+        isValid = false;
+        showError(nameInput, 'Name must be at least 3 characters.');
+      }
+
+      // Email validation
+      if (email === '') {
+        isValid = false;
+        showError(emailInput, 'Email is required.');
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        isValid = false;
+        showError(emailInput, 'Invalid email format.');
+      }
+
+      // Phone validation
+      if (phone === '') {
+        isValid = false;
+        showError(phoneInput, 'Phone number is required.');
+      } else if (!/^\d{10}$/.test(phone)) {
+        isValid = false;
+        showError(phoneInput, 'Phone number must be 10 digits.');
+      }
+
+      if (!isValid) {
+        e.preventDefault(); // Prevent form submission if validation fails
+      }
+    });
+
+    function showError(input, message) {
+      const error = document.createElement('small');
+      error.className = 'error';
+      error.style.color = 'red';
+      error.textContent = message;
+      input.parentElement.appendChild(error);
+    }
+  });
+</script>
+
+  
+</body>
+</html>

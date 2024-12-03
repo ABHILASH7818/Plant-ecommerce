@@ -57,7 +57,7 @@
 
 
 // Timer Script
-let time = 60; // 2 minutes in seconds
+let time = 60; // 1 minutes in seconds
 const timerDisplay = document.getElementById("timer");
 const resendButton = document.getElementById("resend-button");
 
@@ -79,12 +79,12 @@ function startTimer() {
 }
 
 // Resend Button Action
-resendButton.addEventListener("click", () => {
-    time = 60; // Reset to 2 minutes
-    resendButton.disabled = true;
-    resendButton.classList.remove("active");
-    startTimer(); // Restart timer
-});
+// resendButton.addEventListener("click", () => {
+//     time = 60; // Reset to 1 minutes
+//     resendButton.disabled = true;
+//     resendButton.classList.remove("active");
+//     startTimer(); // Restart timer
+// });
 
 startTimer(); // Initialize timer on page load
 

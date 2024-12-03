@@ -1,0 +1,152 @@
+<%- include('../../views/partials/header') %>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shopping Cart</title>
+  <style>
+    /* General Styles */
+   
+    
+  </style>
+</head>
+<body>
+   <div class="cart-heading"><h1>Your Shopping Cart</h1></div>  
+
+  <div class="cart-container">
+    <!-- Product List -->
+    <div class="cart-list">
+      <%cartData.items.forEach((item)=>{%>
+      <!-- Product  -->
+      <div class="cart-details" data-product-id="<%= item._id %>">
+        <div class="cart-info">
+          <img src="/uploads/<%=item.productId.images[0]%>" alt="Product" class="cart-image">
+          <div class="info">
+            <h6><%= item.productId.productName %></h6>
+            <p>Color:<%= item.productId.color %></p>
+            <p>Category: Indoor</p>
+            <p>Stock Status: <strong style="color: green;"> In Stock</strong></p>
+            <p>Product Price:  <span class="discount-price"> ₹ <%=item.productId.price%></span>
+              <!-- <span class="original-price">₹1,800</span>
+              <span class="offer">(64% Off)</span> -->
+            </p>
+            <div class="quantity">
+              <button class="decrease">-</button>
+              <input type="number" class="quantity-input" value="<%=item.quantity%>" min="1">
+              <button class="increase">+</button>
+            </div>
+          </div>
+        </div>
+        <div><form action="/cart-delete/<%=item._id%>" method="post"><button class="remove-btn">Remove</button></form></div>
+      </div>
+      <%})%>
+    </div>
+
+    <!-- Order Summary -->
+    <div class="order-summary">
+      
+        <h2>Price Details</h2>
+        <hr>
+        <p >Price : <strong  id="totalAmount">₹<%=totalprice%>.00</strong></p>
+        <p>Discount: <strong style="color: rgb(241, 59, 59);">– 0</strong></p>
+        <!-- <p>Platform Fee: <strong>₹3</strong></p> -->
+        <p>Delivery Charges: <strong style="text-decoration: line-through;"></strong> <strong style="color: green;">Free</strong></p>
+        <hr>
+        <p  style="font-size: 1.2em;">Total Amount:<strong id="finalAmount"> ₹<%=totalprice%>.00</strong></p>
+        <!-- <p style="color: green; font-weight: bold;">You will save ₹5,727 on this order</p> -->
+     <form action="/checkout" method="post"> <button class="checkout-btn">Proceed to Checkout</button></form>
+    </div>
+  </div>
+
+  <script>
+    const decreaseButtons = document.querySelectorAll(".decrease");
+    const increaseButtons = document.querySelectorAll(".increase");
+    const quantityInputs = document.querySelectorAll(".quantity-input");
+    const priceElements = document.querySelectorAll(".discount-price");
+    const totalAmountElement = document.getElementById("totalAmount");
+    const totaldiscountElement= document.getElementById("finalAmount");
+  
+    decreaseButtons.forEach((btn, index) => {
+      btn.addEventListener("click", () => {
+        let quantity = parseInt(quantityInputs[index].value);
+        if (quantity > 1) {
+          quantityInputs[index].value = quantity - 1;
+          updatePrices();
+        }
+      });
+    });
+  
+    increaseButtons.forEach((btn, index) => {
+      btn.addEventListener("click", () => {
+        let quantity = parseInt(quantityInputs[index].value);
+        if(quantity<10){
+            quantityInputs[index].value = quantity + 1;
+        updatePrices();
+        }
+       });
+    });
+  
+    function updatePrices() {
+      let totalAmount = 0;
+      let discountAmount = 0;
+  
+      quantityInputs.forEach((input, index) => {
+        const quantity = parseInt(input.value);
+        const pricePerUnit = parseFloat(priceElements[index].innerText.replace("₹", ""));
+        totalAmount += quantity * pricePerUnit;
+        finalAmount= totalAmount-0;
+      });
+  
+      // Update total items and total amount in the Price Details section
+      totaldiscountElement.innerText = `₹${finalAmount.toFixed(2)}`;
+      totalAmountElement.innerText = `₹${totalAmount.toFixed(2)}`;
+    }
+    
+    document.querySelector(".checkout-btn").addEventListener("click", async (event) => {
+  event.preventDefault(); // Prevent default form submission
+
+  const cartItems = [];
+  const cartDetails = document.querySelectorAll(".cart-details");
+
+  cartDetails.forEach((detail) => {
+    const quantity = detail.querySelector(".quantity-input").value;
+    const productId = detail.getAttribute("data-product-id"); // Add data-product-id attribute in HTML
+
+    cartItems.push({
+      id: productId, // Use product ID or cart item ID
+      quantity: parseInt(quantity),
+    });
+  });
+
+  try {
+    const response = await fetch("/checkout", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ items: cartItems }),
+    });
+
+    const result = await response.json();
+    if (result.success) {
+      // alert(result.message);
+      window.location.href = "/order-summary"; // Redirect to an order summary or success page
+    } else {
+      alert(result.message);
+    }
+  } catch (error) {
+    console.error("Checkout error:", error);
+    alert("Failed to checkout. Please try again.");
+  }
+});
+
+  </script>
+  
+<%- include('../../views/partials/footer') %>
+
+
+
+
+ 

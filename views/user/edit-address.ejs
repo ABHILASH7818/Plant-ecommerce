@@ -1,0 +1,127 @@
+<%- include('../../views/partials/header') %>
+
+ <!-- Main Content --> 
+  <di class="container username-section  d-flex "><p>Welcom <span style="color: red;"><%= user.name%></span></p></di>
+ <div class="profile-container">
+   
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <h3>Manage My Account</h3>
+      <ul>
+        <li><a href="/profile" ><i class="fas fa-user"></i> My Profile</a></li>
+        <li><a href="/address" class="active"><i class="fas fa-map-marker-alt"></i> Address</a></li>
+        <li><a href="/change-password" ><i class="fas fa-lock"></i> Change Password</a></li>
+        <li><a href="/order"><i class="fas fa-shopping-cart"></i> Orders</a></li>
+        <li><a href="#"><i class="fas fa-tags"></i> Coupons</a></li>
+        <li><a href="#"><i class="fas fa-wallet"></i> Wallet</a></li>
+      </ul>
+    </aside>
+    <section class="profile-section">
+        <h2>Manage Your Addresses</h2>
+        
+            <form id="new-address-form" class="profile-form" action="/editAddress/<%=address._id%>" method="post">
+                <div class="form-group">
+                  <label for="name">Name</label>
+                  <input type="text" id="name" name="name" value="<%=address.name%>"  placeholder="Enter Name" >
+                  <small class="error-message"></small>
+                </div>
+                <div class="form-group">
+                    <label for="phone">phone</label>
+                    <input type="text" id="phone" name="phone" value="<%=address.phone%>"  placeholder="Enter Phone Number" >
+                    <small class="error-message"></small>
+                  </div>
+                <div class="form-group">
+                  <label for="street">Address and street</label>
+                  <input type="text" id="street"name="street" value="<%=address.street%>"  placeholder="Enter Address and street" >
+                  <small class="error-message"></small>
+                </div>
+                <div class="form-group">
+                  <label for="city">City</label>
+                  <input type="text" id="city" name="city" value="<%=address.city%>"  placeholder="Enter Your city" >
+                  <small class="error-message"></small>
+                </div>
+                <div class="form-group">
+                    <label for="state">State</label>
+                    <input type="text" id="state" name="state" value="<%=address.state%>" placeholder="Enter Your state" >
+                    <small class="error-message"></small>
+                  </div>
+                  <div class="form-group">
+                    <label for="pin-code">PinCode</label>
+                    <input type="text" id="pin" name="pinCode" value="<%=address.pinCode%>"  placeholder="Enter Your pincode" >
+                    <small class="error-message"></small>
+                  </div>
+               
+                <div class="form-actions">
+                  <button type="submit" class="save-btn ">Update Address</button>
+                </div>
+             
+          </form>
+        
+    </section>
+ </div>
+    
+    <script>
+         newAddressForm.addEventListener('submit', (e) => {
+      let isValid = true;
+
+      // Clear previous error messages
+    document.querySelectorAll('.error').forEach(error => error.remove());
+
+      // Validate Name
+      const name = document.getElementById('name');
+      if (name.value.trim() === '') {
+        isValid = false;
+        showError(name, 'Name is required.');
+      }
+
+      // Validate Phone
+      const phone = document.getElementById('phone');
+      if (!/^\d{10}$/.test(phone.value.trim())) {
+        isValid = false;
+        showError(phone, 'Enter a valid 10-digit phone number.');
+      }
+
+      // Validate Address and Street
+      const street = document.getElementById('street');
+      if (street.value.trim() === '') {
+        isValid = false;
+        showError(street, 'Address and street are required.');
+      }
+
+      // Validate City
+      const city = document.getElementById('city');
+      if (city.value.trim() === '') {
+        isValid = false;
+        showError(city, 'City is required.');
+      }
+
+      // Validate State
+      const state = document.getElementById('state');
+      if (state.value.trim() === '') {
+        isValid = false;
+        showError(state, 'State is required.');
+      }
+
+      // Validate PinCode
+      const pin = document.getElementById('pin');
+      if (!/^\d{6}$/.test(pin.value.trim())) {
+        isValid = false;
+        showError(pin, 'Enter a valid 6-digit pin code.');
+      }
+
+      if (!isValid) {
+        e.preventDefault(); // Prevent form submission if validation fails
+      }
+    });
+
+    function showError(input, message) {
+      const error = document.createElement('small');
+      error.className = 'error';
+      error.style.color = 'red';
+      error.textContent = message;
+      input.parentElement.appendChild(error);
+    }
+
+      </script>
+      </body>
+      </html>

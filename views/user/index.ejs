@@ -31,6 +31,7 @@
         </a>
         <div class="card-body">
          <h5 class="card-title"> <%=products[i].productName%></h5>
+         <h6> Rating  -  <%=products[i].rating%>/5</h6>
          <!-- <h6><i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
           <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
           <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
@@ -81,73 +82,13 @@
           <a href="#" class="btn btn-primary"><i class="fa-solid fa-cart-shopping"></i></a>
         </div>
       </div> --><%}%>
-      <button type="button" class="btn btn-outline-success">View All</button>
+     <a href="/shop"> <button type="button" class="btn btn-outline-success">View All</button></a>
        </div>
       
     </section>
 
     <!-- Indoor Plants -->
-    <section class="product-category">
-      <h2>Indoor Plants</h2>
-      <div class="product container">
-        <%for(let i=0;i<products.length;i++){%>
-      <div class="card" >
-        <img src="/uploads/<%=products[i].images[0]%>" class="card-img-top" alt="...">
-        <div class="card-body">
-          <h5 class="card-title"><%=products[i].productName%></h5>
-         <h6><i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-          <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-          <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-          <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-          <i class="fa-regular fa-star-half-stroke" style="color: #FFD43B;"></i></h6>
-          <span class="card-text">Price </span>
-          <a  href="#" class=" class btn btn-primary"> <i class="fa-solid fa-cart-shopping"></i></a>
-        </div>
-      </div>
-      <!-- <div class="card" >
-        <img src="/uploads/1732120213140-61G22QQuPhL._SL1080_.jpg" class="card-img-top" alt="...">
-        <div class="card-body">
-          <h5 class="card-title">Card title</h5>
-          <h6><i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-            <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-            <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-            <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-            <i class="fa-regular fa-star-half-stroke" style="color: #FFD43B;"></i></h6>
-          <span class="card-text"> Price</span>
-          <a  href="#" class="cart btn btn-primary"><i class="fa-solid fa-cart-shopping"></i> </a>
-        </div>
-      </div>
-      <div class="card" >
-        <img src="/uploads/1732098837868-Exercise 2.5.png" class="card-img-top" alt="...">
-        <div class="card-body">
-          <h5 class="card-title">Card title</h5>
-          <h6><i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-            <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-            <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-            <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-            <i class="fa-regular fa-star-half-stroke" style="color: #FFD43B;"></i></h6>
-          <span class="card-text">Price</span>
-          <a href="#" class="btn btn-primary"><i class="fa-solid fa-cart-shopping"></i></a>
-        </div>
-      </div>
-      <div class="card">
-        <img src="/uploads/1731623366650-51hE8+XEUBL._SL1080_.jpg" class="card-img-top" alt="...">
-        <div class="card-body">
-          <h5 class="card-title">Card title</h5>
-          <h6><i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-            <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-            <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-            <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-            <i class="fa-regular fa-star-half-stroke" style="color: #FFD43B;"></i></h6>
-          <span class="card-text">Price.</span>
-          <a href="#" class="btn btn-primary"><i class="fa-solid fa-cart-shopping"></i></a>
-        </div>
-      </div> -->
-      <%}%>
-      <button type="button" class="btn btn-outline-success">View All</button>
-
-      </div>
-    </section> 
+   
     <!-- Outdoor Plants -->
     <!-- <section class="product-category">
       <h2>Outdoor Plants</h2>

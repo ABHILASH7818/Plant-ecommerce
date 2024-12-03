@@ -72,7 +72,7 @@ exports.getEditCategory = async (req,res)=>{
 exports.editCategory = async (req,res)=>{
     try {
         const id = req.params.id;
-        const {name,description,} = req.body;
+        const {name,description,status} = req.body;
         const existCategory = await Category.findOne({name:req.name});
        
         if(existCategory){
@@ -81,6 +81,7 @@ exports.editCategory = async (req,res)=>{
         const updateCategory  = await Category.findByIdAndUpdate(id,{
             name:name,
             description:description,
+            status:status,
             
         });
        

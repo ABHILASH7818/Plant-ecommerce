@@ -1,0 +1,50 @@
+<%- include('../../views/partials/header') %>
+
+ <!-- Main Content -->
+  <div class="container username-section  d-flex "><p>Welcom <span style="color: red;"><%= user.name%></span></p></div>
+ <div class="profile-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <h3>Manage My Account</h3>
+      <ul>
+        <li><a href="/profile" class="active" ><i class="fas fa-user"></i> My Profile</a></li>
+        <li><a href="/address" ><i class="fas fa-map-marker-alt"></i> Address</a></li>
+        <li><a href="/change-password" ><i class="fas fa-lock"></i> Change Password</a></li>
+        <li><a href="/order"><i class="fas fa-shopping-cart"></i> Orders</a></li>
+        <li><a href="#"><i class="fas fa-tags"></i> Coupons</a></li>
+        <li><a href="#"><i class="fas fa-wallet"></i> Wallet</a></li>
+      </ul>
+    </aside>
+
+
+    <!-- Profile Form -->
+    <section class="profile-section1">
+      <h2 class="d-flex ">Your Profile <a href="/edit-profile"><button class="edit-btn">Edit</button></a></h2>
+     
+      <form class="profile-form">
+        <div class="form-group">
+          <h5><strong>Name : </strong><span style="color: blue;"><%= user.name %></span> </h5>
+        </div>
+        <div class="form-group">
+            <h5><strong>Email : </strong><span style="color: blue;"><%=user.email%></span>  </h5>
+        </div>
+        <div class="form-group">
+            <h5><strong>Phone Number : </strong><span style="color: blue;"><%=user.phone%></span> </h5>
+        </div>
+        <!-- <div class="form-group">
+          <label for="gender">Gender</label>
+          <select id="gender" disabled>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+          </select>
+        </div> -->
+        <!-- <div class="form-actions">
+          <button type="button" class="cancel-btn">Cancel</button>
+          <button type="submit" class="save-btn">Save Changes</button>
+        </div> -->
+      </form>
+    </section>
+  </div>
+
+</body>
+</html>

@@ -250,9 +250,9 @@
       
       <div class="Cart-actions">
         <button onclick="decreaseQuantity()">-</button>
-        <input id="quantity" type="text" value="2" readonly />
+        <input id="quantity" name="quantity" type="text" value="2" readonly />
         <button onclick="increaseQuantity()">+</button>
-        <button class="add-to-cart">Add to Cart</button>
+        <form action="/add-to-cart/<%=product._id%>" method="post"><button class="add-to-cart"> <i class="fa-solid fa-cart-shopping"></i></button></form>   
         <button class="wishlist">wishlist</button>
       </div>
 

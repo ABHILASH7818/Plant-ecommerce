@@ -1,0 +1,212 @@
+.username-section{
+  margin-top: 60px;
+  
+}
+
+.profile-container {
+    display: flex;
+    max-width: 1000px;
+    margin: 20px auto;
+  }
+  
+  .sidebar {
+    width: 24%;
+    padding: 20px;
+    max-height: 550px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    border-radius: 8px;
+  }
+  
+  .sidebar h3 {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 15px;
+  }
+  
+  .sidebar ul {
+    list-style: none;
+  }
+  
+  .sidebar ul li a {
+    display: block;
+    padding: 10px;
+    color: #333;
+    text-decoration: none;
+    border-radius: 4px;
+    margin-bottom: 5px;
+  }
+  
+  .sidebar ul li a:hover,
+  .sidebar ul li a.active {
+    background-color: #f0f0f0;
+    color: #e63946;
+  }
+
+  .profile-section1 {
+   flex:1;
+    padding: 20px;
+    /* max-width: 100px; */
+    max-height: 400px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    
+    border-radius: 8px;
+    margin-left: 20px;
+  }
+
+  .profile-section1 h2 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #000102;
+    padding-bottom: 20px;
+    margin-bottom: 40px;
+  }
+
+  .profile-section1 h5{
+    margin-bottom: 20px;
+    align-items: center;
+    /* text-align: center; */
+  }
+  
+  
+  .profile-section {
+    flex: 2;
+    padding: 20px;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    border-radius: 8px;
+    margin-left: 20px;
+  }
+  
+  .profile-section h2 {
+    font-size: 24px;
+    color: #333;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .edit-btn {
+    padding: 8px 16px;
+    font-size: 14px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .profile-form .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .profile-form label {
+    display: block;
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 5px;
+  }
+  
+  .profile-form input,
+  .profile-form select {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+  }
+  
+  .profile-form input:disabled,
+  .profile-form select:disabled {
+    background-color: #f0f0f0;
+  }
+
+  .passwordChange-form .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .passwordChange-form label {
+    display: block;
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 5px;
+  }
+  
+  .passwordChange-form input,
+  .passwordChange-form select {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+  }
+  
+  .passwordChange-form input:disabled,
+  .passwordChange-form select:disabled {
+    background-color: #f0f0f0;
+  }
+  
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+  
+  .cancel-btn {
+    padding: 10px 20px;
+    background-color: #ccc;
+    border: none;
+    border-radius: 4px;
+    color: #333;
+    cursor: pointer;
+  }
+  
+  .save-btn {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+
+  /* address */
+
+  .address-card {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin: 10px 0;
+    background: #f4eaead2;
+  }
+
+ .address-btn {
+  display: block;
+  width: 100%;
+  max-width: 200px;
+  padding: 10px;
+  background: #45a046;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+  margin-bottom: 12px;
+ }
+ .address-btn:hover {
+  background: #209556;
+}
+.hidden {
+  display: none;
+}

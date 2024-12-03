@@ -1,47 +1,91 @@
 <%- include('../../views/partials/adminheader') %>
- <div class="side">
+<div class="side">
     <aside>
         <ul>
             <li><a href="/admin/dashboard">Dashboard</a></li>
-            <li><a href="/admin/Products">Products</a> </li>
+            <li><a href="/admin/Products">Products</a></li>
             <li><a href="/admin/Users">Users</a></li>
             <li><a href="#">Coupons</a></li>
             <li><a href="#">Order</a></li>
             <li><a href="/admin/Offers">Offers</a></li>
             <li class="active"><a href="/admin/category">Category</a></li>
             <li class="sign-out">Sign Out</li>
-           
         </ul>
     </aside>
     <main>
         <!-- Header Navigation Bar -->
-         <h2>Category</h2>
-         <section class="new-form-section">
-            <form action="/admin/addcategory" method="post" class="category-form">
-                <% if (typeof message!== 'undefined') { %>
-                    <p class="text-center m-auto" style="color:red;font-size:16px;"><%= message%></p>
+        <h2>Category</h2>
+        <section class="new-form-section">
+            <form action="/admin/addcategory" method="post" class="category-form" id="categoryForm">
+                <% if (typeof message !== 'undefined') { %>
+                    <p class="text-center m-auto" style="color:red;font-size:16px;"><%= message %></p>
                 <% } %> 
-               
+
                 <label for="name">Category Name</label>
-                <input type="text" id="name" name="name" placeholder="Enter category name" required>
+                <input type="text" id="name" name="name" placeholder="Enter category name" >
+                <small id="nameError" style="color: red; display: none;">Category name must be at least 3 characters long.</small>
 
                 <label for="description">Description</label>
-                <textarea id="description" name="description" placeholder="Enter category description" required></textarea>
+                <textarea id="description" name="description" placeholder="Enter category description" ></textarea>
+                <small id="descriptionError" style="color: red; display: none;">Description must be at least 10 characters long.</small>
 
                 <div class="input-group mb-3">
                     <label class="input-group-text" for="inputGroupSelect01">Status</label>
-                    <select class="form-select" id="inputGroupSelect01" name="status">
-                      <option selected>Choose...</option>
-                      <option value=true>Active</option>
-                      <option value=false>Inactive</option>
+                    <select class="form-select" id="inputGroupSelect01" name="status" >
+                        <option value="" selected>Choose...</option>
+                        <option value="true">Active</option>
+                        <option value="false">Inactive</option>
                     </select>
-                  </div>
+                </div>
+                <small id="statusError" style="color: red; display: none;">Please select a status.</small>
+
                 <div class="form-buttons">
-                    <button type="button" class="cancel-button">Cancel</button>
+                    <button type="button" class="cancel-button" onclick="window.history.back();">Cancel</button>
                     <button type="submit" class="submit-button">Submit</button>
                 </div>
             </form>
         </section>
-   </main>
+    </main>
 </div>
 <%- include('../../views/partials/adminfooter') %>
+
+<script>
+    document.getElementById('categoryForm').addEventListener('submit', function(event) {
+        let isValid = true;
+
+        // Validate Category Name
+        const nameInput = document.getElementById('name');
+        const nameError = document.getElementById('nameError');
+        if (nameInput.value.trim().length < 3) {
+            nameError.style.display = 'block';
+            isValid = false;
+        } else {
+            nameError.style.display = 'none';
+        }
+
+        // Validate Description
+        const descriptionInput = document.getElementById('description');
+        const descriptionError = document.getElementById('descriptionError');
+        if (descriptionInput.value.trim().length < 10) {
+            descriptionError.style.display = 'block';
+            isValid = false;
+        } else {
+            descriptionError.style.display = 'none';
+        }
+
+        // Validate Status
+        const statusInput = document.getElementById('inputGroupSelect01');
+        const statusError = document.getElementById('statusError');
+        if (statusInput.value === "") {
+            statusError.style.display = 'block';
+            isValid = false;
+        } else {
+            statusError.style.display = 'none';
+        }
+
+        // Prevent form submission if validation fails
+        if (!isValid) {
+            event.preventDefault();
+        }
+    });
+</script>

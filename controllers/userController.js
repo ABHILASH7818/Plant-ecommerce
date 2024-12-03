@@ -18,8 +18,9 @@ exports.loadHome =async(req,res)=>{
         productData.sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
         productData = productData.slice(0,4);
         if( req.session.user){
-            const user =  req.session.user;
-            res.render('user/index',{user,products:productData});
+            const userId = req.session.user; 
+            const userData = await User.findOne({_id:userId})
+            res.render('user/index',{user:userData,products:productData});
         }else{
             
             return  res.render('user/index',{products:productData})
@@ -41,7 +42,7 @@ function generateOtp(){
     return Math.floor(100000 + Math.random()*900000).toString();
 }
 
-async function sentVerificationEmail(email,otp) {
+async function sendVerificationEmail(email,otp) {
     try {
         const transporter = nodemailer.createTransport({
             service:'gmail',
@@ -88,7 +89,7 @@ exports.postsignup = async(req,res)=>{
                 message: 'Username or email already exists'});
         }
         const otp =generateOtp();
-        const emailSent = await sentVerificationEmail(email,otp);
+        const emailSent = await sendVerificationEmail(email,otp);
         if(!emailSent){
             return res.json("email.errorr")
         }
@@ -140,7 +141,7 @@ exports.verifyotp = async(req,res)=>{
             res.render('user/login')
       }else{
         res.render('user/verify-otp',{
-            message: 'Username or email already exists'})
+            message: 'Invalid Otp'})
       }
       
     } catch (error) {
@@ -156,10 +157,11 @@ exports.resendOtp = async(req,res)=>{
             return res.render('user/verify-otp',{message:"email not fount in session"}) 
         }
         const otp =generateOtp();
-        req.session.userOtp = otp;
-        const emailsent =await sendVerificationEmail(email,otp);
-        if(emailsent){
-            console.log("resend otp :",otp);
+        // req.session.userOtp = otp;
+        const emailSent = await sendVerificationEmail(email,otp);
+        if(emailSent){
+            req.session.userOtp = otp;
+            console.log("Resend OTP :",otp);
             res.render('user/verify-otp',{message:"otp send success"});
         }else{
             res.render('user/verify-otp',{message:"failed to sent otp"});
@@ -171,7 +173,6 @@ exports.resendOtp = async(req,res)=>{
 }
 
 
-    //user auth 
 
 exports.getlogin =async(req,res)=>{
     try {
@@ -198,7 +199,7 @@ exports.postlogin = async(req,res)=>{
          if(finduser.isblock){
             return res.render('user/login',{message:"User blocked by admin"})
          }
-       const checkPassword = await bcrypt.compare(password ,finduser.password)
+       const checkPassword = await bcrypt.compare(password, finduser.password)
        if( !checkPassword){
        return res.render("user/login",{message:"Incorrect password"})
        }
@@ -229,11 +230,68 @@ exports.logout= async(req,res)=>{
 }
 
 
-exports.getproducts = async(req,res)=>{
+
+//shoping-page
+exports.getShopPage = async(req,res)=>{
     try {
-        return res.render('user/shop')
+        const category = await Category.find({status:true})
+        const userId = req.session.user; 
+        const userData = await User.findOne({_id:userId})
+        const page = parseInt(req.query.page) || 1; 
+        const limit = 6; 
+        const skip = (page - 1) * limit; 
+
+        // Fetch the paginated category data
+        const productData = await Product.find({})
+            .sort({ createdAt: -1 }) 
+            .skip(skip) 
+            .limit(limit)
+            .populate('category') 
+            .exec();
+
+            const totalProducts = await Product.countDocuments({stock:{$gt:0}})
+             const totalPages = Math.ceil(totalProducts / limit); 
+
+        return res.render('user/shop',{
+            user:userData,
+            product:productData,
+            category:category,
+            currentPage: page,
+            totalPages: totalPages,
+            totalProducts: totalProducts
+        })
     } catch (error) {
         console.log("shop page not found");
         res.status(404).send("page not found")
     }
 }
+
+exports.getShopFilerPage = async (req,res)=>{
+    try {
+        const categories = await Category.find({status:true})
+        const { category, minPrice, maxPrice } = req.query;
+
+
+  let filter = {};
+
+  
+
+  if (minPrice && maxPrice) {
+    filter.price = { $gte: parseInt(minPrice), $lte: parseInt(maxPrice) };
+  }
+
+  
+  const products = await Product.find(filter);
+  
+
+  res.render("user/shop", {
+    product: products,
+    category: categories,
+  });
+
+   
+    } catch (error) {
+        res.status(404).send("page not found")
+    }
+}
+

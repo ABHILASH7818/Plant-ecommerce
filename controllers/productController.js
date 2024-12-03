@@ -84,6 +84,7 @@ exports.addProduct = async (req, res) => {
                 stock:product.quantity,
                 price: product.price,
                 color: product.color,
+                rating:product.rating,
                 images: imgarr,
                 //stastus: 'Available' 
       });
@@ -97,60 +98,33 @@ exports.addProduct = async (req, res) => {
   };
  
 
-// exports.addProduct = async(req,res)=>{
-//     try {
-//         const products = req.body;
-//         const productExists = await Product.findOne({
-//             productName:products.productName
-//         });
-//         if(!productExists){
-//             const images = [];
-             
-//             if(req.files && req.files.length >0){
-//                 for(let i=0; i<req.files.length;i++){
-//                     const originalImagePath = req.files[i].path;
+exports.deleteProduct =  async (req,res)=>{
+  try {
+      await Product.findByIdAndDelete(req.params.id);
+  res.redirect('/admin/products');
+  } catch (error) {
+      res.status(404).json({error:"Internal server error"})      
+  }
+}
+exports.getEditProduct =  async (req,res)=>{
+  try {    
+     const category = await Category.find({status:true})
+     const product = await Product.findById(req.params.id) .populate('category');
+     res.render('admin/edit-product',{product:product,cat:category});   
+  } catch (error) {
+      res.redirect('/pageerror')
+  }
+}
 
-//                     const resizedImagePath = path.join('public','uploads','product-images',req.files[i].filename);
-//                     await sharp(originalImagePath).resize({width:440,height:440}).toFile(resizedImagePath);
-//                     images.push(req.files[i].filename);
-//                 }
-//             }
-//             // const categoryId = await Category.findOne({_id:products.category});
-//             // if(!products.category){
-//             //     return res.status(400).json("Invalid category name")
-//             // }
-//             const newProduct = new Product({
-//                 productName: products.productName,
-//                 description: products.description,
-//                 // category: categoryId._id,
-//                 regularPrice: products.regularPrice,
-//                 salePrice: products.salePrice,
-//                 color: products.color,
-//                 productImage: images,
-//                 stastus: 'Available' ,
-            
-//         });
-//         await newProduct.save();
-//         return res.redirect("/admin/products");
-//     }else{
-//         return res.stastus(400).json("product already exist.")
-//     }
-
-//     } catch (error) {
-//         console.log("error add new product");
-//         return req.redirect("/pageerror");
-//     }
-// }
-
-
-
+//user side
 exports.getProductDetails = async(req,res)=>{
   try {
     const productId =req.params.id; 
     const product = await Product.findById(productId);
-    
+    const userId = req.session.user; 
+    const userData = await User.findOne({_id:userId})
   //  console.log(product)
-    res.render("user/product-details",{product:product})
+    res.render("user/product-details",{user:userData,product:product})
   } catch (error) {
     console.log("error getting product-details");
     return res.redirect("/pageerror");

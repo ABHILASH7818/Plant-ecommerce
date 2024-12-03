@@ -38,10 +38,7 @@
                 
 
                     
-                        <label class="form-label"> Price</label>
-                        <input placeholder="" name="price" type="text"
-                            class="form-control border" id="price">
-                            <div class="error danger-msg" id="price-error"></div>
+                        
 
                             <label class="form-label"> Price</label>
                         <input placeholder="" name="price" type="text"
@@ -51,6 +48,10 @@
                                 <label class="form-label">Quantity</label>
                                 <input placeholder="" name="quantity" id="quantity" type="text" class="form-control border">
                                 <div class="error danger-msg" id="quantity-error"></div>
+
+                                <label class="form-label">Rating</label>
+                                <input placeholder="" name="rating" id="rating" type="text" class="form-control border">
+                                <div class="error danger-msg" id="rating"></div>
 
                                 <label class="form-label">Color</label>
                                 <input  name="color" id="color" type="text" class="form-control border">
@@ -77,11 +78,11 @@
                             
                                             <br> <div id="fileInput">
                                                 <!-- <input class="form-control" type="file" name="image" id="fileInput1"accept="image/png, image/jpeg, image/jpg"> -->
-                                                            <input type="file" name="image" id="fileInput1"  multiple required>
+                                                            <input type="file" name="image" id="fileInput1"   >
         
-                                                            <input type="file" name="image" id="fileInput2"  multiple required>                                           
+                                                            <input type="file" name="image" id="fileInput2"   >                                           
                                                           
-                                                            <input type="file" name="image" id="fileInput3"  multiple required><br><br>
+                                                            <input type="file" name="image" id="fileInput3"  ><br><br>
                                                         </div>
                                                     
                                                             <div id="previewContainer" class="preview"></div><br>
@@ -207,139 +208,101 @@ function validateAndSubmit(){
         modal.appendChild(cropButton);
     }
 
-    // Handle form submission and gather data
-    document.getElementById("frm-btn").addEventListener("submit", function (event) {
-        event.preventDefault();
+     // Function to handle form submission with validation
+     document.getElementById("productform").addEventListener("submit", function (event) {
+        event.preventDefault(); // Prevent form submission until validation is done
 
+        // Clear any previous error messages
+        clearErrors();
 
-         // Get form elements
-    const name = document.getElementById('name');
-    const description = document.getElementById('description');
-    const price = document.getElementById('price');
-    const quantity = document.getElementById('quantity');
-    const color= document.getElementById('color');
+        // Validate form fields
+        let isValid = true;
 
-    // Clear any previous error messages
-    clearErrors();
+        // Validate each form field
+        const name = document.getElementById('name');
+        const description = document.getElementById('descriptionid');
+        const price = document.getElementById('price');
+        const quantity = document.getElementById('quantity');
+        const color = document.getElementById('color');
 
-    // Validate form
-    let isValid = true;
+        if (!validateName(name.value)) {
+            showError('name-error', 'Please enter a valid product name.');
+            isValid = false;
+        }
 
-    // Name Validation
-    if(!validateName(name.value)){
-        showError('name-error', 'Please enter a valid name');
-        isValid = false;
-    }
+        if (!description.value.trim()) {
+            showError('description-error', 'Please enter a product description.');
+            isValid = false;
+        }
 
-    // Email Validation
-    if (!validateName(description.value)) {
-        showError('description-error', 'Email is required');
-        isValid = false;
-    // } 
-    // else if (!validateEmail(email.value)) {
-    //     showError('emailError', 'Please enter a valid email');
-    //     isValid = false;
-    }
+        if (!price.value.trim() || isNaN(price.value)) {
+            showError('price-error', 'Price must be a valid number.');
+            isValid = false;
+        }
 
-    // Phone Number Validation
-    if (!price.value.trim()) {
-        showError('price-error', 'price is required');
-        isValid = false;
-    // } else if (!validatePhone(phone.value)) {
-    //     showError('phone-error', 'Phone Number must be at least 10 digits');
-    //     isValid = false;
-    }
+        if (!quantity.value.trim() || isNaN(quantity.value) || parseInt(quantity.value) <= 0) {
+            showError('quantity-error', 'Quantity must be a valid positive number.');
+            isValid = false;
+        }
 
-    // Password Validation
-    if (!quantity.value.trim()) {
-        showError('quantity-error', 'Password is required');
-        isValid = false;
-    }
-    // } else if (!validatePassword(password.value)) {
-    //     showError('password-error', 'Password must be at least 8 characters long, include letter, at least one digit, and one special character (e.g., @, $, !, %, *, ?, &).');
-    //     isValid = false;
-    // }
+        if (!color.value.trim()) {
+            showError('color-error', 'Please specify a color.');
+            isValid = false;
+        }
 
-    // Confirm Password Validation
-    if (!color.value.trim()) {
-        showError('color-error', 'Confirm Password is required');
-        isValid = false;
-    }
-    // } else if (password.value !== confirmPassword.value) {
-    //     showError('confirm-error', 'Passwords do not match');
-    //     isValid = false;
-    // }
-
-
-const formData = new FormData(this);
+        // If all validations pass, submit the form
+        if (isValid) {
+            this.submit(); // Submit the form if validation is successful
+        } else {
+            document.getElementById('formError').textContent = 'Please correct the errors above.';
+        }
+        const formData = new FormData(this);
         croppedImages.forEach((imageData, index) => {
             formData.append(`images[${index}]`, imageData);
         });
+    });
 
-
-    // Show form error if needed
-    if (!isValid) {
-        document.getElementById('formError').textContent = 'Please correct the errors above.';
-    } else {
-        // Submit the form if valid
-        document.getElementById('productform').submit();
+    // Function to show error messages
+    function showError(id, message) {
+        const errorElement = document.getElementById(id);
+        errorElement.textContent = message;
+        errorElement.style.display = 'block';
     }
 
-  
+    // Function to clear all error messages
+    function clearErrors() {
+        const errorElements = document.querySelectorAll('.error');
+        errorElements.forEach(error => {
+            error.style.display = 'none';
+        });
+    }
 
-        
+    // Name validation function
+    function validateName(name) {
+        const nameRegex = /^[A-Za-z\s]+$/; // Only allows letters and spaces
+        return nameRegex.test(name);
+    }
 
-        // fetch("/admin/add-product", {
-        //     method: "POST",
-        //     body: formData,
-        // })
-            // .then((response) => response.json())
-            // .then((data) => {
-            //     alert("Product added successfully!");
-            //     // Optional: Reset form or navigate
-            // })
-            // .catch((error) => console.error("Error:", error));
-    });
+    // Price validation function
+    function validatePrice(price) {
+        return !isNaN(price) && parseFloat(price) > 0;
+    }
 
+    // Quantity validation function
+    function validateQuantity(quantity) {
+        return !isNaN(quantity) && parseInt(quantity) > 0;
+    }
 
+    // Color validation function
+    function validateColor(color) {
+        return color.trim().length > 0;
+    }
 
-
-// Function to show error message
-function showError(id, message) {
-    const errorElement = document.getElementById(id);
-    errorElement.textContent = message;
-    errorElement.style.display = 'block';
-}
-
-// Function to clear errors
-function clearErrors() {
-    const errors = document.querySelectorAll('.error');
-    errors.forEach(error => {
-        error.style.display = 'none';
-    });
-}
-//Name validation funtion 
-function validateName(name){
-    const nameRegex = /^[A-Za-z\s]+$/;
-    return nameRegex.test(name);
-}
-
-// Email validation function
-function validateEmail(email) {
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    return emailRegex.test(email);
-}
-
-// Phone number validation function
-function validatePhone(phone) {
-    const phoneRegex = /^\d{10,}$/; // Ensure at least 10 digits
-    return phoneRegex.test(phone);
-}
-//Password validation funtion 
-function validatePassword(password){
-    const passwordRegex =/^(?=.*[A-Za-z\s])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    return passwordRegex.test(password);
-}
+    // Email validation function (if you need it later)
+    function validateEmail(email) {
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        return emailRegex.test(email);
+    }
 
 
 
@@ -347,95 +310,6 @@ function validatePassword(password){
 
 
 
-
-//     function validateForm() {
-//               clearErrorMessages();
-//               const name = document.getElementsByName('productName')[0].value;
-//               const description = document.getElementById('descriptionid').value;
-//               const brand = document.getElementsByName('brand')[0].value;
-//               const price = document.getElementsByName('regularPrice')[0].value;
-//               const saleprice = document.getElementsByName('salePrice')[0].value;
-//               const color = document.getElementsByName('color')[0].value;
-//               const category = document.getElementsByName('category')[0].value;
-//               const images = document.getElementById('input1')
-//               const quantity=document.getElementsByName('quantity')
-//               let isValid = true
-//               if (name.trim() === "") {
-//       displayErrorMessage('productName-error', 'Please enter a product name.');
-//       isValid = false;
-//    } else if (!/^[a-zA-Z\s]+$/.test(name.trim())) {
-//       displayErrorMessage('productName-error', 'Product name should contain only alphabetic characters.');
-//       isValid = false;
-//    }
-            
-//    if (description.trim() === "") {
-//       displayErrorMessage('description-error', 'Please enter a product description.');
-//       isValid = false;
-//    } else if (!/^[a-zA-Z\s]+$/.test(description.trim())) {
-//       displayErrorMessage('description-error', 'Product description should contain only alphabetic characters.');
-//       isValid = false;
-//    }
-  
-  
-           
-  
-  
-//               if ( parseInt(quantity) < 0) {
-//                   displayErrorMessage('quantity-error', 'Please enter a valid non-negative quantity.');
-//                   isValid = false;
-//               }
-  
-  
-  
-  
-//               if (!/^\d+(\.\d{1,2})?$/.test(price) || parseFloat(price) < 0) {
-//                   displayErrorMessage('regularPrice-error', 'Please enter a valid non-negative price.');
-//                   isValid = false;
-//               }
-  
-  
-  
-  
-//               if (!/^\d+(\.\d{1,2})?$/.test(saleprice) || parseFloat(saleprice) < 0) {
-//                   displayErrorMessage('salePrice-error', 'Please enter a valid non-negative price.');
-//                   isValid = false;
-//               }
-//               if (parseFloat(price) <= parseFloat(saleprice)) {
-//       displayErrorMessage('regularPrice-error', 'Regular price must be greater than sale price.');
-//       isValid = false;
-//    }
-  
-  
-//               if (color.trim() === "") {
-//                   displayErrorMessage('color-error', 'Please enter a color.');
-//                   isValid = false;
-//               }
-  
-  
-//               if (images.files.length === 0) {
-//                   displayErrorMessage("images-error",'Please select an image.');
-//                   isValid = false;
-//               }
-//               return isValid;
-//           }
-
-
-//           function displayErrorMessage(elementId, message) {
-//               var errorElement = document.getElementById(elementId);
-//               errorElement.innerText = message;
-//               errorElement.style.display = "block";
-//           }
-  
-  
-//           function clearErrorMessages() {
-//               const errorElements = document.getElementsByClassName('error-message');
-//               Array.from(errorElements).forEach(element => {
-//                   element.innerText = '';
-//               });
-//               const errorMessage = document.getElementById('errorMessage');
-  
-  
-//           } 
 
 </script>
 <%- include('../../views/partials/adminfooter') %>

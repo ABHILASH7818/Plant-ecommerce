@@ -1,4 +1,5 @@
 <%- include('../../views/partials/adminheader') %>
+
 <div class="side">
     <aside>
         <ul>
@@ -25,7 +26,7 @@
                <div  class="card mx-1 text-start">
                 
                     <label for="product_name" class="form-label">Product Name</label>
-                    <input type="text" placeholder="Type here" name="name"
+                    <input type="text" placeholder="Type here" value="<%= product.productName%>" name="name"
                         class="form-control border" id="name">
                     <div class="error danger-msg" id="name-error"></div>
                 
@@ -33,27 +34,27 @@
                
                     <label class="form-label">Full description</label>
                     <textarea placeholder="Type here" id="descriptionid" name="description" class="form-control border"
-                        rows="2"></textarea>
+                        rows="2"><%= product.description%></textarea>
                     <div class="error danger-msg" id="description-error"></div>
                 
 
                     
                         <label class="form-label"> Price</label>
-                        <input placeholder="" name="price" type="text"
+                        <input placeholder="" value="<%= product.price%>" name="price" type="text"
                             class="form-control border" id="price">
                             <div class="error danger-msg" id="price-error"></div>
                     
                                 <label class="form-label">Quantity</label>
-                                <input placeholder="" name="quantity" id="quantity" type="text" class="form-control border">
+                                <input placeholder="" value="<%= product.stock%>" name="quantity" id="quantity" type="text" class="form-control border">
                                 <div class="error danger-msg" id="quantity-error"></div>
 
                                 <label class="form-label">Color</label>
-                                <input  name="color" id="color" type="text" class="form-control border">
+                                <input  name="color" id="color" value="<%= product.color%>" type="text" class="form-control border">
                             <div class="error danger-msg" id="color-error"></div>
 
                         <label class="form-label">Category</label>
                         <select class="form-select border" style="width: 150px;" name="category">
-                            
+                            <option value="<%=product.category.name%>"><%=product.category.name%></option>
                             <%for(let i=0;i<cat.length;i++){%>
                                 <option value="<%=cat[i].name%>">
                                     <%=cat[i].name%>
@@ -70,23 +71,29 @@
                                 <h4>Choose images</h4>
                             </div>
                             
-                                            <br> <div id="fileInput">
-                                                <!-- <input class="form-control" type="file" name="image" id="fileInput1"accept="image/png, image/jpeg, image/jpg"> -->
-                                                            <input type="file" name="image" id="fileInput1"  multiple required>
-        
-                                                            <input type="file" name="image" id="fileInput2"  multiple required>                                           
-                                                          
-                                                            <input type="file" name="image" id="fileInput3"  multiple required><br><br>
-                                                        </div>
-                                                    
-                                                            <div id="previewContainer" class="preview"></div><br>
+                                            <br>  <div id="fileInput">
+                                                 
+                                                <% product.images.forEach((image, index) => { %>
+                                                    <input type="file" name="newImages" id="fileInput1" value="<%= image %>" multiple>
+                                                    <div id="imageContainer-<%= index %>" class="image-preview">
+                                                        <img src="/uploads/<%= image %>" alt="Product Image" style="width: 100px; height: 100px;">
+                                                        <input type="hidden" name="existingImages" value="">
+                                                        <button type="button" onclick="deleteImage('<%= index %>')" class="btn btn-danger btn-sm">Delete</button>
+                                                    </div>
+                                                <% }); %>
+                                                
+                                                <div id="previewContainer" class="preview"></div><br>
+                                                <small>Upload new images (optional)</small>
+                                            </div>
+                                        </div>
                        
                                                     </div>
-                </div>
-                
-                <div class="form-buttons">
+                                                     <div class="form-buttons">
                     <button type="submit" class="submit-button" id="frm-btn">Submit</button>
                 </div>
+                
+                
+               
             </form>
         </section>
    </main>
@@ -95,6 +102,13 @@
 
 
 <script>
+     function deleteImage(index) {
+            const imageContainer = document.getElementById(`imageContainer-${index}`);
+            if (imageContainer) {
+                imageContainer.remove();
+                // Optionally add logic to remove the image from the server if necessary.
+            }
+        }
 
 function validateAndSubmit(){
         if(validateForm){

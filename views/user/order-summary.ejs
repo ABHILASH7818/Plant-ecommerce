@@ -1,0 +1,316 @@
+<%- include('../../views/partials/header') %>
+
+ <!-- Main Content --> 
+ <div class="cart-heading"><h3>Order Summary</h3></div>  
+ <div class="cart-container">
+    <!-- Sidebar -->
+    
+    <section class="profile-section">
+        <h2> Addresses</h2>
+        <div class="saved-addresses">
+          <h5>Saved Addresses</h5>
+          <!-- <form action="/placeOrder" method="post" id="select-address-form"> -->
+            <div class="address-list" id="address-list">
+              <% userAddress.address.forEach((address, index) => { %>
+              <div class="address-card">
+                <div>
+                  <input 
+                    type="radio" 
+                    name="selectedAddress" 
+                    id="address<%= index %>" 
+                    value="<%= address._id %>" 
+                    <%= index === 0 ? 'checked' : '' %>>
+                  <label for="address<%= index %>">
+                    <p>
+                      <strong><%= address.name %></strong><br>
+                      <%= address.phone %>, <%= address.street %>, <%= address.city %>,<br>
+                      <%= address.state %>,<%= address.pinCode %>
+                    </p>
+                  </label>
+                </div>
+                <div>
+                  <!-- <a href="/editAddress/<%= address._id %>">
+                    <i class="fa-regular fa-pen-to-square"></i>
+                  </a> -->
+                </div>
+              </div>
+              <% }) %>
+            </div>
+            <!-- <button type="submit" id="save-address-btn" class="address-btn">Save & Continue</button> -->
+          <!-- </form> -->
+        </div>
+        
+         <button class="address-btn " id="add-address-btn"> <span>  Add New Address</span></button>
+         <button type="submit" id="save-address-btn" style="background-color: rgb(251, 155, 71);" class="address-btn">view order-summary</button>
+        <div class="address-form hidden" id="address-form">
+            <form id="new-address-form" class="profile-form" action="/saveAddress" method="post">
+                <div class="form-group">
+                  <label for="name">Name</label>
+                  <input type="text" id="name" name="name"  placeholder="Enter Name" >
+                  <small class="error-message"></small>
+                </div>
+                <div class="form-group">
+                    <label for="phone">phone</label>
+                    <input type="text" id="phone" name="phone"  placeholder="Enter Phone Number" >
+                    <small class="error-message"></small>
+                  </div>
+                <div class="form-group">
+                  <label for="street">Address and street</label>
+                  <input type="text" id="street"name="street"  placeholder="Enter Address and street" >
+                  <small class="error-message"></small>
+                </div>
+                <div class="form-group">
+                  <label for="city">City</label>
+                  <input type="text" id="city" name="city"  placeholder="Enter Your city" >
+                  <small class="error-message"></small>
+                </div>
+                <div class="form-group">
+                    <label for="state">State</label>
+                    <input type="text" id="state" name="state"  placeholder="Enter Your state" >
+                    <small class="error-message"></small>
+                  </div>
+                  <div class="form-group">
+                    <label for="pin-code">PinCode</label>
+                    <input type="text" id="pin" name="pinCode"  placeholder="Enter Your pincode" >
+                    <small class="error-message"></small>
+                  </div>
+                <div class="form-actions">
+                  <button type="submit" class="save-btn ">Save Address</button>
+                </div>
+             
+          </form>
+        </div>
+
+
+        <div class="cart-list hidden">
+          <h4>Order Overview</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Image</th>
+                <th>Product Name</th>
+                <th>Price</th>
+                <th>Color</th>
+                <th>Quantity</th>
+                <th>Subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% cartData.items.forEach((item) => { %>
+                <div class="cart-products" data-product-id="<%= item.productId._id %>" data-product-quantity="<%= item.quantity %>">
+              <tr>
+                <td><img src="/uploads/<%= item.productId.images[0] %>" alt="Product Image" class="cart-image"></td>
+                <td><%= item.productId.productName %></td>
+                <td>₹<%= item.productId.price %></td>
+                <td><%= item.productId.color %></td>
+                <td id="product-quantity"><%= item.quantity %></td>
+                <td>₹<%= item.quantity * item.productId.price %></td>
+              </tr>
+            </div>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+        
+    </section>
+
+    <div class="order-summary">
+      <h2>Price Details</h2>
+      <hr>
+      <p>Price: <strong id="totalAmount">₹<%= totalprice %>.00</strong></p>
+      <p>Discount: <strong style="color: rgb(241, 59, 59);">– 0</strong></p>
+      <p>Delivery Charges: <strong style="text-decoration: line-through;"></strong> 
+        <strong style="color: green;">Free</strong>
+      </p>
+      <hr>
+      <p style="font-size: 1.2em;">Total Amount: <strong id="finalAmount"> ₹<%= totalprice %>.00</strong></p>
+    
+      <!-- Apply Coupon Section -->
+      <!-- <div class="coupon-section">
+        <label for="couponCode">Apply Coupon:</label>
+        <input type="text" id="couponCode" placeholder="Enter Coupon Code">
+        <button id="applyCoupon">Apply</button>
+      </div> -->
+    
+      <!-- Payment Method Section -->
+      <div class="payment-methods">
+        <h3>Select Payment Method:</h3>
+        <div>
+          <input type="radio" id="cod" name="paymentMethod" value="COD" checked>
+          <label for="cod">Cash on Delivery</label>
+        </div>
+        <div>
+          <input type="radio" id="online" name="paymentMethod" value="Online">
+          <label for="online">Online Payment</label>
+        </div>
+      </div>
+    
+      <button class="checkout-btn">Place Order</button>
+    </div>
+    
+ </div>
+    
+      <script>
+        document.addEventListener('DOMContentLoaded', () => {
+  const addAddressBtn = document.getElementById('add-address-btn');
+  const addressForm = document.getElementById('address-form');
+  const newAddressForm = document.getElementById('new-address-form');
+  const addressList = document.getElementById('address-list');
+
+  // Toggle address form visibility
+  addAddressBtn.addEventListener('click', () => {
+    addressForm.classList.toggle('hidden');
+  });
+
+  newAddressForm.addEventListener('submit', (e) => {
+      let isValid = true;
+
+      // Clear previous error messages
+    document.querySelectorAll('.error').forEach(error => error.remove());
+
+      // Validate Name
+      const name = document.getElementById('name');
+      if (name.value.trim() === '') {
+        isValid = false;
+        showError(name, 'Name is required.');
+      }
+
+      // Validate Phone
+      const phone = document.getElementById('phone');
+      if (!/^\d{10}$/.test(phone.value.trim())) {
+        isValid = false;
+        showError(phone, 'Enter a valid 10-digit phone number.');
+      }
+
+      // Validate Address and Street
+      const street = document.getElementById('street');
+      if (street.value.trim() === '') {
+        isValid = false;
+        showError(street, 'Address and street are required.');
+      }
+
+      // Validate City
+      const city = document.getElementById('city');
+      if (city.value.trim() === '') {
+        isValid = false;
+        showError(city, 'City is required.');
+      }
+
+      // Validate State
+      const state = document.getElementById('state');
+      if (state.value.trim() === '') {
+        isValid = false;
+        showError(state, 'State is required.');
+      }
+
+      // Validate PinCode
+      const pin = document.getElementById('pin');
+      if (!/^\d{6}$/.test(pin.value.trim())) {
+        isValid = false;
+        showError(pin, 'Enter a valid 6-digit pin code.');
+      }
+
+      if (!isValid) {
+        e.preventDefault(); // Prevent form submission if validation fails
+      }
+    });
+
+    function showError(input, message) {
+      const error = document.createElement('small');
+      error.className = 'error';
+      error.style.color = 'red';
+      error.textContent = message;
+      input.parentElement.appendChild(error);
+    }
+
+    //display cart-list 
+    document.getElementById('save-address-btn').addEventListener('click', () => {
+  const selectedAddress = document.querySelector('input[name="selectedAddress"]:checked');
+  if (!selectedAddress) {
+    alert("Please select an address to continue.");
+    return;
+  }
+  document.querySelector('.cart-list').classList.remove('hidden');
+});
+
+
+    const applyCouponButton = document.getElementById('applyCoupon');
+    const couponCodeInput = document.getElementById('couponCode');
+    const finalAmountElement = document.getElementById('finalAmount');
+    const totalAmountElement = document.getElementById('totalAmount');
+
+    // applyCouponButton.addEventListener('click', () => {
+    //   const couponCode = couponCodeInput.value.trim();
+      
+    //   if (!couponCode) {
+    //     alert("Please enter a valid coupon code.");
+    //     return;
+    //   }
+
+    //   // Simulate applying the coupon
+    //   const discount = 100; // Replace this with your logic to calculate discount
+    //   const totalPrice = parseFloat(totalAmountElement.textContent.replace("₹", ""));
+    //   const finalAmount = totalPrice - discount;
+
+    //   // Update the UI
+    //   finalAmountElement.textContent = `₹${finalAmount}.00`;
+    //   alert("Coupon applied successfully!");
+    // });
+
+    document.querySelector('.checkout-btn').addEventListener('click', async () => {
+  const selectedAddress = document.querySelector('input[name="selectedAddress"]:checked')?.value;
+  const finalAmount = document.getElementById('finalAmount').textContent.replace("₹", "").trim();
+
+  const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value;
+  if (!paymentMethod) {
+    alert("Please select a payment method.");
+    return;
+  }
+  const cartProducts = [];
+  const cartDetails = document.querySelectorAll(".cart-products");
+
+  cartDetails.forEach((detail) => {
+    const quantity = detail.getAttribute("data-product-quantity");
+    const productId = detail.getAttribute("data-product-id"); // Add data-product-id attribute in HTML
+
+    cartProducts.push({
+      productId: productId, // Use product ID or cart item ID
+      quantity: parseInt(quantity),
+    });
+  });
+  // const cartProducts = JSON.parse(localStorage.getItem('cartProducts')) || []; // Assuming cart is stored in local storage
+
+  // Prepare the order data
+  const orderData = {
+    selectedAddress,
+    finalAmount,
+    cartProducts,
+    paymentMethod,
+  };
+
+  try {
+    // Send POST request to the server
+    const response = await fetch('/placeOrder', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(orderData),
+    });
+
+    if (response.ok) {
+      alert("Order placed successfully!");
+      window.location.href = '/orderSuccess'; // Redirect to success page
+    } else {
+      const errorMessage = await response.text();
+      alert(`Error placing order: ${errorMessage}`);
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    alert("An unexpected error occurred while placing the order.");
+  }
+});
+
+});
+      </script>
+    </body>
+    </html>
+    
