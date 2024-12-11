@@ -76,3 +76,17 @@
     color: red;
     font-size: 12px;
 } */
+ 
+/* sales report form */
+
+.report-filter label{
+    font-size: 16px;
+    font-weight: 400;
+}
+.report-filter input  {
+    padding: 4px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}

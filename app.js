@@ -10,9 +10,12 @@ const adminRoutes = require('./routes/admin.js');
 const db =require("./config/db.js")
 const env =require('dotenv').config();
 const app =express();
+const cors = require('cors');
+
 
 //midlewares
 app.use(express.json());
+app.use(cors());
 app.use(bodyParser.urlencoded({extended:true}))
 app.use(session({
     secret: "my-secret-key",

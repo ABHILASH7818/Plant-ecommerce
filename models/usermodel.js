@@ -13,7 +13,7 @@ const userSchema = new mongoose.Schema({
     updatedAt: { type: Date },
     addresses: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Address' }],
     cart :[{type:mongoose.Schema.Types.ObjectId,ref:'cart'}],
-    whshlist:[{type:mongoose.Schema.Types.ObjectId,ref:'wishlist'}],
+    wishlist:[{type:mongoose.Schema.Types.ObjectId,ref:'Wishlist'}],
     orders: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Order' }],  
      wallet:{type:Number,default:0},
     referalcode:{type:String},

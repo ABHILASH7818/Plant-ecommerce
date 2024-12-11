@@ -9,14 +9,15 @@
       <div>
         <h3>Order Info</h3>
         <p><strong>Order ID:</strong> <%= order.orderId %></p>
-        <p><strong>Date:</strong> <%= new Date(order.createdAt).toLocaleDateString() %></p>
-        <p><strong>Payment Method:</strong> Razorpay</p>
+        <p><strong>Date:</strong> <%= new Date(order.createAT).toLocaleDateString() %></p>
+        <p><strong>Payment Method:</strong> <%=order.paymentMethod%></p>
       </div>
       <div>
         <h3>Billing Address</h3>
-        <p><strong>City:</strong> <%= order.address.city %></p>
-        <p><strong>District:</strong> <%= order.address.street %></p>
-        <p><strong>Postcode:</strong> <%= order.address.name %></p>
+        <p><strong>Name:</strong> <%= address.name %></p> 
+        <p><strong>Phone:</strong> <%= address.phone %></p>
+        <p><strong>City:</strong> <%= address.city %></p>
+        <p><strong>Pincode:</strong> <%= address.pinCode %></p>
       </div>
     </div>
   
@@ -36,7 +37,7 @@
                 <tr>
                   <td><%= item.productId.productName %></td>
                   <td>x <%= item.quantity %></td>
-                  <td>₹<%= item.quantity * item.productId.price %></td>
+                  <td>₹<%= item.quantity * item.productId.salePrice %></td>
                 </tr>
               <% } else { %>
                 <tr>
@@ -53,8 +54,14 @@
           </tr>
         </tfoot>
       </table>
+      
     </div>
+    <div><button class="btn btn-secondary" onclick="downloadInvoice('<%= order._id %>')">Download Invoice</button> </div>
   </section>
-  
+  <script>
+    function downloadInvoice(orderId) {
+      window.location.href = `/order/${orderId}/invoice`;
+    }
+  </script>
 </body>
 </html>

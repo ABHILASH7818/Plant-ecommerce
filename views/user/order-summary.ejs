@@ -41,7 +41,7 @@
         </div>
         
          <button class="address-btn " id="add-address-btn"> <span>  Add New Address</span></button>
-         <button type="submit" id="save-address-btn" style="background-color: rgb(251, 155, 71);" class="address-btn">view order-summary</button>
+         <!-- <button type="submit" id="save-address-btn" style="background-color: rgb(251, 155, 71);" class="address-btn">view order-summary</button> -->
         <div class="address-form hidden" id="address-form">
             <form id="new-address-form" class="profile-form" action="/saveAddress" method="post">
                 <div class="form-group">
@@ -101,10 +101,10 @@
               <tr>
                 <td><img src="/uploads/<%= item.productId.images[0] %>" alt="Product Image" class="cart-image"></td>
                 <td><%= item.productId.productName %></td>
-                <td>₹<%= item.productId.price %></td>
+                <td>₹<%= item.productId.salePrice %></td>
                 <td><%= item.productId.color %></td>
                 <td id="product-quantity"><%= item.quantity %></td>
-                <td>₹<%= item.quantity * item.productId.price %></td>
+                <td>₹<%= item.quantity * item.productId.salePrice %></td>
               </tr>
             </div>
               <% }) %>
@@ -118,7 +118,7 @@
       <h2>Price Details</h2>
       <hr>
       <p>Price: <strong id="totalAmount">₹<%= totalprice %>.00</strong></p>
-      <p>Discount: <strong style="color: rgb(241, 59, 59);">– 0</strong></p>
+      <p>Discount: <strong id="discountAmount" style="color: rgb(241, 59, 59);"> 0</strong></p>
       <p>Delivery Charges: <strong style="text-decoration: line-through;"></strong> 
         <strong style="color: green;">Free</strong>
       </p>
@@ -126,11 +126,14 @@
       <p style="font-size: 1.2em;">Total Amount: <strong id="finalAmount"> ₹<%= totalprice %>.00</strong></p>
     
       <!-- Apply Coupon Section -->
-      <!-- <div class="coupon-section">
-        <label for="couponCode">Apply Coupon:</label>
+      <div class="coupon-section">
+        <div class="alert alert-info hidden" role="alert">
+          A simple info alert—check it out!
+        </div>
+        <!-- <label for="couponCode">Apply Coupon:</label> -->
         <input type="text" id="couponCode" placeholder="Enter Coupon Code">
-        <button id="applyCoupon">Apply</button>
-      </div> -->
+        <button id="applyCoupon" class="applyCoupon-btn">Apply</button>
+      </div>
     
       <!-- Payment Method Section -->
       <div class="payment-methods">
@@ -149,7 +152,8 @@
     </div>
     
  </div>
-    
+
+ <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
       <script>
         document.addEventListener('DOMContentLoaded', () => {
   const addAddressBtn = document.getElementById('add-address-btn');
@@ -224,43 +228,65 @@
     }
 
     //display cart-list 
-    document.getElementById('save-address-btn').addEventListener('click', () => {
-  const selectedAddress = document.querySelector('input[name="selectedAddress"]:checked');
-  if (!selectedAddress) {
-    alert("Please select an address to continue.");
-    return;
-  }
-  document.querySelector('.cart-list').classList.remove('hidden');
-});
+//     document.getElementById('save-address-btn').addEventListener('click', () => {
+//   const selectedAddress = document.querySelector('input[name="selectedAddress"]:checked');
+//   if (!selectedAddress) {
+//     alert("Please select an address to continue.");
+//     return;
+//   }
+//   document.querySelector('.cart-list').classList.remove('hidden');
+// });
 
-
+//coupon
     const applyCouponButton = document.getElementById('applyCoupon');
     const couponCodeInput = document.getElementById('couponCode');
     const finalAmountElement = document.getElementById('finalAmount');
     const totalAmountElement = document.getElementById('totalAmount');
+    const discountAmountElement = document.getElementById('discountAmount');
 
-    // applyCouponButton.addEventListener('click', () => {
-    //   const couponCode = couponCodeInput.value.trim();
-      
-    //   if (!couponCode) {
-    //     alert("Please enter a valid coupon code.");
-    //     return;
-    //   }
+    applyCouponButton.addEventListener('click', async () => {
+  const couponCode = couponCodeInput.value.trim();
+  const totalPrice = parseFloat(totalAmountElement.textContent.replace("₹", ""));
+     
+  if (!couponCode) {
+    Swal.fire('Error', 'Please enter a valid coupon code.', 'error');
 
-    //   // Simulate applying the coupon
-    //   const discount = 100; // Replace this with your logic to calculate discount
-    //   const totalPrice = parseFloat(totalAmountElement.textContent.replace("₹", ""));
-    //   const finalAmount = totalPrice - discount;
+    return;
+  }
 
-    //   // Update the UI
-    //   finalAmountElement.textContent = `₹${finalAmount}.00`;
-    //   alert("Coupon applied successfully!");
-    // });
+  try {
+    const response = await fetch('/couponsValidate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ couponCode, totalAmount: totalPrice }),
+    });
 
-    document.querySelector('.checkout-btn').addEventListener('click', async () => {
+    if (!response.ok) {
+      const { message } = await response.json();
+      Swal.fire('Error', message, 'error');
+      return;
+    }
+
+    const { message, discountAmount } = await response.json();
+
+    // Update the UI with the discount
+    const finalAmount = totalPrice - discountAmount;
+    discountAmountElement.textContent = `${discountAmount}.00`;
+    finalAmountElement.textContent = `₹${finalAmount}.00`;
+
+    Swal.fire('Success', message, 'success');
+  } catch (error) {
+    console.error('Error validating coupon:', error);
+    Swal.fire('Error', 'An unexpected error occurred. Please try again.', 'error');
+  }
+});
+
+
+document.querySelector('.checkout-btn').addEventListener('click', async () => {
   const selectedAddress = document.querySelector('input[name="selectedAddress"]:checked')?.value;
   const finalAmount = document.getElementById('finalAmount').textContent.replace("₹", "").trim();
-
+  const discountAmount = document.getElementById('discountAmount').textContent.replace("₹", "").trim();
+  const couponCode =  document.getElementById('couponCode').value.trim();
   const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value;
   if (!paymentMethod) {
     alert("Please select a payment method.");
@@ -284,10 +310,12 @@
   const orderData = {
     selectedAddress,
     finalAmount,
+    discountAmount,
+    couponCode,
     cartProducts,
     paymentMethod,
   };
-
+if(paymentMethod === "COD"){
   try {
     // Send POST request to the server
     const response = await fetch('/placeOrder', {
@@ -295,22 +323,88 @@
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(orderData),
     });
-
+    
     if (response.ok) {
-      alert("Order placed successfully!");
-      window.location.href = '/orderSuccess'; // Redirect to success page
-    } else {
-      const errorMessage = await response.text();
-      alert(`Error placing order: ${errorMessage}`);
+          Swal.fire({
+            icon: 'success',
+            title: 'Order Placed',
+            text: 'Your order has been placed successfully!',
+            confirmButtonText: 'OK',
+          }).then(() => {
+            window.location.href = '/orderSuccess'; // Redirect to success page
+          });
+        } else {
+          const errorMessage = await response.text();
+          Swal.fire({
+            icon: 'error',
+            title: 'Order Failed',
+            text: `Error placing order: ${errorMessage}`,
+          });
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Unexpected Error',
+          text: 'An unexpected error occurred while placing the order.',
+        });
+      }
+    }else{
+      const response = await fetch('/create-order', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          amount: finalAmount, // INR 5.00
+          currency: 'INR',
+          receipt: 'receipt123',
+        }),
+      });
+       const order = await response.json();
+      // alert(order.id)
+      // Initialize Razorpay payment form
+      const options = {
+       " key": 'rzp_test_4MBYamMKeUifHI', // Replace with your Razorpay Key ID
+        "amount": order.amount,
+        "currency": order.currency,
+        "name": 'planta',
+       " description": 'Test Transaction',
+        "image": 'https://your-logo-url.com/logo.png', // Optional logo
+        "order_id": order.id, // Razorpay order ID
+       " handler": async function (response) {
+          alert(order.id)
+          // Verify the payment on the server
+          const verificationResponse = await fetch('/verify-payment', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(response),
+          });
+          const verificationData = await verificationResponse.json();
+          if (verificationData.success) {
+            alert('Payment Successful');
+          } else {
+            alert('Payment Verification Failed');
+          }
+        },
+       " prefill": {
+          "name": 'John Doe',
+         " email": 'john.doe@example.com',
+          "contact": '9999999999',
+        },
+        "theme": {
+          color: '#F37254',
+        },
+      };
+      // alert("success")
+      const rzp = new Razorpay(options);
+      rzp.open();
     }
-  } catch (error) {
-    console.error("Error:", error);
-    alert("An unexpected error occurred while placing the order.");
-  }
-});
-
+    
+    });
 });
       </script>
     </body>
     </html>
-    

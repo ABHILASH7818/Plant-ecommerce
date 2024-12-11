@@ -266,32 +266,86 @@ exports.getShopPage = async(req,res)=>{
     }
 }
 
-exports.getShopFilerPage = async (req,res)=>{
+exports.getShopFilterPage = async (req, res) => {
     try {
+        const { category, minPrice, maxPrice, search } = req.query;
+        const userId = req.session.user;
         const categories = await Category.find({status:true})
-        const { category, minPrice, maxPrice } = req.query;
+        let filter = {};
+
+        // Handle category filtering
+        if (category) {
+            // Check if the category is a valid ObjectId or a string
+            if (mongoose.Types.ObjectId.isValid(category)) {
+                filter.category = mongoose.Types.ObjectId(category);
+            } else {
+                // If category is a string (e.g., "New Arrivals"), map it to its ObjectId
+                const categoryDoc = await Category.findOne({ name: category });
+                if (categoryDoc) {
+                    filter.category = categoryDoc._id;
+                } else {
+                    return res.status(400).json({ error: `Invalid category: ${category}` });
+                }
+            }
+        }
+
+        // Handle price range filtering
+        if (minPrice || maxPrice) {
+            filter.price = {};
+            if (minPrice) filter.price.$gte = parseFloat(minPrice);
+            if (maxPrice) filter.price.$lte = parseFloat(maxPrice);
+        }
+
+        // Handle search functionality
+        if (search) {
+            filter.name = { $regex: search, $options: 'i' }; // Case-insensitive search
+        }
+
+        // Fetch products based on the filter
+        const products = await Product.find(filter).populate('category');
+        res.render('user/shop', { product:products, category: categories, user:userId }); // Adjust view name and data as needed
+    } catch (error) {
+        console.error('Error in getShopFilterPage:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
 
 
-  let filter = {};
+// exports.getShopFilterPage = async (req,res)=>{
+//     try {
+//         const userId = req.session.user;
+//         const categories = await Category.find({status:true})
+//         const { category, minPrice, maxPrice } = req.query;
+//         const page = parseInt(req.query.page) || 1;
+//         const limit = 6;
 
+//   let filter = {};
+
+//   if(category || category===all){
+//     filter.Category= category;
+//   }
   
 
-  if (minPrice && maxPrice) {
-    filter.price = { $gte: parseInt(minPrice), $lte: parseInt(maxPrice) };
-  }
+//   if (minPrice && maxPrice) {
+//     filter.price = { $gte: parseInt(minPrice), $lte: parseInt(maxPrice) };
+//   }
 
   
-  const products = await Product.find(filter);
+//   const products = await Product.find(filter) 
+//     .skip((page - 1) * limit)
+//     .limit(limit);
   
 
-  res.render("user/shop", {
-    product: products,
-    category: categories,
-  });
+//   res.render("user/shop", {
+//     product: products,
+//     category: categories, 
+//    user:userId
+//   });
 
    
-    } catch (error) {
-        res.status(404).send("page not found")
-    }
-}
+//     } catch (error) {
+//         console.log("shop filter page error",error);
+//         res.status(404).send("page not found");
+//     }
+// }
 

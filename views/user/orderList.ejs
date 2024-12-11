@@ -39,8 +39,8 @@
             <td><%= item.status %></td>
             <td>
               <button class="edit-btn"><a class="nav-link" href="/orderview/<%= item._id %>">View</a></button>
-              <form action="" method="POST" style="display:inline;">
-                <button class="delete-btn">Cancel</button>
+              <form action="/orderReturn/<%= item.id %>" method="POST" style="display:inline;">
+                <button class="delete-btn">Return</button>
               </form>
             </td>
           </tr>

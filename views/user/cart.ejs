@@ -25,13 +25,17 @@
           <img src="/uploads/<%=item.productId.images[0]%>" alt="Product" class="cart-image">
           <div class="info">
             <h6><%= item.productId.productName %></h6>
-            <p>Color:<%= item.productId.color %></p>
-            <p>Category: Indoor</p>
+            <p>Color: <strong><%= item.productId.color %></strong></p>
+            <p>Category: <Strong><%=item.productId.category.name%></Strong></p>
             <p>Stock Status: <strong style="color: green;"> In Stock</strong></p>
-            <p>Product Price:  <span class="discount-price"> ₹ <%=item.productId.price%></span>
-              <!-- <span class="original-price">₹1,800</span>
-              <span class="offer">(64% Off)</span> -->
+            
+
+              <p>Product Price:  <span class="discount-price"> ₹ <%=item.productId.salePrice%></span>
+              <!-- <span class="original-price">₹</span> -->
+              <!-- <span class="offer">(64% Off)</span> -->
             </p>
+        
+            
             <div class="quantity">
               <button class="decrease">-</button>
               <input type="number" class="quantity-input" value="<%=item.quantity%>" min="1">

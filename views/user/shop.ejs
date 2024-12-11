@@ -4,7 +4,7 @@
     <!-- Sidebar for Filters -->
  
     <aside class="filters">
-      <form class="filterform" method="get" action="/shopFilter">
+      <form class="filterform" method="get" action="/shopfilter">
         <h2>Filter Products</h2>
         
          
@@ -12,8 +12,8 @@
          <!-- Category Filter -->
          <div class="filter-group">
             <label>Category</label>
-            <select class="form-select">
-                <option value="all">All Categories</option>
+            <select name="category" class="form-select">
+                <option value="">All Categories</option>
                 <%for(let i=0;i<category.length;i++){%>
                   <option value="<%=category[i].name%>">
                       <%=category[i].name%>
@@ -48,14 +48,14 @@
     <div class="product-section">
         <!-- Sort Option -->
         <!-- <div class="sort-bar">
-        
-            <select class="form-select" id="sort">
-                <option value="popularity">Sort By</option>
-                <option value="popularity">Popularity</option>
-                <option value="price-low-to-high">Price: Low to High</option>
-                <option value="price-high-to-low">Price: High to Low</option>
-                <option value="rating">Rating</option>
-            </select>
+          <select class="form-select" id="sort" name="sort" onchange="applySort()">
+            <option value="">Sort By</option>
+            <option value="price-asc">Price: Low to High</option>
+            <option value="price-desc">Price: High to Low</option>
+            <option value="name-asc">A - Z</option>
+            <option value="name-desc">Z - A</option>
+            <option value="new">Newly Added</option>
+          </select>
         </div> -->
 
         <!-- Products List -->
@@ -67,7 +67,8 @@
                      
                       <a href="/productDetails/<%= product[i]._id %>"   >
                         <img src="/uploads/<%=product[i].images[0]%>" class="card-img-top" alt="...">
-                      </a>
+                      </a><span class="wish-list-icon" onclick="addToWishlist('<%=product[i]._id%>')" ><i class="fa-regular fa-heart"></i></span>
+                      <!-- <div class="wish-list-icon" >❤️</div> -->
                   <div class="card-body">
                     <h5 class="card-title"><%=product[i].productName%></h5>
                    <h6>
@@ -77,7 +78,7 @@
                     <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
                     <i class="fa-regular fa-star-half-stroke" style="color: #FFD43B;"></i> -->
                   </h6>
-                    <span class="card-text">₹<%=product[i].price%></span>
+                    <span class="card-text">₹<%=product[i].salePrice%></span>
                  <form action="/add-to-cart/<%=product[i]._id%>" method="post"><button class=" class btn btn-primary cart-btn"> <i class="fa-solid fa-cart-shopping"></i></button></form>   
                   </div>
                 </div>
@@ -96,6 +97,48 @@
 </nav>
 </div>
           
+<script>
+  // function applySort() {
+  //   const sort = document.getElementById('sort').value;
+  //   const url = new URL(window.location.href);
+  //   url.searchParams.set('sort', sort);
+  //   window.location.href = url.href;
+  // }
+ function addToWishlist(productId) {
+  fetch("/addToWishlist", {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ productId }),
+  })
+    .then((response) => response.json()) // Parse the response JSON
+    .then((data) => {
+      if (data.status) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Wishlist Updated',
+          text: 'Product has been added to your wishlist',
+          timer: 2000,
+        });
+      } else {
+        Swal.fire({
+          icon: 'info',
+          title: 'Product Already in Wishlist!',
+          text: data.message,
+          timer: 2000,
+        });
+      }
+    })
+    .catch((error) => {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'An error occurred. Please try again.',
+        timer: 2000,
+      });
+      console.error('Error:', error);
+    });
+}
 
+</script>
            
 <%- include('../../views/partials/footer') %>

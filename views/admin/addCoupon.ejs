@@ -1,0 +1,122 @@
+<%- include('../../views/partials/adminheader') %>
+<div class="side">
+    <aside>
+        <ul>
+            <li><a href="/admin/dashboard">Dashboard</a></li>
+            <li><a href="/admin/Products">Products</a></li>
+            <li><a href="/admin/Users">Users</a></li>
+            <li><a href="#">Coupons</a></li>
+            <li><a href="#">Order</a></li>
+            <li><a href="/admin/Offers">Offers</a></li>
+            <li class="active"><a href="/admin/category">Category</a></li>
+            <li class="sign-out">Sign Out</li>
+        </ul>
+    </aside>
+    <main>
+        <!-- Header Navigation Bar -->
+        <h2>Add Coupon</h2>
+        <section class="new-form-section">
+            <form action="/admin/addCoupon" method="post" class="category-form" id="categoryForm">
+                <% if (typeof message !== 'undefined') { %>
+                    <p class="text-center m-auto" style="color:red;font-size:16px;"><%= message %></p>
+                <% } %> 
+            
+                 <!-- Add this element for error messages -->
+                 <p id="statusError" style="color: red; display: none;"></p> 
+                 
+                <label for="name">Coupon Name</label>
+                <input type="text" id="name" name="name" placeholder="Enter Coupon name" >
+                
+                <label for="description">Description</label>
+                <textarea id="description" name="description" placeholder="Enter Coupon description" ></textarea>
+               
+                <label for="name">Coupon Code</label>
+                <input type="text" id="code" name="code" placeholder="Enter Coupon code" >
+                
+            
+                <label for="name">Minimum Purchase</label>
+                <input type="text" id="minPurchase" name="minPurchase" placeholder="Enter Minimum Purchase Amount" >
+               
+            
+                <label for="name">Discount</label>
+                <input type="text" id="discount" name="discount" placeholder="%" >
+               
+                <label for="expire-date">Maximum Discount</label>
+                <input type="text" id="maxDiscount" name="maxDiscount" placeholder="Maximum Discount price">  
+
+                <label for="name">Usage Limit</label>
+                <input type="text" id="usageLimit" name="usageLimit" placeholder="Enter Usage Limit" >
+            
+                <label for="expire-date">Expire Date</label>
+                <input type="date" id="expire-date" name="expireDate">
+            
+                <!-- Add this element for error messages -->
+                <p id="statusError" style="color: red; display: none;"></p>
+            
+                <div class="form-buttons">
+                    <button type="button" class="cancel-button" onclick="window.history.back();">Cancel</button>
+                    <button type="submit" class="submit-button">Submit</button>
+                </div>
+            </form>
+        </section>
+    </main>
+</div>
+<script>
+    document.getElementById('categoryForm').addEventListener('submit', function(event) {
+    let isValid = true;
+
+    const name = document.getElementById('name').value.trim();
+    const description = document.getElementById('description').value.trim();
+    const code = document.getElementById('code').value.trim();
+    const cartAmount = document.getElementById('cartAmount').value.trim();
+    const discount = document.getElementById('discount').value.trim();
+    const startDate = document.getElementById('start-date').value;
+    const expireDate = document.getElementById('expire-date').value;
+
+    const errorElement = document.getElementById('statusError');
+    errorElement.textContent = ''; // Clear previous error messages
+    errorElement.style.display = 'none';
+
+    // Validate Name
+    if (!name) {
+        errorElement.textContent = "Coupon name is required.";
+        errorElement.style.display = 'block';
+        isValid = false;
+    } else if (!description) {
+        errorElement.textContent = "Description is required.";
+        errorElement.style.display = 'block';
+        isValid = false;
+    } else if (!code) {
+        errorElement.textContent = "Coupon code is required.";
+        errorElement.style.display = 'block';
+        isValid = false;
+    } else if (!cartAmount || isNaN(cartAmount) || parseFloat(cartAmount) <= 0) {
+        errorElement.textContent = "Cart amount must be a positive number.";
+        errorElement.style.display = 'block';
+        isValid = false;
+    } else if (!discount || isNaN(discount) || parseFloat(discount) <= 0 || parseFloat(discount) > 100) {
+        errorElement.textContent = "Discount must be a number between 1 and 100.";
+        errorElement.style.display = 'block';
+        isValid = false;
+    } else if (!startDate) {
+        errorElement.textContent = "Start date is required.";
+        errorElement.style.display = 'block';
+        isValid = false;
+    } else if (!expireDate) {
+        errorElement.textContent = "Expire date is required.";
+        errorElement.style.display = 'block';
+        isValid = false;
+    } else if (new Date(startDate) >= new Date(expireDate)) {
+        errorElement.textContent = "Expire date must be after the start date.";
+        errorElement.style.display = 'block';
+        isValid = false;
+    }
+
+    if (!isValid) {
+        event.preventDefault();
+    }
+});
+    </script>
+    
+<%- include('../../views/partials/adminfooter') %>
+

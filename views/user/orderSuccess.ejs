@@ -14,9 +14,10 @@
       </div>
       <div>
         <h3>Billing Address</h3>
+        <p><strong>Name:</strong> <%= address.name %></p> 
+        <p><strong>Phone:</strong> <%= address.phone %></p>
         <p><strong>City:</strong> <%= address.city %></p>
-        <p><strong>District:</strong> <%= address.street %></p>
-        <p><strong>Postcode:</strong> <%= address.name %></p>
+        <p><strong>Pincode:</strong> <%= address.pinCode %></p>
       </div>
     </div>
   
@@ -36,7 +37,7 @@
                 <tr>
                   <td><%= item.productId.productName %></td>
                   <td>x <%= item.quantity %></td>
-                  <td>₹<%= item.quantity * item.productId.price %></td>
+                  <td>₹<%= item.quantity * item.productId.salePrice %></td>
                 </tr>
               <% } else { %>
                 <tr>

@@ -1,0 +1,73 @@
+<%- include('../../views/partials/adminheader') %>
+ <div class="side">
+    <aside>
+        <ul>
+            <li><a href="/admin/dashboard">Dashboard</a></li>
+            <li ><a href="/admin/Products">Products</a> </li>
+            <li ><a href="/admin/Users">Users</a></li>
+            <li class="active"><a href="/admin/Coupons">Coupons</a></li>
+            <li><a href="/admin/order">Order</a></li>
+            <li><a href="/admin/Offers">Offers</a></li>
+            <li><a href="/admin/category">Category</a></li>
+            <li><a href="/admin/salesreport">Sales report</a></li>
+           
+        </ul>
+    </aside>
+    <main>
+        <!-- Header Navigation Bar -->
+         <h2>Product List</h2>
+        <div class="list-header">  
+           <div class="search-add">
+               <!-- <input type="text" placeholder="Search offers..." /> -->
+               <button class="add-new"><a class="nav-link" href="/admin/addCoupon">Add New</a></button>
+           </div>
+        </div>
+       <table>
+           <thead>
+               <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>code</th>
+                <th>Discount</th>
+                <th>Start-Date</th>
+                <th>End-Date</th>
+                <th>Action</th>
+               </tr>
+           </thead>
+           <tbody>
+            <%for (let i=0;i<coupon.length;i++){%>
+               <tr>
+                <td><%=coupon[i].name%></td>
+                <td><%=coupon[i].description%></td>
+                <td><%=coupon[i].code%></td>
+                <td><%=coupon[i].discount%></td>
+                <td><%=new Date(coupon[i].startDate).toLocaleDateString()%></td>
+                <td><%=new Date(coupon[i].expireDate).toLocaleDateString()%></td>
+                   <td>
+                    <!-- <button class="edit-btn"><a class="nav-link" href="/admin/editProduct/<%=coupon[i]._id%>">Edit</a></button> -->
+                       <form action="/admin/deleteCoupen/<%=coupon[i]._id%>" method="POST" style="display:inline;">
+                        <button class="delete-btn">Delete</button>
+                       </form>
+                   </td>
+               </tr>
+              <%}%>
+               
+              
+           </tbody>
+       </table>
+       <!-- Pagination -->
+       <div class="pagination">
+        <% if (currentPage > 1) { %>
+             <a href="?page=<%= currentPage - 1 %>">&laquo; Previous</a>
+               <% } %> <% for (let i = 1; i <= totalPages; i++) { %> <% if (i ===
+                currentPage) { %>
+               <span class="current-page"><%= i %></span>
+               <% } else { %>
+               <a href="?page=<%= i %>"><%= i %></a>
+               <% } %> <% } %> <% if (currentPage < totalPages) { %>
+               <a href="?page=<%= currentPage + 1 %>">Next &raquo;</a>
+               <% } %>
+   </div>
+   </main>
+</div>
+<%- include('../../views/partials/adminfooter') %>

@@ -28,7 +28,8 @@
        
         <a href="/productDetails/<%= products[i]._id %>"   >
           <img src="/uploads/<%=products[i].images[0]%>" class="card-img-top" alt="...">
-        </a>
+        </a><span class="wish-list-icon" onclick="addToWishlist('<%=products[i]._id%>')" ><i class="fa-regular fa-heart"></i></span>
+        <!-- <div class="wish-list-icon" >❤️</div> -->
         <div class="card-body">
          <h5 class="card-title"> <%=products[i].productName%></h5>
          <h6> Rating  -  <%=products[i].rating%>/5</h6>
@@ -37,7 +38,7 @@
           <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
           <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
           <i class="fa-regular fa-star-half-stroke" style="color: #FFD43B;"></i></h6> -->
-          <span class="card-text">Price ₹<%=products[i].price%> </span>
+          <span class="card-text">Price ₹<%=products[i].salePrice%> </span>
           <a  href="#" class=" class btn btn-primary  cart-btn"> <i class="fa-solid fa-cart-shopping"></i></a>
         </div>
       </div>
@@ -152,6 +153,43 @@
 
 
   <!-- Footer -->
+  <script>
+    function addToWishlist(productId) {
+     fetch("/addToWishlist", {
+       method: 'POST',
+       headers: { 'Content-Type': 'application/json' },
+       body: JSON.stringify({ productId }),
+     })
+       .then((response) => response.json()) // Parse the response JSON
+       .then((data) => {
+         if (data.status) {
+           Swal.fire({
+             icon: 'success',
+             title: 'Wishlist Updated',
+             text: 'Product has been added to your wishlist',
+             timer: 2000,
+           });
+         } else {
+           Swal.fire({
+             icon: 'info',
+             title: 'Product Already in Wishlist!',
+             text: data.message,
+             timer: 2000,
+           });
+         }
+       })
+       .catch((error) => {
+         Swal.fire({
+           icon: 'error',
+           title: 'Error',
+           text: 'An error occurred. Please try again.',
+           timer: 2000,
+         });
+         console.error('Error:', error);
+       });
+   }
+   
+   </script>
   
   <%- include('../../views/partials/footer') %>
  

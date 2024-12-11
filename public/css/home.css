@@ -56,6 +56,8 @@
    text-align: center;
    margin: 20px;
   }
+
+  
   .card{
     position: relative;
     width: 18rem;
@@ -63,6 +65,17 @@
   }
   .card img{
     width: 100%;
+  }
+  .wish-list-icon{
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 24px;
+    height: 24px;
+    text-align: center;
+    background-color: rgb(248, 248, 248);
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
   .cart-btn{
     display: inline;

@@ -66,14 +66,6 @@ exports.logout = async(req,res)=>{
     }
 }
 
-exports.getoffersList = async(req,res)=>{
-    try {
-        return res.render('admin/offers');
-    } catch (error) {
-        console.log("adminpanel page not found");
-        res.status(404).send("page not found")
-    }
-}
 
 
 

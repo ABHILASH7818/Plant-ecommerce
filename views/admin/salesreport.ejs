@@ -1,0 +1,93 @@
+<%- include('../../views/partials/adminheader') %>
+<div class="side">
+    <aside>
+        <ul>
+            <li><a href="/admin/dashboard">Dashboard</a></li>
+            <li ><a href="/admin/Products">Products</a> </li>
+            <li><a href="/admin/Users">Users</a></li>
+            <li><a href="/admin/Coupons">Coupons</a></li>
+            <li class="active"><a href="/admin/order">Order</a></li>
+            <li><a href="/admin/Offers">Offers</a></li>
+            <li><a href="/admin/category">Category</a></li>
+            <li class="sign-out">Sales report</li>
+           
+        </ul>
+    </aside>
+    <main>
+        <!-- Header Navigation Bar -->
+         <h2>Sales Report</h2>
+         <form class="report-filter" action="/admin/salesreportfilter" method="GET">
+            <label for="report-type">Report Type:</label>
+            <select id="report-type" name="filterType">
+              <option value="custom-date">Custom Date</option>
+              <option value="1-day">Last 1 Day</option>
+              <option value="1-week">Last 1 Week</option>
+              <option value="1-month">Last 1 Month</option>
+            </select>
+            <label for="start-date" id="start-date" >Start Date:</label>
+            <input type="date" id="start-date" name="startDate">
+            <label for="end-date" id="end-date">End Date:</label>
+            <input type="date" id="end-date" name="endDate">
+            <button type="submit" class="btn btn-primary">Generate Report</button>
+          </form>
+        <div class="list-header">  
+           <div class="search-add"> 
+            <form action="/admin/sales-report/pdf" method="GET">
+                <input type="hidden" name="filterType" value="<%= filterType %>">
+                <input type="hidden" name="startDate" value="<%= startDate %>">
+                <input type="hidden" name="endDate" value="<%= endDate %>">
+                <button type="submit" class="btn btn-danger">📄 Sales Report PDF</button>
+              </form>
+            <button class="edit-btn" >📊 Sales Report Excel</button>
+           </div> 
+        </div>
+       <table>
+           <thead>
+               <tr>
+                <th>Order ID</th>
+                <th>Payment Method</th>
+                <!-- <th>Quantity</th> -->
+                <!-- <th>Regular Total Price</th> -->
+                <th>Discount</th>
+                <th>Date</th>
+                <th>Sold Price</th>
+               </tr>
+           </thead>
+           <tbody>
+            <%for (let i=0;i<order.length;i++){%>
+                <tr>
+                 <td><%=order[i].orderId %></td>
+                 <td><%=order[i].paymentMethod%></td>
+                 <td><%=order[i].discount%></td>
+                 <td><%= new Date(order[i].createAT).toLocaleDateString() %></td>
+                 <td><%=order[i].finalAmount%></td>
+                    <td>
+              <%}%>
+           </tbody>
+       </table>
+       <!-- Pagination -->
+       <div class="pagination">
+        <% if (currentPage > 1) { %>
+             <a href="?page=<%= currentPage - 1 %>">&laquo; Previous</a>
+               <% } %> <% for (let i = 1; i <= totalPages; i++) { %> <% if (i ===
+                currentPage) { %>
+               <span class="current-page"><%= i %></span>
+               <% } else { %>
+               <a href="?page=<%= i %>"><%= i %></a>
+               <% } %> <% } %> <% if (currentPage < totalPages) { %>
+               <a href="?page=<%= currentPage + 1 %>">Next &raquo;</a>
+               <% } %>
+   </div>
+   </main>
+</div>
+<script>
+document.getElementById('report-type').addEventListener('change', (e) => {
+    const customDateFields = document.querySelectorAll('#start-date, #end-date');
+    if (e.target.value === 'custom-date') {
+      customDateFields.forEach(field => field.style.display = 'inline');
+    } else {
+      customDateFields.forEach(field => field.style.display = 'none');
+    }
+  });
+  </script>
+<%- include('../../views/partials/adminfooter') %>

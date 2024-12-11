@@ -5,6 +5,7 @@ const productController = require("../controllers/productController")
 const profileController = require("../controllers/profileController")
 const cartController = require("../controllers/cartController")
 const orderController = require("../controllers/orderController")
+const wishlistController = require("../controllers/wishlistController")
 const passport = require("passport");
 const {userAuth,adminAuth} = require("../middlewares/auth")
 
@@ -20,7 +21,7 @@ router.post("/resend-otp",userController.resendOtp)
 //signup with google
 router.get("/auth/google",passport.authenticate('google',{scope:['profile','email']}))
 router.get("/auth/google/callback",passport.authenticate('google',{failureRedirect: '/signup'}),(req,res)=>{
-    res.redirect('/');
+res.redirect('/');
 })
 
 //loginlogout
@@ -30,7 +31,7 @@ router.get('/logout',userController.logout)
 
 //productlist management
 router.get('/shop',userController.getShopPage)
-router.get('/shopFilter',userController.getShopFilerPage)
+router.get('/shopfilter',userController.getShopFilterPage)
 
 //product management
 router.get("/productDetails/:id",productController.getProductDetails)
@@ -42,6 +43,8 @@ router.post("/edit-profile",userAuth,profileController.postEditProfile);
 router.post("/verify-profile-otp",userAuth,profileController.verifyotp)
 router.get("/order",userAuth,profileController.getorder)
 router.get("/orderview/:id",userAuth,profileController.getorderview)
+router.get("/user-coupon",userAuth,profileController.getUserCoupon)
+router.get("/order/:orderId/invoice",userAuth,profileController.getorderdetailsinvoice)
 //password change
 router.get("/change-password",userAuth,profileController.getChangePassword);
 router.post("/change-password",userAuth,profileController.postChangePasword)
@@ -57,12 +60,25 @@ router.get("/cart",userAuth,cartController.getCart);
 router.post("/add-to-cart/:id",userAuth,cartController.addToCart)
 router.post("/cart-delete/:id",userAuth,cartController.deleteCart)
 router.post("/checkout",userAuth,cartController.updateCart)
+router.post("/create-order",userAuth,cartController.createOrder)
+// router.post("/verify-payment",userAuth,cartController.verifyPayment)
+router.post("/verify-payment",userAuth,cartController.verifypayment)
+
+//wish-list
+router.get("/wishlist",userAuth,wishlistController.getWishlist)
+router.post("/addToWishlist",userAuth,wishlistController.addToWishlist)
+router.post("/wishlist-delete/:id",userAuth,wishlistController.deleteWishlist)
 
 //order-management
+
 router.get("/order-summary",userAuth,cartController.getOrderSummary)
 router.post("/saveAddress",userAuth,cartController.addNewAddress)
 router.post("/placeOrder",userAuth,cartController.postOrderSummary)
 router.get("/orderSuccess",userAuth,orderController.getOrderSuccess)
+router.post("/couponsValidate",userAuth,orderController.couponsValidate)
+router.post("/orderReturn/:id",userAuth,orderController.orderReturn)
 
+//wallet 
+router.get('/wallet',userAuth,orderController.getWallet)
 
 module.exports =router

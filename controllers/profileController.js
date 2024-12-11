@@ -2,11 +2,13 @@ const User = require("../models/usermodel");
 const Product = require("../models/productmodel");
 const Category = require("../models/categorymodel");
 const Address = require("../models/addressmodel");
-const Order =require("../models/ordermodel")
+const Order = require("../models/ordermodel")
+const Coupon = require("../models/couponmodel") 
 const nodemailer = require("nodemailer")
 const env = require("dotenv").config()
 const bcrypt = require("bcrypt")
-
+const mongoose = require("mongoose")
+const PDFDocument = require('pdfkit');
 
 //user-account
 exports.getUserAccount = async(req,res)=>{
@@ -302,17 +304,24 @@ exports.getorderview = async(req,res)=>{
 
     // Fetch order details by ID
     const order = await Order.findById(orderId)
-      .populate('orderItems.productId') // Assuming `items` has `productId` to fetch product details
-      .populate('address.addressId')
+      .populate('orderItems.productId') 
       .exec();
 
     if (!order) {
       return res.status(404).send('Order not found');
     }
 
+
+    const addressId = order.address;
+    const addressDoc = await Address.findOne({address:{$elemMatch:{_id:addressId}}}).lean()
+    const addressArray = addressDoc.address
+    const addressData = addressArray.find((address) => {
+        return address._id = new mongoose.Types.ObjectId(addressId)
+    })
     // Render the order success page
     res.render('user/oderDetails', {
-      order:order // Pass order data
+      order:order, // Pass order data
+      address:addressData,
       // products: order.items, // Pass order items (product details, quantity, etc.)
       // billingAddress: order.billingAddress, // Assuming order has a `billingAddress` field
       // finalAmount: order.totalAmount, // Assuming order has `totalAmount`
@@ -320,5 +329,70 @@ exports.getorderview = async(req,res)=>{
   } catch (err) {
     console.error(err);
     res.status(500).send('Internal Server Error');
+  }
+}
+
+exports.getUserCoupon = async(req,res)=>{
+  try {
+    const userId = req.session.user;
+    const userData = await User.findOne({_id:userId})
+    const coupon = await Coupon.find({})
+    res.render("user/userCoupons",{user:userData,coupon:coupon})
+  } catch (error) {
+    
+  }
+}
+exports.getorderdetailsinvoice = async(req,res)=>{
+  try {
+    const orderId = req.params.orderId;
+
+    // Fetch order details from the database
+    const order = await Order.findById(orderId).populate('orderItems.productId'); 
+    if (!order) {
+        return res.status(404).send('Order not found');
+    }
+
+    const addressId = order.address;
+    const addressDoc = await Address.findOne({address:{$elemMatch:{_id:addressId}}}).lean()
+    const addressArray = addressDoc.address
+    const addressData = addressArray.find((address) => {
+        return address._id = new mongoose.Types.ObjectId(addressId)
+    })
+    
+    // Create a new PDF document
+    const doc = new PDFDocument();
+
+    // Set the response headers
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename=invoice_${orderId}.pdf`);
+
+    // Pipe the PDF into the response
+    doc.pipe(res);
+
+    // Add content to the PDF
+    doc.fontSize(18).text('Invoice', { align: 'center' });
+    doc.text('\n');
+    doc.fontSize(12).text(`Order ID: ${order.orderId}`);
+    doc.text(`Date: ${new Date(order.createAT).toLocaleDateString()}`);
+    doc.text(`Payment Method: ${order.paymentMethod}`);
+    doc.text('\n');
+    doc.text('Billing Address:');
+    doc.text(`${addressData.name}`);
+    doc.text(`${addressData.city}`);
+    doc.text(`${addressData.pinCode}`);
+    doc.text('\n');
+
+    doc.text('Order Details:', { underline: true });
+    order.orderItems.forEach((item) => {
+        doc.text(`${item.productId.productName} x ${item.quantity} - ₹${item.quantity * item.productId.salePrice}`);
+    });
+    doc.text('\n');
+    doc.text(`Grand Total: ₹${order.finalAmount}`, { bold: true });
+
+    // Finalize the PDF and end the stream
+    doc.end();
+  } catch (error) {
+    console.log("oerder details pdf error",error)
+    res.redirect("/pagenot found")
   }
 }

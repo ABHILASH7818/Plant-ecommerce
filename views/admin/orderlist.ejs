@@ -5,11 +5,11 @@
             <li><a href="/admin/dashboard">Dashboard</a></li>
             <li ><a href="/admin/Products">Products</a> </li>
             <li><a href="/admin/Users">Users</a></li>
-            <li><a href="#">Coupons</a></li>
+            <li><a href="/admin/Coupons">Coupons</a></li>
             <li class="active"><a href="/admin/order">Order</a></li>
             <li><a href="/admin/Offers">Offers</a></li>
             <li><a href="/admin/category">Category</a></li>
-            <li class="sign-out">Sign Out</li>
+            <li><a href="/admin/salesreport">Sales report</a></li>
            
         </ul>
     </aside>
@@ -39,12 +39,12 @@
                 <td><%=order[i].userId.name %></td>
                 <td><%=order[i].paymentMethod%></td>
                 <td><%=order[i].finalAmount%></td>
-                <td><%= new Date(order.creatAt).toLocaleDateString() %></td>
+                <td><%= new Date(order[i].createAT).toLocaleDateString() %></td>
                 <td><%=order[i].status%></td>
                    <td>
-                    <button class="edit-btn"><a class="nav-link" href="/admin/editProduct/<%=order[i]._id%>">Aprove</a></button>
-                       <form action="/admin/deleteProduct/<%=order._id%>" method="POST" style="display:inline;">
-                        <button class="delete-btn">Cancel</button>
+                    <button class="edit-btn"><a class="nav-link" href="/admin/approve/<%=order[i]._id%>">aprove</a></button>
+                       <form action="/admin/Cancel/<%=order[i]._id%>" method="POST" class="cancel-form" style="display:inline;">
+                        <button  class="delete-btn">Cancel</button>
                        </form>
                    </td>
                </tr>
@@ -68,4 +68,30 @@
    </div>
    </main>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+     document.querySelectorAll('.delete-btn').forEach(button => {
+        button.addEventListener('click', (event) => {
+            event.preventDefault(); // Prevent default form submission
+
+            const form = button.closest('.cancel-form');
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'Do you really want to cancel this order?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, cancel it!',
+                cancelButtonText: 'No, keep it',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Submit the form if the user confirms
+                    form.submit();
+                }
+            });
+        });
+    });
+
+</script>
 <%- include('../../views/partials/adminfooter') %>

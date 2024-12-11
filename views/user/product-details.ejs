@@ -243,17 +243,17 @@
     <div class="product-info">
         <h1>Golden Money Plant<%=product.productName%></h1>
         <p class="rating">⭐⭐⭐⭐⭐ <span>(150 Reviews)</span></p>
-        <p class="price">₹<%=product.price%></p>
+        <p class="price">₹<%=product.salePrice%></p>
         <p class="status">In Stock</p>
         <p class="description">One of the most popular houseplants, and our all-time bestseller, this easy-growing plant with its heart-shaped leaves is loved for its beautiful fenestrations.</p>
 
       
       <div class="Cart-actions">
-        <button onclick="decreaseQuantity()">-</button>
+        <!-- <button onclick="decreaseQuantity()">-</button>
         <input id="quantity" name="quantity" type="text" value="2" readonly />
-        <button onclick="increaseQuantity()">+</button>
+        <button onclick="increaseQuantity()">+</button> -->
         <form action="/add-to-cart/<%=product._id%>" method="post"><button class="add-to-cart"> <i class="fa-solid fa-cart-shopping"></i></button></form>   
-        <button class="wishlist">wishlist</button>
+        <button class="wishlist" onclick="addToWishlist('<%=product[i]._id%>')">wishlist</button>
       </div>
 
       <div class="delivery-info">
@@ -331,6 +331,40 @@
                 quantityInput.value = currentQuantity - 1;
             }
         };
+        function addToWishlist(productId) {
+     fetch("/addToWishlist", {
+       method: 'POST',
+       headers: { 'Content-Type': 'application/json' },
+       body: JSON.stringify({ productId }),
+     })
+       .then((response) => response.json()) // Parse the response JSON
+       .then((data) => {
+         if (data.status) {
+           Swal.fire({
+             icon: 'success',
+             title: 'Wishlist Updated',
+             text: 'Product has been added to your wishlist',
+             timer: 2000,
+           });
+         } else {
+           Swal.fire({
+             icon: 'info',
+             title: 'Product Already in Wishlist!',
+             text: data.message,
+             timer: 2000,
+           });
+         }
+       })
+       .catch((error) => {
+         Swal.fire({
+           icon: 'error',
+           title: 'Error',
+           text: 'An error occurred. Please try again.',
+           timer: 2000,
+         });
+         console.error('Error:', error);
+       });
+   }
     });
     </script>
     

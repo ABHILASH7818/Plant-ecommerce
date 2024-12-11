@@ -1,0 +1,47 @@
+<%- include('../../views/partials/header') %>
+
+<!-- Main Content -->
+<div class="container username-section d-flex">
+  <p>Welcome <span style="color: red;"><%= user.name %></span></p>
+</div>
+<div class="profile-container">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <h3>Manage My Account</h3>
+    <ul>
+      <li><a href="/profile" class="active"><i class="fas fa-user"></i> My Profile</a></li>
+      <li><a href="/address"><i class="fas fa-map-marker-alt"></i> Address</a></li>
+      <li><a href="/change-password"><i class="fas fa-lock"></i> Change Password</a></li>
+      <li><a href="/order"><i class="fas fa-shopping-cart"></i> Orders</a></li>
+      <li><a href="#"><i class="fas fa-tags"></i> Coupons</a></li>
+      <li><a href="#"><i class="fas fa-wallet"></i> Wallet</a></li>
+    </ul>
+  </aside>
+
+  <!-- Coupon Section -->
+  <section class="coupon-section">
+    <h2>Available Coupons</h2>
+    <% if (coupon && coupon.length > 0) { %>
+      <% coupon.forEach((coupen) => { %>
+        <div class="coupon-card">
+          <div class="coupon-discount">
+            <p><%= coupen.discount %>%</p>
+            <p>OFF</p>
+          </div>
+          <div class="coupon-description">
+            <p><%= coupen.description %></p>
+          </div>
+          <div class="coupon-code-section">
+            <p class="coupon-code-label">Code</p>
+            <p class="coupon-code-text"><%= coupen.code %></p>
+            <!-- <button class="coupon-copy-btn">Copy</button> -->
+          </div>
+        </div>
+      <% }); %>
+    <% } else { %>
+      <p>No coupons available at the moment.</p>
+    <% } %>
+  </section>
+</div>
+</body>
+</html>
