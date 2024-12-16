@@ -242,7 +242,7 @@
 
     <div class="product-info">
         <h1>Golden Money Plant<%=product.productName%></h1>
-        <p class="rating">⭐⭐⭐⭐⭐ <span>(150 Reviews)</span></p>
+        <!-- <p class="rating">⭐⭐⭐⭐⭐ <span>(150 Reviews)</span></p> -->
         <p class="price">₹<%=product.salePrice%></p>
         <p class="status">In Stock</p>
         <p class="description">One of the most popular houseplants, and our all-time bestseller, this easy-growing plant with its heart-shaped leaves is loved for its beautiful fenestrations.</p>
@@ -253,7 +253,7 @@
         <input id="quantity" name="quantity" type="text" value="2" readonly />
         <button onclick="increaseQuantity()">+</button> -->
         <form action="/add-to-cart/<%=product._id%>" method="post"><button class="add-to-cart"> <i class="fa-solid fa-cart-shopping"></i></button></form>   
-        <button class="wishlist" onclick="addToWishlist('<%=product[i]._id%>')">wishlist</button>
+        <button class="wishlist" onclick="addToWishlist('<%=product._id%>')">wishlist</button>
       </div>
 
       <div class="delivery-info">
@@ -266,6 +266,39 @@
       </div>
     </div>
   </div>
+  <section class="related-product-category container ">
+    <h3>Related Plants</h3> 
+   
+    <div class="related-product ">
+      <%for(let i=0;i<products.length;i++){%>
+    <div class="card" >
+     
+      <a href="/productDetails/<%= products[i]._id %>"   >
+        <img src="/uploads/<%=products[i].images[0]%>" class="card-img-top" alt="...">
+      </a>
+      <%if(products[i].inWishList === false){%>
+        <span class="wish-list-icon" onclick="addToWishlist('<%= products[i]._id %>')">
+          <i class="fa-regular fa-heart"></i>
+        </span>
+        <%}else{%>
+        <span class="wish-list-icon" onclick="addToWishlist('<%=products[i]._id%>')" >❤️</span>
+       <%}%>
+      <div class="card-body">
+       <h5 class="card-title"> <%=products[i].productName%></h5>
+       <h6> Rating  -  <%=products[i].rating%>/5</h6>
+       <!-- <h6><i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
+        <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
+        <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
+        <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
+        <i class="fa-regular fa-star-half-stroke" style="color: #FFD43B;"></i></h6> -->
+        <span class="card-text">Price ₹<%=products[i].salePrice%> </span>
+        <a  href="#" class=" class btn btn-primary  cart-btn"> <i class="fa-solid fa-cart-shopping"></i></a>
+      </div>
+    </div>
+    <%}%>
+     </div>
+    
+  </section>
 </div>
 
 <script>
@@ -412,8 +445,7 @@ function decreaseQuantity() {
 }
 
   </script> -->
-</body>
-</html>
+  <%- include('../../views/partials/footer') %>
 
 
 

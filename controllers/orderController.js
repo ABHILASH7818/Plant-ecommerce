@@ -11,6 +11,7 @@ const Wallet = require("../models/walletmodel")
 const env = require("dotenv").config()
 const Razorpay = require('razorpay');
 const PDFDocument = require('pdfkit');
+const xlsx = require("xlsx")
 
 
 
@@ -72,7 +73,7 @@ exports.getOrderSuccess = async (req, res) => {
   
       
       const orderData = await Order.find({})
-        .sort({ createdAt: 1 }) 
+        .sort({  createAT: -1 }) 
         .skip(skip)
         .limit(limit)
         .populate('userId') 
@@ -96,24 +97,30 @@ exports.getOrderSuccess = async (req, res) => {
   exports.approve = async(req,res)=>{
     try {
       const orderId = req.params.id;
-      await Order.findByIdAndUpdate(orderId, { status: 'Processed' }); // Update status to 'Processed'
-      res.redirect('/admin/order'); // Redirect back to the order page
-  } catch (error) {
+      const order = await Order.findById(orderId)
+      console.log("order",order)
+      if(order.orderStatus === 'Processed'){
+        await Order.findByIdAndUpdate(orderId, { orderStatus: 'Shipped' }); // Update status to 'Processed'
+         return res.redirect('/admin/order'); // Redirect back to the order page
+      }
+      if(order.orderStatus === 'Shipped'){
+        await Order.findByIdAndUpdate(orderId, { orderStatus: 'Delivered' }); 
+       return  res.redirect('/admin/order'); 
+      }
+      // if(order.orderItems ===  'Return requested'){
+      //   await Order.findByIdAndUpdate(orderId, { orderStatus: 'Returned' }); 
+      //  return  res.redirect('/admin/order'); 
+      // }
+
+    } catch (error) {
       console.error(error);
       res.status(500).send('Error approving the order');
-  }
-  //   try {
-  //     let id = req.query.id;
-  //     await User.updateOne({_id:id},{$set:{status:"Processing"}});
-  //     res.redirect("/admin/order");
-  // } catch (error) {
-  //     res.redirect("/pageerror")
-  // }
+    }
   }
   exports.cancel = async(req,res)=>{
     try {
       const orderId = req.params.id;
-      await Order.findByIdAndUpdate(orderId, { status: 'Cancelled' }); // Update status to 'Cancelled'
+      await Order.findByIdAndUpdate(orderId, { orderStatus: 'Cancelled' }); // Update status to 'Cancelled'
       res.redirect('/admin/order'); // Redirect back to the order page
   } catch (error) {
       console.error(error);
@@ -141,19 +148,19 @@ exports.getOrderSuccess = async (req, res) => {
         });
       }
     
-      if (coupon.usedCount >= coupon.usageLimit) {
+      if (coupon.usageCount >= coupon.usageLimit) {
         return res.status(400).json({ message: 'Coupon usage limit reached.' });
       }
     
-      discountAmount = Math.floor(totalAmount * (coupon.discount / 100));
-      if (coupon.maxDiscount > 0 && discountAmount > coupon.maxDiscount) {
-        discountAmount = coupon.maxDiscount;
+      couponDiscountAmount = Math.floor(totalAmount * (coupon.discount / 100));
+      if (coupon.maxDiscount > 0 && couponDiscountAmount > coupon.maxDiscount) {
+        couponDiscountAmount = coupon.maxDiscount;
       }
       // const discount = Math.min(totalAmount, coupon.maxDiscount);
     
       coupon.usageCount += 1; // Update usage count
       await coupon.save();
-      return res.json({ message: 'Coupon applied successfully!', discountAmount });
+      return res.json({ message: 'Coupon applied successfully!', couponDiscountAmount });
     
     } catch (error) {
       console.log("coupen not validate",error)
@@ -179,25 +186,50 @@ exports.getOrderSuccess = async (req, res) => {
     }
   }
 
-  exports.orderReturn = async(req,res)=>{
+  exports.getWalletTransaction = async(req,res)=>{
     try {
-      const orderId = req.params.id;
-      console.log(orderId)
-      const orderData = await Order.findById(orderId)
       const userId = req.session.user; 
       const userData = await User.findOne({_id:userId})
-      console.log("orderdata",orderData)
+      const wallet = await Wallet.find({});
+      let totalprice = 0;
+        if(wallet){
+            wallet.forEach((item) =>{
+                totalprice +=item.Amount
+            });
+        }
+       return res.render("user/walletTransactions",{user:userData,wallet:wallet,totalprice:totalprice})
+    } catch (error) {
+      console.log("wallet error",error)
+      res.redirect("/pagenotfound");
+    }
+  }
+
+  exports.orderReturn = async(req,res)=>{
+    try {
+      const orderId = req.params.id;      
+      const orderData = await Order.findById(orderId)
+      console.log("order data  for return" ,orderData)
+      const userId = req.session.user; 
+      const userData = await User.findOne({_id:userId})
       if (orderData.paymentMethod === "Online") {
         
         const wallet = new Wallet({userId:userData._id,Amount:orderData.finalAmount})
-        
         await wallet.save();
-  
-        // Update the order status
-        orderData.status = "returned";
+
+         // Update the order status
+        if(orderData.orderStatus === "Delivered"){
+          orderData.status = "Returned";
         await orderData.save();
-        res.redirect("/user/order")
+        // return res.redirect("/order");
+        }else if( orderData.orderStatus ==="Cancelled" || orderData.status === "Returned" ){
+          // return res.redirect("/order")
+        }else {
+          orderData.orderStatus = "Cancelled";
+          await orderData.save();
+          // return res.redirect("/order");
+        }
       }
+      res.redirect("/order")
     } catch (error) {
       console.log("order return failed",error)
       res.redirect("/pagenotfound");
@@ -206,27 +238,51 @@ exports.getOrderSuccess = async (req, res) => {
 
   exports.getSalesReport = async(req,res)=>{
     try {
-      
-      const page = parseInt(req.query.page) || 1; 
-      const limit = 4; 
+        const { startDate, endDate, filterType } = req.query;
+  
+      // Initialize date filter
+      let dateFilter = {};
+      if (startDate && endDate) {
+        dateFilter = {
+          createAT: {
+            $gte: new Date(startDate),
+            $lte: new Date(endDate),
+          },
+        };
+      } else if (filterType === '1-day') {
+        const today = new Date();
+        dateFilter = {
+          createAT: {
+            $gte: new Date(today.setHours(0, 0, 0, 0)),
+            $lte: new Date(today.setHours(23, 59, 59, 999)),
+          },
+        };
+      } else if (filterType === '1-week') {
+        const lastWeek = new Date();
+        lastWeek.setDate(lastWeek.getDate() - 7);
+        dateFilter = { createAT: { $gte: lastWeek, $lte: new Date() } };
+      } else if (filterType === '1-month') {
+        const lastMonth = new Date();
+        lastMonth.setMonth(lastMonth.getMonth() - 1);
+        dateFilter = { createAT: { $gte: lastMonth, $lte: new Date() } };
+      }
+  
+      const page = parseInt(req.query.page) || 1;
+      const limit = 4; // Number of items per page
       const skip = (page - 1) * limit;
-  
       
-      const orderData = await Order.find({})
-        .sort({ createdAt: 1 }) 
-        .skip(skip)
-        .limit(limit)
-        .populate('userId') 
-  
-      const totalOrder = await Order.countDocuments();
-      const totalPages = Math.ceil(totalOrder / limit);
-  
-   
-      res.render("admin/salesreport", {
-        order: orderData, 
-        currentPage: page, 
-        totalPages: totalPages, 
-        totalOrders: totalOrder
+      const totalCount = await Order.countDocuments(dateFilter);
+      const totalPages = Math.ceil(totalCount / limit);
+      
+      const orders = await Order.find(dateFilter).skip(skip).limit(limit).sort({  createAT: -1 });
+      
+      res.render('admin/salesreport', {
+        order: orders,
+        currentPage: page,
+        totalPages: totalPages,
+        filterType:filterType,
+        startDate:startDate,
+        endDate:endDate,
       });
     } catch (error) {
       console.log("Error loading order list:", error);
@@ -234,8 +290,92 @@ exports.getOrderSuccess = async (req, res) => {
     }
   }
 
+
+  
+  
+  exports.getSalesReportpdf = async(req,res)=>{
+    try {
+      const { filterType, startDate, endDate } = req.query;
+
+    // Fetch the filtered data from the database based on query parameters
+    const filterCriteria = {};
+    
+    if (filterType === 'custom-date' && startDate && endDate) {
+        filterCriteria.createAT = { $gte: new Date(startDate), $lte: new Date(endDate) };
+    } else if (filterType === '1-day') {
+        const today = new Date();
+        filterCriteria.createAT = { $gte: today.setDate(today.getDate() - 1) };
+    } else if (filterType === '1-week') {
+        const today = new Date();
+        filterCriteria.createAT = { $gte: today.setDate(today.getDate() - 7) };
+    } else if (filterType === '1-month') {
+        const today = new Date();
+        filterCriteria.createAT = { $gte: today.setMonth(today.getMonth() - 1) };
+    }
+    console.log("filterCriteria",filterCriteria)
+    const orders = await Order.find(filterCriteria); // Replace with your database query logic
+
+    // Create a PDF document
+    const doc = new PDFDocument();
+    res.setHeader('Content-Disposition', 'attachment; filename=sales-report.pdf');
+    res.setHeader('Content-Type', 'application/pdf');
+    doc.pipe(res);
+
+    // Add content to the PDF
+    doc.fontSize(18).text('Sales Report', { align: 'center' });
+    doc.moveDown();
+
+    // Add table header
+    doc.fontSize(12).text('Order ID', 50, doc.y, { continued: true });
+    doc.text('Payment Method', 150, doc.y, { continued: true });
+    doc.text('Discount', 300, doc.y, { continued: true });
+    doc.text('Date', 400, doc.y, { continued: true });
+    doc.text('Sold Price', 500);
+    doc.moveDown();
+
+    // Add table rows
+    orders.forEach((order) => {
+        doc.text(order.orderId, 50, doc.y, { continued: true });
+        doc.text(order.paymentMethod, 150, doc.y, { continued: true });
+        doc.text(order.discount, 300, doc.y, { continued: true });
+        doc.text(new Date(order.createAT).toLocaleDateString(), 400, doc.y, { continued: true });
+        doc.text(order.finalAmount, 500);
+        doc.moveDown();
+    });
+
+    doc.end();
+    } catch (error) {
+      console.log("erro in downloading pdf",error)
+      res.redirect('/pagenotfound')
+    }
+  }
+
   exports.getSalesFilter = async(req,res)=>{
     try {
+
+      if(!req.query){
+        const page = parseInt(req.query.page) || 1; 
+        const limit = 5; 
+        const skip = (page - 1) * limit;
+    
+        
+        const orderData = await Order.find({})
+          .sort({ createAT: -1 })  
+          .skip(skip)
+          .limit(limit)
+          .populate('userId') 
+    
+        const totalOrder = await Order.countDocuments();
+        const totalPages = Math.ceil(totalOrder / limit);
+    
+     
+        res.render("admin/salesreport", {
+          order: orderData, 
+          currentPage: page, 
+          totalPages: totalPages, 
+          totalOrders: totalOrder
+        });
+        }
       const { startDate, endDate, filterType } = req.query;
   
       // Initialize date filter
@@ -272,7 +412,7 @@ exports.getOrderSuccess = async (req, res) => {
       const totalCount = await Order.countDocuments(dateFilter);
       const totalPages = Math.ceil(totalCount / limit);
       
-      const orders = await Order.find(dateFilter).skip(skip).limit(limit);
+      const orders = await Order.find(dateFilter).skip(skip).limit(limit).sort({  createAT: -1 }) ;
       
       res.render('admin/salesreport', {
         order: orders,
@@ -282,34 +422,5 @@ exports.getOrderSuccess = async (req, res) => {
     } catch (error) {
       console.error(error);
       res.status(500).send('Error fetching sales report');
-    }
-  }
-  
-  exports.getSalesReportpdf = async(req,res)=>{
-    try {
-      const { filterType, startDate, endDate } = req.query;
-  const reportData = generateReportData(filterType, startDate, endDate);
-
-  const doc = new PDFDocument();
-  res.setHeader('Content-Disposition', 'attachment; filename="sales_report.pdf"');
-  res.setHeader('Content-Type', 'application/pdf');
-  doc.pipe(res);
-
-  doc.fontSize(18).text('Sales Report', { align: 'center' });
-  doc.moveDown();
-
-  reportData.forEach((order) => {
-    doc.fontSize(12).text(`Order ID: ${order.orderId}`);
-    doc.text(`Payment Method: ${order.paymentMethod}`);
-    doc.text(`Discount: ${order.discount}`);
-    doc.text(`Date: ${new Date(order.createAT).toLocaleDateString()}`);
-    doc.text(`Final Amount: ${order.finalAmount}`);
-    doc.moveDown();
-  });
-
-  doc.end();
-    } catch (error) {
-      console.log("erro in downloading pdf",error)
-      res.redirect('/pagenotfound')
     }
   }

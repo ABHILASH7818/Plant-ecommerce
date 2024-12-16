@@ -1,6 +1,11 @@
 const mongoose = require('mongoose');
+// const { image } = require('pdfkit');
 
 const offerSchema = new mongoose.Schema({
+  image :{
+    type: String,
+    required: true,
+  },
   name: {
     type: String,
     required: true,

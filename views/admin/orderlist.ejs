@@ -40,7 +40,7 @@
                 <td><%=order[i].paymentMethod%></td>
                 <td><%=order[i].finalAmount%></td>
                 <td><%= new Date(order[i].createAT).toLocaleDateString() %></td>
-                <td><%=order[i].status%></td>
+                <td><%=order[i].orderStatus%></td>
                    <td>
                     <button class="edit-btn"><a class="nav-link" href="/admin/approve/<%=order[i]._id%>">aprove</a></button>
                        <form action="/admin/Cancel/<%=order[i]._id%>" method="POST" class="cancel-form" style="display:inline;">

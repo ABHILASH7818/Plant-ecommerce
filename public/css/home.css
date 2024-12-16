@@ -24,7 +24,7 @@
   
   .slide {
     min-width: 100%;
-    height: 500px;
+    height: 400px;
     object-fit: cover;
   }
   
@@ -154,4 +154,23 @@
     color: #666;
     text-align: center;
   }
+
+
+/*   related -product */
+
+.related-product-category{
+margin-top: 28px;
+}
+.related-product-category h3{
+  color: rgb(254, 6, 6);
+  font-weight: 400;
+}
+.related-product{
+  display: flex;
+    /* justify-content: center; */
+    gap: 20px;
+    flex-wrap: wrap;
+    margin:32px 28px;
+}
+
   

@@ -287,10 +287,18 @@ exports.getorder = async (req, res) => {
   try {
     const userId = req.session.user; 
     const userData = await User.findOne({ _id: userId });
+    const page = parseInt(req.query.page) || 1; 
+    const limit = 5; 
+    const skip = (page - 1) * limit;
     const orderData = await Order.find({ userId: userId }) 
-      .sort({ createAt: -1 }); 
+    .sort({  createAT: -1 }) 
+    .skip(skip)
+    .limit(limit);
+
+    const totalOrder = await Order.countDocuments();
+    const totalPages = Math.ceil(totalOrder / limit);
     
-    res.render("user/orderlist", { order: orderData, user: userData });
+    res.render("user/orderlist", { order: orderData, user: userData, currentPage: page,  totalPages: totalPages, totalOrders: totalOrder });
   } catch (error) {
     console.error("Error fetching order data:", error);
     res.status(500).json({ message: "Error fetching order data" });

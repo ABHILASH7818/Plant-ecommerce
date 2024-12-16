@@ -16,42 +16,63 @@
         <!-- Header Navigation Bar -->
         <h2>Add Coupon</h2>
         <section class="new-form-section">
-            <form action="/admin/addCoupon" method="post" class="category-form" id="categoryForm">
+            <form action="/admin/addCoupon" method="post" class="coupon-form" id="couponForm">
                 <% if (typeof message !== 'undefined') { %>
                     <p class="text-center m-auto" style="color:red;font-size:16px;"><%= message %></p>
                 <% } %> 
-            
-                 <!-- Add this element for error messages -->
-                 <p id="statusError" style="color: red; display: none;"></p> 
+             
                  
-                <label for="name">Coupon Name</label>
+                <div class="form-group">
+                    <label for="name">Coupon Name</label>
                 <input type="text" id="name" name="name" placeholder="Enter Coupon name" >
-                
-                <label for="description">Description</label>
-                <textarea id="description" name="description" placeholder="Enter Coupon description" ></textarea>
-               
-                <label for="name">Coupon Code</label>
-                <input type="text" id="code" name="code" placeholder="Enter Coupon code" >
-                
-            
-                <label for="name">Minimum Purchase</label>
-                <input type="text" id="minPurchase" name="minPurchase" placeholder="Enter Minimum Purchase Amount" >
-               
-            
-                <label for="name">Discount</label>
-                <input type="text" id="discount" name="discount" placeholder="%" >
-               
-                <label for="expire-date">Maximum Discount</label>
-                <input type="text" id="maxDiscount" name="maxDiscount" placeholder="Maximum Discount price">  
+                <small class="error-message" ></small>
 
-                <label for="name">Usage Limit</label>
+                </div>
+                <div class="form-group">
+                    <label for="description">Description</label>
+                <textarea id="description" name="description" placeholder="Enter Coupon description" ></textarea>
+               <small class="error-message" ></small>
+                </div>
+
+                <div class="form-group">
+                    <label for="name">Coupon Code</label>
+                <input type="text" id="code" name="code" placeholder="Enter Coupon code" >
+                <small class="error-message"></small>
+                </div>
+            
+                <div class="form-group">
+                    <label for="name">Minimum Purchase Amount</label>
+                <input type="text" id="minPurchase" name="minPurchase" placeholder="Enter Minimum Purchase Amount" >
+                <small class="error-message"></small>
+                </div>
+            
+                <div class="form-group">
+                    <label for="name">Discount</label>
+                <input type="text" id="discount" name="discount" placeholder="%" >
+                <small class="error-message"></small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="expire-date">Maximum Discount</label>
+                <input type="text" id="maxDiscount" name="maxDiscount" placeholder="Maximum Discount price">  
+                <small class="error-message"></small>
+                </div>
+                
+                
+                <div class="form-group">
+                     <label for="name">Usage Limit</label>
                 <input type="text" id="usageLimit" name="usageLimit" placeholder="Enter Usage Limit" >
-            
-                <label for="expire-date">Expire Date</label>
-                <input type="date" id="expire-date" name="expireDate">
-            
-                <!-- Add this element for error messages -->
-                <p id="statusError" style="color: red; display: none;"></p>
+                <small class="error-message"></small>
+                </div>
+               
+
+                <div class="form-group"> 
+                    <label for="expire-date">Expire Date</label>
+                <input type="date" id="expireDate" name="expireDate">
+                <small class="error-message"></small>
+                </div>
+                
+                
             
                 <div class="form-buttons">
                     <button type="button" class="cancel-button" onclick="window.history.back();">Cancel</button>
@@ -62,60 +83,84 @@
     </main>
 </div>
 <script>
-    document.getElementById('categoryForm').addEventListener('submit', function(event) {
-    let isValid = true;
+    
+   document.addEventListener('DOMContentLoaded', () => {
+    const  couponForm =document.getElementById('couponForm');
+    const name = document.getElementById("name");
+    const description = document.getElementById("description");
+    const code = document.getElementById("code");
+    const minPurchase = document.getElementById("minPurchase");
+    const discount = document.getElementById("discount");
+    const maxDiscount = document.getElementById("maxDiscount");
+    const usageLimit = document.getElementById("usageLimit");
+    const expireDate = document.getElementById("expireDate");
 
-    const name = document.getElementById('name').value.trim();
-    const description = document.getElementById('description').value.trim();
-    const code = document.getElementById('code').value.trim();
-    const cartAmount = document.getElementById('cartAmount').value.trim();
-    const discount = document.getElementById('discount').value.trim();
-    const startDate = document.getElementById('start-date').value;
-    const expireDate = document.getElementById('expire-date').value;
+    couponForm.addEventListener('submit', (e)=>{
+        let isValid = true;
 
-    const errorElement = document.getElementById('statusError');
-    errorElement.textContent = ''; // Clear previous error messages
-    errorElement.style.display = 'none';
+        // Clear previous error messages
+    document.querySelectorAll('.error').forEach(error => error.remove());
 
-    // Validate Name
-    if (!name) {
-        errorElement.textContent = "Coupon name is required.";
-        errorElement.style.display = 'block';
+    if (name.value.trim() === '') {
         isValid = false;
-    } else if (!description) {
-        errorElement.textContent = "Description is required.";
-        errorElement.style.display = 'block';
+        showError(name, 'Name is required.');
+      }
+      if(description.value.trim()===''){
+        isValid =false;
+        showError(description,'description is required')
+      }
+      if (code.value.trim() === '') {
         isValid = false;
-    } else if (!code) {
-        errorElement.textContent = "Coupon code is required.";
-        errorElement.style.display = 'block';
+        showError(code, 'Name is required.');
+      }
+
+      if (minPurchase.value.trim() === '') {
+    isValid = false;
+    showError(minPurchase, 'Minimum purchase amount is required.');
+    } else if (!/^\d+(\.\d+)?$/.test(minPurchase.value.trim())) {
+    isValid = false;
+    showError(minPurchase, 'Enter a valid number for the minimum purchase amount.');
+    } else if (parseFloat(minPurchase.value.trim()) <= 500) {
+    isValid = false;
+    showError(minPurchase, 'Minimum purchase amount should be greater than 500/-.');
+    }   
+      if (!/^\d+(\.\d+)?$/.test(discount.value.trim())) {
         isValid = false;
-    } else if (!cartAmount || isNaN(cartAmount) || parseFloat(cartAmount) <= 0) {
-        errorElement.textContent = "Cart amount must be a positive number.";
-        errorElement.style.display = 'block';
+        showError(discount, 'Enter Discount persentage.');
+      } else if(discount<=0){
         isValid = false;
-    } else if (!discount || isNaN(discount) || parseFloat(discount) <= 0 || parseFloat(discount) > 100) {
-        errorElement.textContent = "Discount must be a number between 1 and 100.";
-        errorElement.style.display = 'block';
+        showError(discount,"Enter  a valid discount")
+      }
+      if (maxDiscount.value.trim() === '') {
         isValid = false;
-    } else if (!startDate) {
-        errorElement.textContent = "Start date is required.";
-        errorElement.style.display = 'block';
+        showError(maxDiscount, 'Name is required.');
+      }else  if (!/^\d+(\.\d+)?$/.test(maxDiscount.value.trim())) {
         isValid = false;
-    } else if (!expireDate) {
-        errorElement.textContent = "Expire date is required.";
-        errorElement.style.display = 'block';
+        showError(maxDiscount, 'Enter minimum parchase amount.');
+      }
+      if(!/^\d+(\.\d+)?$/.test(usageLimit.value.trim())) {
         isValid = false;
-    } else if (new Date(startDate) >= new Date(expireDate)) {
-        errorElement.textContent = "Expire date must be after the start date.";
-        errorElement.style.display = 'block';
-        isValid = false;
+        showError(usageLimit, 'Enter minimum parchase amount.');
+      }
+      if(expireDate.value.trim()){
+        isValid =false;
+        showError(expireDate,"Enter Expiry Date.")
+      }
+
+      if (!isValid) {
+        e.preventDefault(); // Prevent form submission if validation fails
+      }
+
+    });
+    function showError(input, message) {
+      const error = document.createElement('small');
+      error.className = 'error';
+      error.style.color = 'red';
+      error.textContent = message;
+      input.parentElement.appendChild(error);
     }
 
-    if (!isValid) {
-        event.preventDefault();
-    }
-});
+   });
     </script>
     
 <%- include('../../views/partials/adminfooter') %>

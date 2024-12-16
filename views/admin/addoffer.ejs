@@ -16,7 +16,7 @@
         <!-- Header Navigation Bar -->
         <h2>Add offer</h2>
         <section class="new-form-section">
-            <form action="/admin/addOffer" method="post" class="category-form" id="offerForm">
+            <form action="/admin/addOffer" method="post" class="category-form" id="offerForm"  enctype="multipart/form-data">
                 <% if (typeof message !== 'undefined') { %>
                     <p class="text-center m-auto" style="color:red;font-size:16px;"><%= message %></p>
                 <% } %> 
@@ -71,6 +71,9 @@
 
                 <label for="expire-date">Expire Date</label>
                 <input type="date" id="expire-date" name="expireDate">
+
+                <label for="image">Upload Offer Image</label>
+                <input type="file" id="image" name="image" accept="image/*">
                
 
                 <div class="form-buttons">

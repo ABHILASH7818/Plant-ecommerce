@@ -21,7 +21,8 @@ exports.addToWishlist = async (req, res) => {
   try {
     const { productId } = req.body;
     const userId = req.session.user; 
-
+    const product = await Product.findById(productId)
+    // console.log("product att to wish list",product)
     if (!mongoose.Types.ObjectId.isValid(productId)) {
       return res.status(400).json({ status: false, message: "Invalid Product ID" });
     }
@@ -46,7 +47,11 @@ exports.addToWishlist = async (req, res) => {
     // Add the product to the wishlist
     wishlist.products.push(productId);
     await wishlist.save();
-
+    const updatedata = await Product.updateOne(
+      { _id: productId },
+      { $set: { inWishList:true} }
+    ); 
+    // console.log(updatedata)
     return res.status(200).json({ status: true, message: "Product added to wishlist" });
   } catch (error) {
     console.error("Error adding to wishlist:", error);
@@ -57,6 +62,7 @@ exports.addToWishlist = async (req, res) => {
 exports.deleteWishlist = async(req,res)=>{
   try {
     const productId = req.params.id;
+    // console.log("productid",productId)
     const findProduct = await Wishlist.findOne({products:productId});
     if(!findProduct){
       console.log("product not found")
@@ -64,7 +70,15 @@ exports.deleteWishlist = async(req,res)=>{
     }
     await Wishlist.updateOne({products:productId},
     {$pull: {products: productId}})
-    res.redirect("/wishlist")
+
+    const updatedata = await Product.updateOne(
+      { _id: productId },
+      { $set: { inWishList:false} }
+    ); 
+    // console.log(updatedata)
+
+    return res.status(200).json({success:true,message:"Product not found"})
+    // res.redirect("/wishlist")
   } catch (error) {
     console.error("Error adding to wishlist:", error);
   res.redirect('/pagenotfound');

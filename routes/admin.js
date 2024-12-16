@@ -40,12 +40,14 @@ router.post('/deleteCategory/:id',adminAuth,categoryController.deleteCategory)
 router.get("/Coupons",adminAuth,couponController.getCoupon)
 router.get("/addCoupon",adminAuth,couponController.getAddCoupon)
 router.post("/addCoupon",adminAuth,couponController.postAddCoupon)
+router.get("/editCoupen/:id",adminAuth,couponController.getEditCoupon)
+router.post("/editCoupon/:id",adminAuth,couponController.postEditCoupon)
 router.post("/deleteCoupen/:id",adminAuth,couponController.deleteCoupon)
 
 //offfer management
 router.get("/offers",adminAuth,offerController.getoffersList)
 router.get("/addOffer",adminAuth,offerController.getAddOffer)
-router.post("/addOffer",adminAuth,offerController.postAddOffer)
+router.post("/addOffer",adminAuth, upload.single('image'),offerController.postAddOffer)
 router.post("/deleteOffer/:id",adminAuth,offerController.deleteOffer)
 
 // product management
@@ -58,6 +60,7 @@ router.get('/editProduct/:id',adminAuth,productController.getEditProduct)
 // sales-report
 router.get("/salesreport",adminAuth,orderController.getSalesReport)
 router.get("/salesreportfilter",adminAuth,orderController.getSalesFilter)
-router.get("/admin/sales-report/pdf",adminAuth,orderController.getSalesReportpdf)
+router.get("/salesreport/pdf",adminAuth,orderController.getSalesReportpdf)
+// router.get("/salesreport/excel",adminAuth,orderController.getsalesReportexcel)
 
 module.exports =router

@@ -1,0 +1,61 @@
+<%- include('../../views/partials/header') %>
+
+<div class="container username-section d-flex">
+  <p>Welcome <span style="color: red;"><%= user.name %></span></p>
+</div>
+
+<div class="profile-container">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <h3>Manage My Account</h3>
+    <ul>
+      <li><a href="/profile"><i class="fas fa-user"></i> My Profile</a></li>
+      <li><a href="/address" class="active"><i class="fas fa-map-marker-alt"></i> Address</a></li>
+      <li><a href="/change-password"><i class="fas fa-lock"></i> Change Password</a></li>
+      <li><a href="/order"><i class="fas fa-shopping-cart"></i> Orders</a></li>
+      <li><a href="#"><i class="fas fa-tags"></i> Coupons</a></li>
+      <li><a href="#"><i class="fas fa-wallet"></i> Wallet</a></li>
+    </ul>
+  </aside>
+
+  <section class="profile-section">
+    <%if(wallet.length<=0){%>
+    <div class="alert alert-primary" role="alert">
+      No Transaction History
+    </div>
+    <%}else{%>
+        <div class="alert alert-primary" role="alert">
+             Transaction History
+          </div>
+    <div style="width: 100%;" class="order-details">
+    <table >
+      <thead>
+        <tr>
+          <!-- <th>OrderId</th> -->
+          <th>Sl No</th>
+          <th>Date</th>
+          <th>Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+       <% for(let i=0;i<wallet.length;i++){%>
+          <tr>
+            <td><%= i+1 %></td>
+            <td><%= new Date(wallet[i].createAT).toLocaleDateString() %></td>
+            <td><%= wallet[i].Amount %></td>
+          </tr>
+        <% } %>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="2"><strong>Total Balance</strong></td>
+          <td><strong>₹<%=totalprice %></strong></td>
+        </tr>
+      </tfoot>
+    </table>
+</div>
+<%}%>
+  </section>
+</div>
+
+<%- include('../../views/partials/footer') %>

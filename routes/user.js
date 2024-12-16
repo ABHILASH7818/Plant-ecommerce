@@ -80,5 +80,6 @@ router.post("/orderReturn/:id",userAuth,orderController.orderReturn)
 
 //wallet 
 router.get('/wallet',userAuth,orderController.getWallet)
+router.get("/walletTransactions",userAuth,orderController.getWalletTransaction)
 
 module.exports =router

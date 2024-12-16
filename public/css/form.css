@@ -77,6 +77,34 @@
     font-size: 12px;
 } */
  
+
+/* coupon-form */
+.coupon-form label {
+    font-size: 16px;
+    color: #333;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.coupon-form input,
+.coupon-form textarea {
+    width: 100%;
+    padding: 8px;
+    /* margin-bottom: 20px; */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.coupon-form textarea {
+    resize: vertical;
+    height: 80px;
+}
+
+.form-group{
+    margin-bottom: 20px;
+}
+
 /* sales report form */
 
 .report-filter label{

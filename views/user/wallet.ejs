@@ -1,5 +1,62 @@
 <%- include('../../views/partials/header') %>
+<style>
+  .content {
+            /* width: 75%; */
+            /* margin-left: 5%; */
+            padding: 8px;
+           
+        }
 
+        .wallet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            margin-top: 20px;
+            padding: 12px;
+            background-color: #6cd0ee61;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .wallet-header h2 {
+            color: red;
+            text-align: center;
+        }
+
+        .balance {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .actions {
+          display: flex;
+          justify-content: space-between;
+            margin-top: 40px;
+        }
+
+        .actions button {
+            display: block;
+            width: 200px;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .add-wallet {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .transactions {
+            background-color: #28a745;
+            color: #fff;
+        }
+</style>
 <div class="container username-section d-flex">
   <p>Welcome <span style="color: red;"><%= user.name %></span></p>
 </div>
@@ -19,34 +76,22 @@
   </aside>
 
   <section class="profile-section">
-    <div><button>Add Amount</button></div>
-    <div style="width: 100%;" class="order-details">
-    <table >
-      <thead>
-        <tr>
-          <!-- <th>OrderId</th> -->
-          <th>Sl No</th>
-          <th>Date</th>
-          <th>Amount</th>
-        </tr>
-      </thead>
-      <tbody>
-       <% for(let i=0;i<wallet.length;i++){%>
-          <tr>
-            <td><%= i+1 %></td>
-            <td><%= new Date(wallet[i].createAT).toLocaleDateString() %></td>
-            <td><%= wallet[i].Amount %></td>
-          </tr>
-        <% } %>
-      </tbody>
-      <tfoot>
-        <tr>
-          <td colspan="2"><strong>Total Balance</strong></td>
-          <td><strong>₹<%=totalprice %></strong></td>
-        </tr>
-      </tfoot>
-    </table>
-</div>
+    <%if(wallet.length<=0){%>
+    <div class="alert alert-primary" role="alert">
+      A simple primary alert—check it out!
+    </div>
+    <%}else{%>
+    <div class="content">
+      <div class="wallet-header">
+          <h2>Wallet</h2>
+          <div class="balance">Balance: &#8377;<%=totalprice%></div>
+      </div>
+      <div class="actions">
+          <button class="add-wallet">Add Wallet</button>
+          <a href="/walletTransactions" class="nav-link"><button class="transactions" >Transactions</button></a>
+      </div>
+  </div>
+  <%}%>
   </section>
 </div>
 

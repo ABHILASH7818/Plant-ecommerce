@@ -6,39 +6,51 @@
             <li ><a href="/admin/Products">Products</a> </li>
             <li><a href="/admin/Users">Users</a></li>
             <li><a href="/admin/Coupons">Coupons</a></li>
-            <li class="active"><a href="/admin/order">Order</a></li>
+            <li><a href="/admin/order">Order</a></li>
             <li><a href="/admin/Offers">Offers</a></li>
             <li><a href="/admin/category">Category</a></li>
-            <li class="sign-out">Sales report</li>
+            <li class="active" ><a href="/admin/salesreport">Sales report</a></li>
            
         </ul>
     </aside>
     <main>
         <!-- Header Navigation Bar -->
          <h2>Sales Report</h2>
-         <form class="report-filter" action="/admin/salesreportfilter" method="GET">
-            <label for="report-type">Report Type:</label>
-            <select id="report-type" name="filterType">
-              <option value="custom-date">Custom Date</option>
-              <option value="1-day">Last 1 Day</option>
-              <option value="1-week">Last 1 Week</option>
-              <option value="1-month">Last 1 Month</option>
-            </select>
-            <label for="start-date" id="start-date" >Start Date:</label>
-            <input type="date" id="start-date" name="startDate">
-            <label for="end-date" id="end-date">End Date:</label>
-            <input type="date" id="end-date" name="endDate">
-            <button type="submit" class="btn btn-primary">Generate Report</button>
-          </form>
+         <form class="report-filter" action="/admin/salesreport" method="GET">
+          <label for="report-type">Report Type:</label>
+          <select id="report-type" name="filterType">
+              <option value="" <%= filterType === '' ? 'selected' : '' %>>Report Type</option>
+              <option value="custom-date" <%= filterType === 'custom-date' ? 'selected' : '' %>>Custom Date</option>
+              <option value="1-day" <%= filterType === '1-day' ? 'selected' : '' %>>Last 1 Day</option>
+              <option value="1-week" <%= filterType === '1-week' ? 'selected' : '' %>>Last 1 Week</option>
+              <option value="1-month" <%= filterType === '1-month' ? 'selected' : '' %>>Last 1 Month</option>
+          </select>
+        
+          <!-- Start and End Date Fields -->
+          <div id="date-fields" >
+              <label for="start-date">Start Date:</label>
+              <input type="date" id="start-date" name="startDate" value="<%= startDate || '' %>">
+              <label for="end-date">End Date:</label>
+              <input type="date" id="end-date" name="endDate" value="<%= endDate || '' %>">
+          </div>
+        
+          <!-- Submit Button -->
+          <button type="submit" class="btn btn-primary">Generate Report</button>
+        </form>
         <div class="list-header">  
            <div class="search-add"> 
-            <form action="/admin/sales-report/pdf" method="GET">
-                <input type="hidden" name="filterType" value="<%= filterType %>">
-                <input type="hidden" name="startDate" value="<%= startDate %>">
-                <input type="hidden" name="endDate" value="<%= endDate %>">
+              <form id="pdf-form" action="/admin/salesreport/pdf" method="GET">
+                <input type="hidden" name="filterType" value="">
+                <input type="hidden" name="startDate" value="">
+                <input type="hidden" name="endDate" value="">
                 <button type="submit" class="btn btn-danger">📄 Sales Report PDF</button>
-              </form>
-            <button class="edit-btn" >📊 Sales Report Excel</button>
+            </form>
+            <form id="excel-form" action="/admin/salesreport/excel" method="GET">
+              <input type="hidden" name="filterType" value="">
+              <input type="hidden" name="startDate" value="">
+              <input type="hidden" name="endDate" value="">
+              <button type="submit" class="btn btn-primary">📊 Sales Report Excel</button>
+          </form>
            </div> 
         </div>
        <table>
@@ -81,13 +93,63 @@
    </main>
 </div>
 <script>
-document.getElementById('report-type').addEventListener('change', (e) => {
-    const customDateFields = document.querySelectorAll('#start-date, #end-date');
-    if (e.target.value === 'custom-date') {
-      customDateFields.forEach(field => field.style.display = 'inline');
-    } else {
-      customDateFields.forEach(field => field.style.display = 'none');
-    }
-  });
+
+document.addEventListener('DOMContentLoaded', () => {
+    const reportTypeDropdown = document.getElementById('report-type');
+    const dateFields = document.getElementById('date-fields');
+
+    // Function to toggle visibility of date fields
+    const toggleDateFields = () => {
+        if (reportTypeDropdown.value === 'custom-date') {
+            dateFields.style.display = 'inline';
+        } else {
+            dateFields.style.display = 'none';
+        }
+    };
+
+    // Initial setup based on current value of the dropdown
+    toggleDateFields();
+
+    // Add event listener to update visibility on change
+    reportTypeDropdown.addEventListener('change', toggleDateFields);
+
+
+    
+    const pdfForm = document.getElementById('pdf-form');
+    const reportType = document.getElementById('report-type');
+    const startDate = document.getElementById('start-date');
+    const endDate = document.getElementById('end-date');
+    
+    //pdf download
+    pdfForm.addEventListener('submit', (e) => {
+        // Update hidden input values based on current filters
+        pdfForm.filterType.value = reportType.value;
+        pdfForm.startDate.value = startDate.value;
+        pdfForm.endDate.value = endDate.value;
+    });
+
+    //excel download
+
+    excelForm.addEventListener('submit', (e) => {
+        // Update hidden input values based on current filters
+        excelForm.filterType.value = reportType.value;
+        excelForm.startDate.value = startDate.value;
+        excelForm.endDate.value = endDate.value;
+    });
+});
+
+
+// document.getElementById('report-type').addEventListener('change', (e) => {
+//     const dateFields = document.getElementById('date-fields');
+//     if (e.target.value === 'custom-date') {
+//         dateFields.style.display = 'inline';
+//     } else {
+//         dateFields.style.display = 'none';
+//     }
+// });
+
+
+
+
   </script>
 <%- include('../../views/partials/adminfooter') %>

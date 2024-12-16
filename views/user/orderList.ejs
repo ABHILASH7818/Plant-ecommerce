@@ -36,17 +36,35 @@
             <!-- <td><%= item.orderId %></td> -->
             <td><%= item.finalAmount %></td>
             <td><%= new Date(item.createAT).toLocaleDateString() %></td>
-            <td><%= item.status %></td>
+            <td><%= item.orderStatus %></td>
             <td>
               <button class="edit-btn"><a class="nav-link" href="/orderview/<%= item._id %>">View</a></button>
-              <form action="/orderReturn/<%= item.id %>" method="POST" style="display:inline;">
+              <% if(item.orderStatus === "Delivered"){%>
+                <form action="/orderReturn/<%= item._id %>" method="POST" style="display:inline;">
                 <button class="delete-btn">Return</button>
               </form>
+             <% }else{%>
+              <form action="/orderReturn/<%= item._id %>" method="POST" style="display:inline;">
+                <button class="delete-btn">Cancel</button>
+              </form>
+              <%}%>
             </td>
           </tr>
         <% }) %>
       </tbody>
     </table>
+</div>
+<div class="pagination">
+  <% if (currentPage > 1) { %>
+       <a href="?page=<%= currentPage - 1 %>">&laquo; Previous</a>
+         <% } %> <% for (let i = 1; i <= totalPages; i++) { %> <% if (i ===
+          currentPage) { %>
+         <span class="current-page"><%= i %></span>
+         <% } else { %>
+         <a href="?page=<%= i %>"><%= i %></a>
+         <% } %> <% } %> <% if (currentPage < totalPages) { %>
+         <a href="?page=<%= currentPage + 1 %>">Next &raquo;</a>
+         <% } %>
 </div>
   </section>
 </div>

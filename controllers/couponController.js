@@ -62,6 +62,53 @@ exports.getAddCoupon = async(req,res)=>{
       }
  }
 
+ exports.getEditCoupon =async(req,res)=>{
+    try {
+        const coupon = await Coupon.findById(req.params.id);
+        res.render('admin/editCoupon',{coupon})
+    } catch (error) {
+        console.log("not get edit coupon",error)
+        res.redirect("/pagenotfound");
+    }
+ }
+
+ exports.postEditCoupon =async(req,res)=>{
+    try {
+        const id = req.params.id;
+        const { name, description, code, minPurchase, discount, maxDiscount, usageLimit,  expireDate } = req.body;
+        // const existCoupon = await Category.findOne({name:req.name});
+       
+        // if(existCoupon){
+        //    return res.render("admin/edit-category",{message:" not exist category"})
+        // }
+        const updateCoupon  = await Coupon.findByIdAndUpdate(id,{
+            name:name,
+            description:description,
+            code:code,
+            minPurchase:minPurchase,
+            discount:discount,
+            maxDiscount:maxDiscount,
+            usageLimit:usageLimit,
+            expireDate:expireDate,
+            
+        });
+       
+    //   await  Category.findByIdAndUpdate(req.params.id,req.body);
+        if(updateCoupon){
+            
+           return res.redirect('/admin/Coupons')
+        }
+        else{
+            return res.render("admin/editCoupon",{message:"Coupon not found"})
+        }
+        // return res.redirect('/admin/category');
+    } catch (error) {
+        console.log("change is not added",error);
+        res.status(404).send({error:"Internal server error"})        
+    }
+ }
+
+
  exports.deleteCoupon =  async (req,res)=>{
     try {
         await Coupon.findByIdAndDelete(req.params.id);

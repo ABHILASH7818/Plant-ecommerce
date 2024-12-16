@@ -6,80 +6,87 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>My Wishlist</title>
- 
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
-    <!-- <div class="mar"> wishlist</div> -->
   <div class="wishlist-container">
     <h1>My Wishlist <span>(<%=wishlist.products.length%>)</span></h1>
   </div>
-    <table>
-        <thead>
-            <tr>
-             <th>Image</th>
-             <th>Name</th>
-             <th>Price</th>
-             <th>Add to cart</th>
-             <th>Remove</th>
-            </tr>
-        </thead>
-        <tbody>
-        <% wishlist.products.forEach((product)=>{%>
-            <tr>
-             <td><img src="/uploads/<%=product.images[0]%>" alt="Product Image"></td>
-             <td><strong><%=product.productName%></strong><br><%=product.category.name%><br><%=product.color%></td>
-             <td>₹<%=product.salePrice%></td>
-             <td>
-              <!-- <form action="/add-to-cart/<%=product._id%>" method="post"><button class="add-to-cart-btn"><i class="fa-solid fa-cart-shopping"></i> Add to Cart</button></form> -->
-              <form action="/add-to-cart/<%=product._id%>" method="post"><button class=" add-to-cart-btn"> <i class="fa-solid fa-cart-shopping"></i></button></form>   
-            </td>
-             <td> 
-                <form action="/wishlist-delete/<%=product._id%>" method="POST" style="display:inline;">
-                     <button class="delete-btn"> <i class="fa-sharp fa-solid fa-trash"></i> Remove </button>
-                </form>
-            </td>
-            </tr>
-           
-            <%})%>
-           
-        </tbody>
-    </table>
+  <table>
+    <thead>
+      <tr>
+        <th>Image</th>
+        <th>Name</th>
+        <th>Price</th>
+        <th>Add to cart</th>
+        <th>Remove</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% wishlist.products.forEach((product)=>{%>
+      <tr>
+        <td><img src="/uploads/<%=product.images[0]%>" alt="Product Image"></td>
+        <td><strong><%=product.productName%></strong><br><%=product.category.name%><br><%=product.color%></td>
+        <td>₹<%=product.salePrice%></td>
+        <td>
+          <form action="/add-to-cart/<%=product._id%>" method="post">
+            <button class="add-to-cart-btn">
+              <i class="fa-solid fa-cart-shopping"></i>
+            </button>
+          </form>
+        </td>
+        <td>
+          <button class="delete-btn" data-id="<%=product._id%>">
+            <i class="fa-sharp fa-solid fa-trash"></i> Remove
+          </button>
+        </td>
+      </tr>
+      <% }) %>
+    </tbody>
+  </table>
 
-    <!-- <div class="wishlist-item">
-      <img src="https://via.placeholder.com/100" alt="Product Image">
-      <div class="item-details">
-        <h3>HP Backlit Intel Core i5 12th Gen 1235U - (8 GB/512 GB SSD/Windows 11 Home) 15s-fy5002TU Thin and Light</h3>
-        <div class="rating">
-          <span class="rating-value">4.2★</span> 
-          <span class="rating-count">(5,149)</span> 
-          <span class="assured">✔ Assured</span>
-        </div>
-        <div class="price">
-          <span class="current-price">₹46,999</span>
-          <span class="original-price">₹70,064</span>
-          <span class="discount">32% off</span>
-        </div>
-      </div>
-      <button class="delete-btn">🗑️</button>
-    </div>
+  <script>
+    document.querySelectorAll('.delete-btn').forEach(button => {
+      button.addEventListener('click', (event) => {
+        event.preventDefault(); // Prevent form submission
+        const productId = button.getAttribute('data-id');
 
-    <div class="wishlist-item">
-      <img src="https://via.placeholder.com/100" alt="Product Image">
-      <div class="item-details">
-        <h3>ASUS Vivobook 15 Intel Core i5 12th Gen 1235U - (16 GB/512 GB SSD/Windows 11 Home)</h3>
-        <div class="rating">
-          <span class="rating-value">4.2★</span> 
-          <span class="rating-count">(5,659)</span> 
-          <span class="assured">✔ Assured</span>
-        </div>
-        <div class="price">
-          <span class="current-price">₹47,990</span>
-          <span class="original-price">₹74,990</span>
-          <span class="discount">36% off</span>
-        </div>
-      </div>
-      <button class="delete-btn">🗑️</button>
-    </div> -->
- 
+        Swal.fire({
+          title: 'Are you sure?',
+          text: "You want remove this!",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Yes,remove it!'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // Submit the form programmatically
+            fetch(`/wishlist-delete/${productId}`, {
+              method: 'POST',
+            })
+            .then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                Swal.fire(
+                  'Removed!',
+                  'The product has been removed from your wishlist.',
+                  'success'
+                ).then(() => {
+                  location.reload();
+                });
+              } else {
+                Swal.fire(
+                  'Error!',
+                  'Something went wrong. Please try again.',
+                  'error'
+                );
+              }
+            });
+          }
+        });
+      });
+    });
+  </script>
 </body>
 </html>

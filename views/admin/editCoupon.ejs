@@ -1,0 +1,167 @@
+<%- include('../../views/partials/adminheader') %>
+<div class="side">
+    <aside>
+        <ul>
+            <li><a href="/admin/dashboard">Dashboard</a></li>
+            <li><a href="/admin/Products">Products</a></li>
+            <li><a href="/admin/Users">Users</a></li>
+            <li><a href="#">Coupons</a></li>
+            <li><a href="#">Order</a></li>
+            <li><a href="/admin/Offers">Offers</a></li>
+            <li class="active"><a href="/admin/category">Category</a></li>
+            <li class="sign-out">Sign Out</li>
+        </ul>
+    </aside>
+    <main>
+        <!-- Header Navigation Bar -->
+        <h2>Add Coupon</h2>
+        <section class="new-form-section">
+            <form action="/admin/editCoupon/<%=coupon._id%>" method="post" class="coupon-form" id="couponForm">
+                <% if (typeof message !== 'undefined') { %>
+                    <p class="text-center m-auto" style="color:red;font-size:16px;"><%= message %></p>
+                <% } %> 
+             
+                 
+                <div class="form-group">
+                    <label for="name">Coupon Name</label>
+                <input type="text" id="name" name="name" value="<%=coupon.name%>" >
+                <small class="error-message" ></small>
+
+                </div>
+                <div class="form-group">
+                    <label for="description">Description</label>
+                <textarea id="description" name="description" placeholder="Enter Coupon description" ><%=coupon.description%></textarea>
+               <small class="error-message" ></small>
+                </div>
+
+                <div class="form-group">
+                    <label for="code">Coupon Code</label>
+                <input type="text" id="code" name="code" value="<%=coupon.code%>" >
+                <small class="error-message"></small>
+                </div>
+            
+                <div class="form-group">
+                    <label for="minPurchase">Minimum Purchase Amount</label>
+                <input type="text" id="minPurchase" name="minPurchase" value="<%=coupon.minPurchase%>" >
+                <small class="error-message"></small>
+                </div>
+            
+                <div class="form-group">
+                    <label for="discount">Discount</label>
+                <input type="text" id="discount" name="discount" value="<%=coupon.discount%>" >
+                <small class="error-message"></small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="maxDiscount">Maximum Discount</label>
+                <input type="text" id="maxDiscount" name="maxDiscount" value="<%=coupon.maxDiscount%>">  
+                <small class="error-message"></small>
+                </div>
+                
+                
+                <div class="form-group">
+                     <label for="usageLimit">Usage Limit</label>
+                <input type="text" id="usageLimit" name="usageLimit" value="<%=coupon.usageLimit%>" >
+                <small class="error-message"></small>
+                </div>
+               
+
+                <div class="form-group"> 
+                    <label for="expireDate">Expire Date</label>
+                <input type="date" id="expireDate" name="expireDate" value="<%=coupon.expireDate%>">
+                <small class="error-message"></small>
+                </div>
+                
+                
+            
+                <div class="form-buttons">
+                    <button type="button" class="cancel-button" onclick="window.history.back();">Cancel</button>
+                    <button type="submit" class="submit-button">Submit</button>
+                </div>
+            </form>
+        </section>
+    </main>
+</div>
+<script>
+    
+   document.addEventListener('DOMContentLoaded', () => {
+    const  couponForm =document.getElementById('couponForm');
+    const name = document.getElementById("name");
+    const description = document.getElementById("description");
+    const code = document.getElementById("code");
+    const minPurchase = document.getElementById("minPurchase");
+    const discount = document.getElementById("discount");
+    const maxDiscount = document.getElementById("maxDiscount");
+    const usageLimit = document.getElementById("usageLimit");
+    const expireDate = document.getElementById("expireDate");
+
+    couponForm.addEventListener('submit', (e)=>{
+        let isValid = true;
+
+        // Clear previous error messages
+    document.querySelectorAll('.error').forEach(error => error.remove());
+
+    if (name.value.trim() === '') {
+        isValid = false;
+        showError(name, 'Name is required.');
+      }
+      if(description.value.trim()===''){
+        isValid =false;
+        showError(description,'description is required')
+      }
+      if (code.value.trim() === '') {
+        isValid = false;
+        showError(code, 'Name is required.');
+      }
+
+      if (minPurchase.value.trim() === '') {
+    isValid = false;
+    showError(minPurchase, 'Minimum purchase amount is required.');
+    } else if (!/^\d+(\.\d+)?$/.test(minPurchase.value.trim())) {
+    isValid = false;
+    showError(minPurchase, 'Enter a valid number for the minimum purchase amount.');
+    } else if (parseFloat(minPurchase.value.trim()) <= 499) {
+    isValid = false;
+    showError(minPurchase, 'Minimum purchase amount should be greater than 500/-.');
+    }   
+      if (!/^\d+(\.\d+)?$/.test(discount.value.trim())) {
+        isValid = false;
+        showError(discount, 'Enter Discount persentage.');
+      } else if(discount<=0){
+        isValid = false;
+        showError(discount,"Enter  a valid discount")
+      }
+      if (maxDiscount.value.trim() === '') {
+        isValid = false;
+        showError(maxDiscount, 'Name is required.');
+      }else  if (!/^\d+(\.\d+)?$/.test(maxDiscount.value.trim())) {
+        isValid = false;
+        showError(maxDiscount, 'Enter minimum parchase amount.');
+      }
+      if(!/^\d+(\.\d+)?$/.test(usageLimit.value.trim())) {
+        isValid = false;
+        showError(usageLimit, 'Enter minimum parchase amount.');
+      }
+      if(expireDate.value.trim()){
+        isValid =false;
+        showError(expireDate,"Enter Expiry Date.")
+      }
+
+      if (!isValid) {
+        e.preventDefault(); // Prevent form submission if validation fails
+      }
+
+    });
+    function showError(input, message) {
+      const error = document.createElement('small');
+      error.className = 'error';
+      error.style.color = 'red';
+      error.textContent = message;
+      input.parentElement.appendChild(error);
+    }
+
+   });
+    </script>
+    
+<%- include('../../views/partials/adminfooter') %>
+

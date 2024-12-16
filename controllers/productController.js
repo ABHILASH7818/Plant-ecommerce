@@ -14,7 +14,7 @@ exports.getproductsList = async(req,res)=>{
 
         // Fetch the paginated category data
         const productData = await Product.find({})
-            .sort({ createdAt: 1 }) 
+            .sort({ createdAt: -1 }) 
             .skip(skip) 
             .limit(limit)
             .populate('category') 
@@ -122,10 +122,14 @@ exports.getProductDetails = async(req,res)=>{
   try {
     const productId =req.params.id; 
     const product = await Product.findById(productId);
+    const category = product.category;
+    console.log("product category",category)
+    const products =await Product.find({category:category})
+    console.log("similar product",products)
     const userId = req.session.user; 
     const userData = await User.findOne({_id:userId})
   //  console.log(product)
-    res.render("user/product-details",{user:userData,product:product})
+    res.render("user/product-details",{user:userData,product:product,products:products})
   } catch (error) {
     console.log("error getting product-details");
     return res.redirect("/pageerror");

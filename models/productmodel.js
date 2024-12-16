@@ -12,6 +12,7 @@ const productSchema = new mongoose.Schema({
     productOffer:{type:Number,default:0},
     color:{type:String,required:true},
     rating: { type: Number, default: 0 },
+    inWishList: {type:Boolean,default:false},
     // stastus:{type:String,enum :["Available","Out of stok"],require:true,default:"Available"},
     // //  reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Review' }],
     createdAt: { type: Date, default: Date.now },

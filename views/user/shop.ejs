@@ -1,109 +1,137 @@
 <%- include('../../views/partials/header') %>
 <div class="container">
-<div class="product-row ">
+  <div class="product-row">
     <!-- Sidebar for Filters -->
- 
     <aside class="filters">
-      <form class="filterform" method="get" action="/shopfilter">
+      <form class="filterform" method="get" action="/shop" id="filterForm">
         <h2>Filter Products</h2>
-        
-         
 
-         <!-- Category Filter -->
-         <div class="filter-group">
-            <label>Category</label>
-            <select name="category" class="form-select">
-                <option value="">All Categories</option>
-                <%for(let i=0;i<category.length;i++){%>
-                  <option value="<%=category[i].name%>">
-                      <%=category[i].name%>
-                  </option>
-              <%}%>  
-            </select>
-        </div>      
-            
         <!-- Category Filter -->
         <div class="filter-group">
-            <label>Price</label>
-            <select name="minPrice" class="form-select">
-              <option value="">Min Price</option>
-              <option value="0">₹0</option>
+          <label>Category</label>
+          <select name="category" class="form-select">
+            <option value="">All Categories</option>
+            <%for(let i=0;i<category.length;i++){%>
+              <option value="<%=category[i].name%>">
+                  <%=category[i].name%>
+              </option>
+          <%}%>  
+          </select>
+        </div>
+
+        <!-- Price Filter -->
+        <div class="filter-group">
+          <label>Price</label>
+          <select name="minPrice" class="form-select">
+            <option value="">Min Price</option>
+             <option value="0">₹0</option>
               <option value="100">₹100</option>
               <option value="200">₹200</option>
-            </select><br>
-            <select name="maxPrice" class="form-select">
-              <option value="">Max Price</option>
-              <option value="100">₹100</option>
-              <option value="300">₹300</option>
-              <option value="500">₹500</option>
-            </select>
+          </select>
+          <br>
+          <select name="maxPrice" class="form-select">
+            <option value="">Max Price</option>
+            <!-- <option value="">Max Price</option> -->
+            <option value="100">₹100</option>
+            <option value="300">₹300</option>
+            <option value="500">₹500</option>
+          </select>
         </div>
-        
-        <!--  -->
-        <div><button type="submit" class="btn btn-primary">Apply Filter</button></div>
-        </form>
+
+        <!-- Reset and Submit -->
+        <div>
+          <button type="submit" class="btn btn-primary">Apply Filter</button>
+          <button type="button" class="btn btn-secondary" onclick="resetFilters()">Reset Filter</button>
+        </div>
+      </form>
     </aside>
 
     <!-- Main Content Area -->
     <div class="product-section">
-        <!-- Sort Option -->
-        <!-- <div class="sort-bar">
-          <select class="form-select" id="sort" name="sort" onchange="applySort()">
-            <option value="">Sort By</option>
+
+      <div class="sort-search-section">
+
+          <!-- Sort Option -->
+      <div class="sort-bar">
+        <select class="form-select" id="sort" name="sort" onchange="applySort()">
+          <option value="">Sort By</option>
             <option value="price-asc">Price: Low to High</option>
             <option value="price-desc">Price: High to Low</option>
             <option value="name-asc">A - Z</option>
             <option value="name-desc">Z - A</option>
             <option value="new">Newly Added</option>
-          </select>
-        </div> -->
+        </select>
+      </div>
 
-        <!-- Products List -->
-        <div class="product-list">
-            <section class="product-category">
-                <div class="product container">
-                  <%for(let i=0;i<product.length;i++){%>
-                    <div class="card" >
-                     
-                      <a href="/productDetails/<%= product[i]._id %>"   >
-                        <img src="/uploads/<%=product[i].images[0]%>" class="card-img-top" alt="...">
-                      </a><span class="wish-list-icon" onclick="addToWishlist('<%=product[i]._id%>')" ><i class="fa-regular fa-heart"></i></span>
-                      <!-- <div class="wish-list-icon" >❤️</div> -->
-                  <div class="card-body">
-                    <h5 class="card-title"><%=product[i].productName%></h5>
-                   <h6>
-                   Rating  -  <%=product[i].rating%>/5
-                    <!-- <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i> -->
-                    <!-- <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-                    <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-                    <i class="fa-regular fa-star-half-stroke" style="color: #FFD43B;"></i> -->
-                  </h6>
-                    <span class="card-text">₹<%=product[i].salePrice%></span>
-                 <form action="/add-to-cart/<%=product[i]._id%>" method="post"><button class=" class btn btn-primary cart-btn"> <i class="fa-solid fa-cart-shopping"></i></button></form>   
-                  </div>
-                </div>
-                
-                  <%}%>
-                </div>
-                </div>
-              </section>
-        </div>
-   </div>
-   
-</div>
+      <!-- Search Bar -->
+      <div class="shop-search-bar ">
+        <form method="get" action="/shopfilter">
+          <input type="text" name="search" placeholder="Search Products..."  >
+          <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+      </div>
+    </div>
 
-   <nav aria-label="Page navigation">
-    
-</nav>
+      <!-- Products List -->
+      <div class="product-list">
+        <section class="product-category">
+          <div class="product container">
+            <% for (let i = 0; i < product.length; i++) { %>
+              <div class="card">
+                <a href="/productDetails/<%= product[i]._id %>">
+                  <img src="/uploads/<%= product[i].images[0] %>" class="card-img-top" alt="...">
+                </a>
+                <%if(product[i].inWishList === false){%>
+                <span class="wish-list-icon" onclick="addToWishlist('<%= product[i]._id %>')">
+                  <i class="fa-regular fa-heart"></i>
+                </span>
+                <%}else{%>
+                <span class="wish-list-icon" onclick="addToWishlist('<%=product[i]._id%>')" >❤️</span>
+                <%}%>
+                <div class="card-body">
+                  <h5 class="card-title"><%= product[i].productName %></h5>
+                  <h6>Rating - <%= product[i].rating %>/5</h6>
+                  <span class="card-text">₹<%= product[i].salePrice %></span>
+                  <form action="/add-to-cart/<%= product[i]._id %>" method="post">
+                    <button class="btn btn-primary cart-btn">
+                      <i class="fa-solid fa-cart-shopping"></i>
+                    </button>
+                  </form>
+                </div>
+              </div>
+            <% } %>
+          </div>
+          <div class="pagination">
+            <% if (currentPage > 1) { %>
+                 <a href="?page=<%= currentPage - 1 %>">&laquo; Previous</a>
+                   <% } %> <% for (let i = 1; i <= totalPages; i++) { %> <% if (i ===
+                    currentPage) { %>
+                   <span class="current-page"><%= i %></span>
+                   <% } else { %>
+                   <a href="?page=<%= i %>"><%= i %></a>
+                   <% } %> <% } %> <% if (currentPage < totalPages) { %>
+                   <a href="?page=<%= currentPage + 1 %>">Next &raquo;</a>
+                   <% } %>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
 </div>
           
 <script>
-  // function applySort() {
-  //   const sort = document.getElementById('sort').value;
-  //   const url = new URL(window.location.href);
-  //   url.searchParams.set('sort', sort);
-  //   window.location.href = url.href;
-  // }
+ function resetFilters() {
+    document.getElementById('filterForm').reset();
+    window.location.href = '/shop';
+  }
+
+  function applySort() {
+    const sort = document.getElementById('sort').value;
+    const url = new URL(window.location.href);
+    url.searchParams.set('sort', sort);
+    window.location.href = url.href;
+  }
+
  function addToWishlist(productId) {
   fetch("/addToWishlist", {
     method: 'POST',

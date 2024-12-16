@@ -29,7 +29,7 @@
                 <th>Description</th>
                 <th>code</th>
                 <th>Discount</th>
-                <th>Start-Date</th>
+                <!-- <th>Start-Date</th> -->
                 <th>End-Date</th>
                 <th>Action</th>
                </tr>
@@ -41,10 +41,10 @@
                 <td><%=coupon[i].description%></td>
                 <td><%=coupon[i].code%></td>
                 <td><%=coupon[i].discount%></td>
-                <td><%=new Date(coupon[i].startDate).toLocaleDateString()%></td>
+                <!-- <td><%=new Date(coupon[i].startDate).toLocaleDateString()%></td> -->
                 <td><%=new Date(coupon[i].expireDate).toLocaleDateString()%></td>
                    <td>
-                    <!-- <button class="edit-btn"><a class="nav-link" href="/admin/editProduct/<%=coupon[i]._id%>">Edit</a></button> -->
+                    <button class="edit-btn"><a class="nav-link" href="/admin/editCoupen/<%=coupon[i]._id%>">Edit</a></button>
                        <form action="/admin/deleteCoupen/<%=coupon[i]._id%>" method="POST" style="display:inline;">
                         <button class="delete-btn">Delete</button>
                        </form>

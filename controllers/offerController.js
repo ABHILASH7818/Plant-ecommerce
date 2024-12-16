@@ -39,9 +39,12 @@ exports.getAddOffer = async(req,res)=>{
     }
 }
 exports.postAddOffer = async(req,res)=>{
-    try {
-        const { name, discount, type, typeId, startDate, expireDate } = req.body;
-
+    // try {
+    //     const { name, discount, type, typeId, startDate, expireDate } = req.body;
+        try {
+            const { name, discount, type, typeId, startDate, expireDate } = req.body;
+            const image = req.file ;
+           console.log("image",image)
     
     const newOffer = new Offer({
       name,
@@ -50,6 +53,7 @@ exports.postAddOffer = async(req,res)=>{
       typeId,
       startDate,
       expireDate,
+      image:image.filename,
     });
     await newOffer.save();
 

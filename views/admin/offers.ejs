@@ -24,6 +24,7 @@
        <table>
            <thead>
                <tr>
+                <th>Offer Image</th>
                    <th>Offer Title</th>
                    <th>Type</th>
                    <th>Discount</th>
@@ -35,6 +36,7 @@
            <tbody>
             <% offer.forEach((offer)=>{%>
                <tr>
+                <td><img src="/uploads/<%=offer.image%>" alt="offer Image"></td>
                    <td><%= offer.name%></td>
                    <td><%=offer.type%> Offer</td>
                    <td><%= offer.discount%>%</td>

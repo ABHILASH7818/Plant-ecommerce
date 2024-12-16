@@ -234,6 +234,15 @@
   cursor: pointer;
   text-align: center;
 }
+.removeCoupon-btn{
+  padding: 6px;
+  background: #da2316;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: center;
+}
 .coupon-section h2 {
   font-size: 24px;
   color: #333;
@@ -311,3 +320,5 @@
 .coupon-copy-btn:hover {
   background-color: #ddd;
 }
+
+

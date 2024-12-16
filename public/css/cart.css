@@ -172,7 +172,51 @@ margin-top: 15px;
   margin-top: 12px;
 }
 
+.coupon-section-plceorder {
+  padding: 4px;
+  margin: 16px 0;
+}
+.coupon-section-plceorder input {
+  padding: 5px 40px 5px 15px;
+    border: 2px solid rgba(183, 178, 178, 0.25) ;
+    border-radius: 25px;
+    width: 62%;
+}
 
+.applyCoupon-btn{
+  padding: 6px;
+  width: 18%;
+  background: #45a046;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: center;
+}
+.removeCoupon-btn{
+  padding: 6px;
+  background: #da2316;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: center;
+
+}
+.removeCoupon-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.removeCoupon-btn.disable{
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.removeCoupon-btn.active {
+  opacity: 1;
+  cursor: pointer;
+}
 
 /* order-success css */
 
@@ -210,7 +254,7 @@ margin-top: 15px;
 }
 
 .order-details {
-  background-color: #f1f1f1;
+  /* background-color: #f1f1f1; */
   padding: 15px;
   border-radius: 6px;
 }
