@@ -28,13 +28,19 @@
             <p>Color: <strong><%= item.productId.color %></strong></p>
             <p>Category: <Strong><%=item.productId.category.name%></Strong></p>
             <p>Stock Status: <strong style="color: green;"> In Stock</strong></p>
-            
-
+            <%if( item.productId.category.categoryOffer > 0 ){%>
               <p>Product Price:  <span class="discount-price"> ₹ <%=item.productId.salePrice%></span>
-              <!-- <span class="original-price">₹</span> -->
-              <!-- <span class="offer">(64% Off)</span> -->
+              <span class="original-price">₹<%=item.productId.regularPrice%></span>
+              <span class="offer">( <%=item.productId.category.categoryOffer%>% Off)</span>
             </p>
-        
+              <%} else if (item.productId.productOffer > 0) {%>
+                <p>Product Price:  <span class="discount-price"> ₹ <%=item.productId.salePrice%></span>
+                  <span class="original-price">₹<%=item.productId.regularPrice%></span>
+                  <span class="offer">( <%=item.productId.productOffer%>% Off)</span>
+                </p>
+              <%} else {%>
+                 <p>Product Price:  <span class="discount-price"> ₹ <%=item.productId.salePrice%></span></p>
+              <%}%>
             
             <div class="quantity">
               <button class="decrease">-</button>

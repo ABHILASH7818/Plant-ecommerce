@@ -12,8 +12,9 @@
           <select name="category" class="form-select">
             <option value="">All Categories</option>
             <%for(let i=0;i<category.length;i++){%>
-              <option value="<%=category[i].name%>">
-                  <%=category[i].name%>
+              <option value="<%= category[i].name %>" 
+                <%= category[i].name === selectedCategory ? "selected" : "" %>>
+                <%= category[i].name %>
               </option>
           <%}%>  
           </select>
@@ -65,7 +66,7 @@
 
       <!-- Search Bar -->
       <div class="shop-search-bar ">
-        <form method="get" action="/shopfilter">
+        <form method="get" action="/shop">
           <input type="text" name="search" placeholder="Search Products..."  >
           <button type="submit" class="btn btn-primary">Search</button>
         </form>
@@ -91,7 +92,21 @@
                 <div class="card-body">
                   <h5 class="card-title"><%= product[i].productName %></h5>
                   <h6>Rating - <%= product[i].rating %>/5</h6>
-                  <span class="card-text">₹<%= product[i].salePrice %></span>
+                  
+                  <%if(product[i].productOffer > 0){%>
+                    <p>Price:  <span class="discount-price"> ₹ <%=item.productId.salePrice%></span>
+                      <span class="original-price">₹<%=item.productId.regularPrice%></span>
+                      <span class="offer">( <%=product[i].productOffer%>% Off)</span>
+                      </p>
+                  <%} else if (product[i].category.categoryOffer > 0 ) {%>
+                    <p>Price:  <span class="discount-price"> ₹ <%=product[i].salePrice%></span>
+                    <span class="original-price">₹<%=product[i].regularPrice%></span>
+                    <span class="offer">( <%=product[i].category.categoryOffer%>% Off)</span>
+                    </p>
+                  <%} else {%>
+                    <p>Price: <span > ₹ <%=product[i].salePrice%></span></p>
+                  <%}%>
+                  
                   <form action="/add-to-cart/<%= product[i]._id %>" method="post">
                     <button class="btn btn-primary cart-btn">
                       <i class="fa-solid fa-cart-shopping"></i>

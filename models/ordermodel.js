@@ -16,11 +16,12 @@ const orderSchema = new mongoose.Schema({
     couponCode: {type:String},
     address :  {type: mongoose.Schema.Types.ObjectId,ref:"Address",required:true},
     // payment : {type:String,enum:["Pending","Success","Failed"]},
-    invoiceDate : {type:Date},
-    paymentStatus: {type:String, enum:["COD","Succuss","Failed","Pending"], required:true},
+    invoiceDate : {type:Date,default: Date.now,required:true},
+    paymentStatus: {type:String, enum:["COD","Success","Failed","Pending"], required:true},
     orderStatus : {type:String,required:true, enum:["Pending","Processed","Shipped", "Delivered", "Cancelled","Return requested","Returned"]},
     createAT: {type:Date,default: Date.now,required:true},
-    couponApplied : {type:Boolean,default:false}
+    couponApplied : {type:String,enum:["Coupon Applied","No Coupon Applied"],default:"No Coupon Applied"},
+    razorpayOrderId:{type:String},
 })
 
 module.exports = mongoose.model("order",orderSchema);

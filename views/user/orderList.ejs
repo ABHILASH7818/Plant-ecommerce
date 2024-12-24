@@ -39,15 +39,15 @@
             <td><%= item.orderStatus %></td>
             <td>
               <button class="edit-btn"><a class="nav-link" href="/orderview/<%= item._id %>">View</a></button>
-              <% if(item.orderStatus === "Delivered"){%>
-                <form action="/orderReturn/<%= item._id %>" method="POST" style="display:inline;">
-                <button class="delete-btn">Return</button>
-              </form>
-             <% }else{%>
-              <form action="/orderReturn/<%= item._id %>" method="POST" style="display:inline;">
-                <button class="delete-btn">Cancel</button>
-              </form>
-              <%}%>
+              <% if(item.orderStatus === "Delivered"){ %>
+                <form action="/orderReturn/<%= item._id %>" method="POST" style="display:inline;" class="action-form">
+                  <button class="delete-btn" onclick="removeButton(event, this)">Return</button>
+                </form>
+              <% } else if((["Processed", "Shipped", "Pending"].includes(item.orderStatus))) { %>
+                <form action="/orderReturn/<%= item._id %>" method="POST" style="display:inline;" class="action-form">
+                  <button class="delete-btn" onclick="removeButton(event, this)">Cancel</button>
+                </form>
+              <% } %>
             </td>
           </tr>
         <% }) %>
@@ -68,5 +68,24 @@
 </div>
   </section>
 </div>
+<script>
+   function removeButton(event, button) {
+    // Prevent the form from submitting immediately
+    event.preventDefault();
 
+    // Remove the button's parent form from the DOM
+    button.closest('form').remove();
+
+    // Submit the form
+    fetch(button.closest('form').action, {
+      method: button.closest('form').method,
+    }).then(() => {
+      window.location.reload();
+      console.log("Form submitted");
+    }).catch((err) => {
+      console.error("Form submission failed", err);
+    });
+  }
+  
+</script>
 <%- include('../../views/partials/footer') %>

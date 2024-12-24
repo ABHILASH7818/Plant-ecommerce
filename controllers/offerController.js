@@ -83,6 +83,7 @@ exports.postAddOffer = async(req,res)=>{
     }
 }
 
+
 exports.deleteOffer = async(req,res)=>{
     try {
         const offerId =req.params.id;
@@ -113,3 +114,73 @@ exports.deleteOffer = async(req,res)=>{
         res.redirect("/pagenotfound")
     }
 }
+
+exports.getEditOffer = async (req,res)=>{
+    try {     
+        const category = await Category.find({status:true})
+        const product = await Product.find({})   
+        const offer = await Offer.findById(req.params.id);
+        res.render('admin/editOffer',{offer:offer,category:category,product:product})
+    } catch (error) {
+        console.log("eror loading edit offer page",error);
+        res.redirect('/pageerror')
+    }
+}
+
+exports.postEditOffer = async (req,res)=>{
+    try {
+        const id = req.params.id;
+        const { name, discount, type, typeId, startDate, expireDate } = req.body;
+        const image = req.file ;
+        // const existCategory = await Category.findOne({name:req.name});
+       
+        // if(existCategory){
+        //    return res.render("admin/edit-category",{message:" not exist category"})
+        // }
+        const updateoffer  = await Offer.findByIdAndUpdate(id,{
+            name:name,
+            discount:discount,
+             type:type, 
+             typeId:typeId,
+              startDate:startDate,
+               expireDate:expireDate,
+               if (image) {
+                image = image.filename; // Save new image file name
+               }
+        });
+
+       
+    //   await  Category.findByIdAndUpdate(req.params.id,req.body);
+        if(updateoffer){
+            
+            if (type === 'category') {
+                await Category.findByIdAndUpdate(typeId, { categoryOffer: discount });
+                const category =await Category.findById(typeId)
+                const products = await Product.find({category:category._id})
+                if(products.length>0){ 
+                  for(const product of products ){
+                       product.salePrice =product.regularPrice - Math.floor(product.regularPrice * (discount/100))
+                      product.productOffer = 0;
+                      await product.save();
+                  }
+                }
+              } else if (type === 'product') {
+                  const product = await Product.findById(typeId);
+                  product.salePrice = product.regularPrice - Math.floor(product.regularPrice * (discount / 100));
+                  product.productOffer = discount;
+                  await product.save();
+              }
+          
+            
+           return res.redirect('/admin/offers')
+        }
+        else{
+            return res.render("admin/editOffer",{message:"Offer not found"})
+        }
+        // return res.redirect('/admin/category');
+    } catch (error) {
+        console.log("change is not added");
+        res.status(404).send({error:"Internal server error"})        
+    }
+}
+

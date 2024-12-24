@@ -43,7 +43,7 @@
                    <td><%= new Date(offer.startDate).toLocaleDateString() %></td>
                    <td><%= new Date(offer.expireDate).toLocaleDateString() %></td>
                    <td>
-                       <!-- <button class="edit-btn">Edit</button> -->
+                    <button class="edit-btn"><a class="nav-link" href="/admin/editOffer/<%=offer._id%>">Edit</a></button>
                        <form action="/admin/deleteOffer/<%=offer._id%>" method="POST" style="display:inline;">
                         <button class="delete-btn">Remove</button>
                        </form>

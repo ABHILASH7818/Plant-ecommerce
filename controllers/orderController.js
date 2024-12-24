@@ -10,8 +10,10 @@ const Coupon =require("../models/couponmodel")
 const Wallet = require("../models/walletmodel")
 const env = require("dotenv").config()
 const Razorpay = require('razorpay');
+const fs = require('fs');
+const path = require('path');
 const PDFDocument = require('pdfkit');
-const xlsx = require("xlsx")
+const XLSX = require("xlsx")
 
 
 
@@ -204,37 +206,56 @@ exports.getOrderSuccess = async (req, res) => {
     }
   }
 
-  exports.orderReturn = async(req,res)=>{
+  exports.orderReturn = async (req, res) => {
     try {
-      const orderId = req.params.id;      
-      const orderData = await Order.findById(orderId)
-      console.log("order data  for return" ,orderData)
-      const userId = req.session.user; 
-      const userData = await User.findOne({_id:userId})
-      if (orderData.paymentMethod === "Online") {
-        
-        const wallet = new Wallet({userId:userData._id,Amount:orderData.finalAmount})
-        await wallet.save();
-
-         // Update the order status
-        if(orderData.orderStatus === "Delivered"){
-          orderData.status = "Returned";
-        await orderData.save();
-        // return res.redirect("/order");
-        }else if( orderData.orderStatus ==="Cancelled" || orderData.status === "Returned" ){
-          // return res.redirect("/order")
-        }else {
-          orderData.orderStatus = "Cancelled";
-          await orderData.save();
-          // return res.redirect("/order");
-        }
+      const orderId = req.params.id;
+      const userId = req.session.user;
+      console.log("orderstatus ",orderId)
+   
+      const orderData = await Order.findById(orderId);
+      if (!orderData) {
+        console.log("Order not found");
+        return res.redirect("/pagenotfound");
       }
-      res.redirect("/order")
+  
+      const userData = await User.findById(userId);
+      if (!userData) {
+        console.log("User not found");
+        return res.redirect("/pagenotfound");
+      }
+  
+      if (orderData.paymentMethod === "Online" && orderData.finalAmount > 0 && orderData.paymentStatus === 'Success') {
+        // Create or update wallet balance
+        let wallet = await Wallet.findOne({ userId: userData._id });
+        if (!wallet) {
+          wallet = new Wallet({ userId: userData._id, Amount: orderData.finalAmount });
+        } else {
+          wallet.Amount += orderData.finalAmount;
+        }
+        console.log("orderstatus wallet change")
+        await wallet.save();
+      }
+  
+      // Update order status
+      if (orderData.orderStatus === "Delivered") {
+        orderData.orderStatus = "Returned";
+        await orderData.save();
+        return  res.redirect("/order");
+      } else if (["Processed", "Shipped", "Pending"].includes(orderData.orderStatus)) {
+        orderData.orderStatus = "Cancelled";
+        console.log("orderstatus pending change")
+        await orderData.save();
+        return  res.redirect("/order");
+      }
+      console.log("orderstatus  change")
+     
+     
     } catch (error) {
-      console.log("order return failed",error)
+      console.log("Order return failed", error);
       res.redirect("/pagenotfound");
     }
-  }
+  };
+  
 
   exports.getSalesReport = async(req,res)=>{
     try {
@@ -291,7 +312,61 @@ exports.getOrderSuccess = async (req, res) => {
   }
 
 
+  exports.getsalesReportexcel = async(req,res)=>{
+    try {
+      const { filterType, startDate, endDate } = req.query;
+
+      // Fetch the filtered data from the database
+      const filterCriteria = {};
+      if (filterType === 'custom-date' && startDate && endDate) {
+          filterCriteria.createAT = { $gte: new Date(startDate), $lte: new Date(endDate) };
+      } else if (filterType === '1-day') {
+          const today = new Date();
+          filterCriteria.createAT = { $gte: today.setDate(today.getDate() - 1) };
+      } else if (filterType === '1-week') {
+          const today = new Date();
+          filterCriteria.createAT = { $gte: today.setDate(today.getDate() - 7) };
+      } else if (filterType === '1-month') {
+          const today = new Date();
+          filterCriteria.createAT = { $gte: today.setMonth(today.getMonth() - 1) };
+      }
   
+      const orders = await Order.find(filterCriteria); // Replace with your database query logic
+  
+      // Transform data for Excel
+      const data = orders.map(order => ({
+          'Order ID': order.orderId,
+          'Payment Method': order.paymentMethod,
+          Discount: order.discount,
+          Date: new Date(order.createAT).toLocaleDateString(),
+          'Sold Price': order.finalAmount,
+      }));
+  
+      // Create a new workbook and add data to a worksheet
+      const workbook = XLSX.utils.book_new();
+      const worksheet = XLSX.utils.json_to_sheet(data);
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Sales Report');
+  
+      // Generate the Excel file
+      const filePath = path.join(__dirname, 'sales-report.xlsx');
+      XLSX.writeFile(workbook, filePath);
+  
+      // Send the file as a response
+      res.download(filePath, 'sales-report.xlsx', (err) => {
+          if (err) {
+              console.error('Error sending file:', err);
+          }
+  
+          // Delete the file after sending it
+          fs.unlinkSync(filePath);
+      });
+  
+      
+    } catch (error) {
+      console.log("erro in downloading excel",error)
+      res.redirect('/pagenotfound')
+    }
+  }
   
   exports.getSalesReportpdf = async(req,res)=>{
     try {

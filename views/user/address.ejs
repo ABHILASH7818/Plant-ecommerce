@@ -18,6 +18,11 @@
     </aside>
     <section class="profile-section">
         <h2>Manage Your Addresses</h2>
+        <%if(userAddress === null){%>
+          <div class="alert alert-primary" role="alert">
+           you have no adrees 
+          </div>
+          <%}else{%>
         <div class="saved-addresses">
           <h5>Saved Addresses</h5>
           <div class="address-list" id="address-list">
@@ -35,6 +40,8 @@
             <%})%>
           </div>
         </div>
+        <%}%>
+        
          <button class="address-btn " id="add-address-btn"> <span>  Add New Address</span></button>
         <div class="address-form hidden" id="address-form">
             <form id="new-address-form" class="profile-form" action="/address" method="post">

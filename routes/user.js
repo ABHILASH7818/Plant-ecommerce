@@ -63,6 +63,8 @@ router.post("/checkout",userAuth,cartController.updateCart)
 router.post("/create-order",userAuth,cartController.createOrder)
 // router.post("/verify-payment",userAuth,cartController.verifyPayment)
 router.post("/verify-payment",userAuth,cartController.verifypayment)
+router.post ("/payment-failure",userAuth,cartController.paymentFailed)
+router.post ("/payment-cancel",userAuth,cartController.paymentCancel)
 
 //wish-list
 router.get("/wishlist",userAuth,wishlistController.getWishlist)

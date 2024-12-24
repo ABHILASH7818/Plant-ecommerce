@@ -15,7 +15,7 @@ exports.loadHome =async(req,res)=>{
         const categories =  await Category.find({status:true})
         let productData = await Product.find({
             category:{$in:categories.map(category=>category._id)},stock:{$gt:0}
-        })
+        }).populate('category');
 
         productData.sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
         productData = productData.slice(0,4);
@@ -335,7 +335,8 @@ exports.getShopPage = async(req,res)=>{
                     selectedCategory: category || "", 
                     user: userId,
                     currentPage: page,
-                    totalPages: totalPages
+                    totalPages: totalPages,
+                    selectedCategory: category || "", 
                 });
     }
     } catch (error) {

@@ -49,6 +49,8 @@ router.get("/offers",adminAuth,offerController.getoffersList)
 router.get("/addOffer",adminAuth,offerController.getAddOffer)
 router.post("/addOffer",adminAuth, upload.single('image'),offerController.postAddOffer)
 router.post("/deleteOffer/:id",adminAuth,offerController.deleteOffer)
+router.get('/editOffer/:id',adminAuth,offerController.getEditOffer)
+router.post("/editOffer/:id",adminAuth, upload.single('image'), offerController.postEditOffer)
 
 // product management
 router.get("/products",adminAuth,productController.getproductsList);
@@ -56,11 +58,12 @@ router.get("/add-product",adminAuth,productController.getAddProduct);
 router.post("/add-product",adminAuth, upload.array("image", 3),productController.addProduct);
 router.post("/deleteProduct/:id",adminAuth,productController.deleteProduct)
 router.get('/editProduct/:id',adminAuth,productController.getEditProduct)
+router.post("/editProduct/:id",adminAuth, upload.array("newImages", 3),productController.postEditProduct);
 
 // sales-report
 router.get("/salesreport",adminAuth,orderController.getSalesReport)
 router.get("/salesreportfilter",adminAuth,orderController.getSalesFilter)
 router.get("/salesreport/pdf",adminAuth,orderController.getSalesReportpdf)
-// router.get("/salesreport/excel",adminAuth,orderController.getsalesReportexcel)
+router.get("/salesreport/excel",adminAuth,orderController.getsalesReportexcel)
 
 module.exports =router

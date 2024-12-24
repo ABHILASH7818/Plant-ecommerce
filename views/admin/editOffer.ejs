@@ -1,0 +1,113 @@
+<%- include('../../views/partials/adminheader') %>
+<div class="side">
+    <aside>
+        <ul>
+            <li><a href="/admin/dashboard">Dashboard</a></li>
+            <li><a href="/admin/Products">Products</a></li>
+            <li><a href="/admin/Users">Users</a></li>
+            <li><a href="#">Coupons</a></li>
+            <li><a href="#">Order</a></li>
+            <li><a href="/admin/Offers">Offers</a></li>
+            <li class="active"><a href="/admin/category">Category</a></li>
+            <li class="sign-out">Sign Out</li>
+        </ul>
+    </aside>
+    <main>
+        <!-- Header Navigation Bar -->
+        <h2>Add offer</h2>
+        <section class="new-form-section">
+            <form action="/admin/editOffer/<%=offer._id%>" method="post" class="category-form" id="offerForm"  enctype="multipart/form-data">
+                <% if (typeof message !== 'undefined') { %>
+                    <p class="text-center m-auto" style="color:red;font-size:16px;"><%= message %></p>
+                <% } %> 
+
+                <label for="name">Offer Name</label>
+                <input type="text" id="name" name="name" value="<%=offer.name%>" >
+                             
+
+                <label for="name">Discount</label>
+                <input type="text" id="discount" name="discount" value="<%=offer.discount%>" >
+               
+
+                <!-- <div class=" d-flex justify-content-between"> -->
+                    <div class="input-group mb-3">
+                        <label class="input-group-text" for="inputGroupSelect">Type</label>
+                        <select class="form-select" id="Select-type" name="type">
+                          <option value="<%=offer.type%>">Choose...</option>
+                          <option value="category">Category Offer</option>
+                          <option value="product">Product Offer</option>
+                         
+                        </select>
+                      </div>
+                    
+                      <div id="dynamicField" name="typeId" class="input-group mb-3" style="display: none;" ></div>
+                   
+                              
+                      
+                <label for="expire-date">Start Date</label>
+                <input type="date" id="start-date" name="startDate"  value="<%= offer.startDate ? offer.startDate.toISOString().split('T')[0] : '' %>" > 
+
+                <label for="expire-date">Expire Date</label>
+                <input type="date" id="expire-date" name="expireDate" value="<%= offer.expireDate ? offer.expireDate.toISOString().split('T')[0] : '' %>">
+
+                <label for="image">Upload Offer Image</label>
+                <input type="file" id="image" name="image"  accept="image/*">
+                <% if (offer.image) { %>
+                    <div class="image-preview">
+                        <p>Current Image:</p>
+                        <img src="/uploads/<%= offer.image %>" alt="Offer Image" style="max-width: 150px; max-height: 150px;"/>
+                    </div>
+                <% } %>
+               
+
+                <div class="form-buttons">
+                    <button type="button" class="cancel-button" onclick="window.history.back();">Cancel</button>
+                    <button type="submit" class="submit-button">Submit</button>
+                </div>
+            </form>
+        </section>
+    </main>
+</div>
+
+<script>
+   
+        document.getElementById('Select-type').addEventListener('change', function () {
+    const dynamicField = document.getElementById('dynamicField');
+    dynamicField.innerHTML = ''; // Clear any existing dynamic field
+
+    if (this.value === 'category') {
+        dynamicField.innerHTML = `
+            <div class="input-group mb-3" id="category-select">
+                <label class="input-group-text" for="categoryInput">Category</label>
+                <select class="form-select" id="categoryInput" name="typeId">
+                    <% for (let i = 0; i < category.length; i++) { %>
+                        <option value="<%= category[i]._id %>">
+                            <%= category[i].name %>
+                        </option>
+                    <% } %>
+                </select>
+            </div>
+        `;
+        dynamicField.style.display = 'block';
+    } else if (this.value === 'product') {
+        dynamicField.innerHTML = `
+            <div class="input-group mb-3" id="product-select">
+                <label class="input-group-text" for="productInput">Product</label>
+                <select class="form-select" id="productInput" name="typeId">
+                    <% for (let i = 0; i < product.length; i++) { %>
+                        <option value="<%= product[i]._id %>">
+                            <%= product[i].productName %>
+                        </option>
+                    <% } %>
+                </select>
+            </div>
+        `;
+        dynamicField.style.display = 'block';
+    } else {
+        dynamicField.style.display = 'none';
+    }
+});
+    
+    </script>
+<%- include('../../views/partials/adminfooter') %>
+

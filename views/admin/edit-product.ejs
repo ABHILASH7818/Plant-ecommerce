@@ -16,9 +16,9 @@
     </aside>
     <main>
         <!-- Header Navigation Bar -->
-         <h2>Add Product</h2>
+         <h2>Edit Product</h2>
          <section class="new-form-productaddsection">
-            <form  method="post" action="/admin/add-product" enctype="multipart/form-data" id="productform"  class="category-form">
+            <form  method="post" action="/admin/editProduct/<%=product._id%>" enctype="multipart/form-data" id="productform"  class="category-form">
                 <% if (typeof message!== 'undefined') { %>
                     <p class="text-center m-auto" style="color:red;font-size:16px;"><%= message%></p>
                 <% } %> 
@@ -40,7 +40,7 @@
 
                     
                         <label class="form-label"> Price</label>
-                        <input placeholder="" value="<%= product.salePrice%>" name="price" type="text"
+                        <input placeholder="" value="<%= product.regularPrice%>" name="price" type="text"
                             class="form-control border" id="price">
                             <div class="error danger-msg" id="price-error"></div>
                     
@@ -74,10 +74,10 @@
                                             <br>  <div id="fileInput">
                                                  
                                                 <% product.images.forEach((image, index) => { %>
-                                                    <input type="file" name="newImages" id="fileInput1" value="<%= image %>" multiple>
+                                                    <input type="file" name="newImages" id="fileInput1" value="<%=image[index] %>" accept="image/*">
                                                     <div id="imageContainer-<%= index %>" class="image-preview">
                                                         <img src="/uploads/<%= image %>" alt="Product Image" style="width: 100px; height: 100px;">
-                                                        <input type="hidden" name="existingImages" value="">
+                                                        <input type="hidden" name="existingImages" value="<%=image%>">
                                                         <button type="button" onclick="deleteImage('<%= index %>')" class="btn btn-danger btn-sm">Delete</button>
                                                     </div>
                                                 <% }); %>

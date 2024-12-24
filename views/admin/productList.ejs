@@ -43,7 +43,7 @@
                 <td><%=product[i].stock%></td>
                    <td>
                     <button class="edit-btn"><a class="nav-link" href="/admin/editProduct/<%=product[i]._id%>">Edit</a></button>
-                       <form action="/admin/deleteProduct/<%=product._id%>" method="POST" style="display:inline;">
+                       <form action="/admin/deleteProduct/<%=product[i]._id%>" method="POST" style="display:inline;">
                         <button class="delete-btn">Delete</button>
                        </form>
                    </td>

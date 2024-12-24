@@ -291,7 +291,18 @@
         <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
         <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
         <i class="fa-regular fa-star-half-stroke" style="color: #FFD43B;"></i></h6> -->
-        <span class="card-text">Price ₹<%=products[i].salePrice%> </span>
+       
+        <%if(products[i].productOffer > 0){%>
+          <span class="card-text">Price ₹<%=products[i].salePrice%> </span>
+            <span class="original-price">₹<%=products[i].regularPrice%></span>
+            <span class="offer">( <%=products[i].productOffer%>% Off)</span>
+        <%} else if (products[i].category.categoryOffer > 0 ) {%>
+          <span class="card-text">Price ₹<%=products[i].salePrice%> </span>
+          <span class="original-price">₹<%=products[i].regularPrice%></span>
+          <span class="offer">( <%=products[i].category.categoryOffer%>% Off)</span>
+        <%} else {%>
+          <span class="card-text">Price ₹<%=products[i].salePrice%> </span>
+        <%}%>
         <a  href="#" class=" class btn btn-primary  cart-btn"> <i class="fa-solid fa-cart-shopping"></i></a>
       </div>
     </div>

@@ -69,7 +69,7 @@
                 <div class="form-group"> 
                     <label for="expire-date">Expire Date</label>
                 <input type="date" id="expireDate" name="expireDate">
-                <small class="error-message"></small>
+                <!-- <small class="error-message"></small> -->
                 </div>
                 
                 
@@ -93,7 +93,7 @@
     const discount = document.getElementById("discount");
     const maxDiscount = document.getElementById("maxDiscount");
     const usageLimit = document.getElementById("usageLimit");
-    const expireDate = document.getElementById("expireDate");
+    // const expireDate = document.getElementById("expireDate");
 
     couponForm.addEventListener('submit', (e)=>{
         let isValid = true;
@@ -142,10 +142,10 @@
         isValid = false;
         showError(usageLimit, 'Enter minimum parchase amount.');
       }
-      if(expireDate.value.trim()){
-        isValid =false;
-        showError(expireDate,"Enter Expiry Date.")
-      }
+      // if(expireDate.value.trim()){
+      //   isValid =false;
+      //   showError(expireDate,"Enter Expiry Date.")
+      // }
 
       if (!isValid) {
         e.preventDefault(); // Prevent form submission if validation fails

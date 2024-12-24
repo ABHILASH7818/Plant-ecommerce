@@ -124,14 +124,64 @@ exports.getProductDetails = async(req,res)=>{
     const product = await Product.findById(productId);
     const category = product.category;
     console.log("product category",category)
-    const products =await Product.find({category:category})
+    const products =await Product.find({category:category}).populate('category');
     console.log("similar product",products)
     const userId = req.session.user; 
     const userData = await User.findOne({_id:userId})
   //  console.log(product)
-    res.render("user/product-details",{user:userData,product:product,products:products})
+    res.render("user/product-details",{user:userData,product:product,category:category, products:products})
   } catch (error) {
     console.log("error getting product-details");
     return res.redirect("/pageerror");
+  }
+}
+
+exports.postEditProduct = async(req,res)=>{
+  try {
+    // const imgarr = [];
+    const id = req.params.id;
+      const product = req.body;
+      // const images = req.files; 
+      const existingImages = req.body.existingImages || []; // Images that are not deleted
+
+      const newImages = req.files.map((file) => file.filename); // Uploaded images
+      const updatedImages = [...existingImages, ...newImages]; // Combine old and new images
+
+      
+      
+  
+      
+      
+      // for (let i = 0; i < images.length; i++) {
+      //   imgarr.push(images[i].filename);
+      // }
+  
+      
+      // console.log("Uploaded images:", imgarr);
+
+      const categoryId = await Category.findOne({name:product.category});
+             if(!product.category){
+            return res.status(400).json("Invalid category name")
+           }
+  
+      //  save the new product
+      const newProduct = await Product.findByIdAndUpdate(id,{
+                productName: product.name,
+                description: product.description,
+                category: categoryId._id,
+                stock:product.quantity,
+                salePrice: product.price,
+                regularPrice:product.price,
+                color: product.color,
+                rating:product.rating,
+                images: updatedImages
+                // images: imgarr,
+                //stastus: 'Available' 
+      });
+  console.log("updation",newProduct);
+      // await newProduct.save();
+      return res.redirect("/admin/products");
+  } catch (error) {
+    
   }
 }
