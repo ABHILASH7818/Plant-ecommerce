@@ -8,11 +8,7 @@
             <h2>Create an account</h2>
             <p>Enter your details below</p>
 
-            <!-- <%if(locals.message && message.length>0){%>
-                <div class="alert alert-danger text-center">
-                  <%=message%>
-                </div>
-                <%}%>  -->
+           
 
             <form id="signupForm" action="/signup"method="post">
                   <% if (typeof message!== 'undefined') { %>
@@ -32,15 +28,15 @@
               <button type="submit" id="signupBtn" class="btn btn-success">Create Account</button>
              <a href="/auth/google"> <button type="button" class="btn-google">
                  <img class="google-logo"  src="/images/Google-Logo-PNG-Image.png" alt="">   Sign up with Google</button></a>
-            <button type="button" class="btn-google">
-                <img class="facebook-logo"  src="/images/facebook-logo-.webp" alt="">   Sign up with Google</button>
+            <!-- <button type="button" class="btn-google">
+                <img class="facebook-logo"  src="/images/facebook-logo-.webp" alt="">   Sign up with Google</button> -->
             </form>
             
   
-            <p class="already-login">Already have an account? <a href="#">Log in</a></p>
+            <p class="already-login">Already have an account? <a  href="/login">Log in</a></p>
       </div>
     </div>
   </section>
- 
+  <script src="/script/signupvalidation.js"></script>
   <%- include('../../views/partials/footer') %>
  

@@ -62,7 +62,7 @@ router.post("/editProduct/:id",adminAuth, upload.array("newImages", 3),productCo
 
 // sales-report
 router.get("/salesreport",adminAuth,orderController.getSalesReport)
-router.get("/salesreportfilter",adminAuth,orderController.getSalesFilter)
+// router.get("/salesreportfilter",adminAuth,orderController.getSalesFilter)
 router.get("/salesreport/pdf",adminAuth,orderController.getSalesReportpdf)
 router.get("/salesreport/excel",adminAuth,orderController.getsalesReportexcel)
 

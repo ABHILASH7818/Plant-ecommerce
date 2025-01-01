@@ -14,23 +14,20 @@
              <p class="text-center m-auto" style="color:red;font-size:16px;"><%= message%></p>
               <% } %> 
      
-        <input type="email" name="email" id="email" placeholder="Email" required>
+        <input type="email" name="email" id="email" placeholder="Email" >
         <div class="error danger-msg" id="email-error"></div>
-        <input type="password" name="password"id="password" placeholder="Password" required>
+        <input type="password" name="password"id="password" placeholder="Password" >
         <div class="error danger-msg" id="password-error"></div>
         <button type="submit"  class="btn btn-success">Log in</button>
             <button type="button" class="btn-google">
                 <img class="google-logo"  src="/images/Google-Logo-PNG-Image.png" alt="">   Log in with Google</button>
-           <button type="button" class="btn-google">
-               <img class="facebook-logo"  src="/images/facebook-logo-.webp" alt="">   Log in with Facebook</button>
-            <!-- <div class="d-flex justify-content-between">
-            <a href="#" class="forgot-password">sign up</a>
-            <a href="#" class="forgot-password">Forgot Password?</a>
-            </div> -->
+          
+            
           </form>
-          <a href="#" class="forgot-password">Forgot Password?</a>
-          <a href="#" class="forgot-password">Don't have an account?  sign up</a>
+          <a href="/forgot-password" class="forgot-password">Forgot Password?</a>
+          <a href="/signup" class="forgot-password">Don't have an account?  sign up</a>
       </div>
     </div>
   </section>
+  <script src="/script/signupvalidation.js"></script>
   <%- include('../../views/partials/footer') %>

@@ -91,37 +91,6 @@ exports.getCart = async (req, res) => {
   }
 };
 
-// exports.getCart = async(req,res)=>{
-//     try {
-//         const userId = req.session.user; 
-//         const userData = await User.findOne({_id:userId})
-//         const cartData = await Cart.findOne({userId:userId._id}).populate({path:"items.productId",populate:{path:'category',select:"name categoryOffer"}})
-//         let totalprice = 0;
-//         if (cartData){
-//           cartData.items.forEach(item=>{
-//              let productId = item.productId;
-//              console.log("productId",productId)
-//              console.log("itemsId",item._id)
-//              if(!productId){
-//              cartData = await Cart.updateOne({"items._id":item._id},
-//                 {$pull : {items : {_id :item._id}}}
-//               )
-//               console.log("No product data available in this id",item.productId._id)
-//              }
-//             // let product = await Product.findById(item.productId);
-//           })
-//         }
-//         if(cartData){
-//             cartData.items.forEach(item =>{
-//                 totalprice +=item.productId.salePrice*item.quantity;
-//             });
-//         }
-//         res.render("user/cart",{user:userData,cartData:cartData,totalprice:totalprice});
-//     } catch (error) {
-//         res.status(404).send("page not found")
-//     }
-// }
-
 exports.deleteCart = async(req,res)=>{
     try {
         const cartId =req.params.id;
@@ -156,6 +125,7 @@ exports.updateCart = async (req, res) => {
           }
         );
       }
+      
       res.status(200).send({ success: true, message: "Cart updated successfully!" });
   } catch (error) {
     console.error("Error updating cart:", error);
@@ -211,16 +181,6 @@ exports.updateCart = async (req, res) => {
   
   
   exports.postOrderSummary =  async (req, res) => {
-  //   const orderId = req.query.orderId;
-  //   console.log("oouuhhgg",orderId)
-  //  if (orderId) {
-  //       // Update order status for failed payment retry
-  //       await Order.updateOne(
-  //         { orderId: orderId },
-  //         { $set: { paymentStatus: 'Success', orderStatus: 'Processed' } }
-  //       );
-  //       return res.json({success:true, message:'Yay! your order has been successfully placed!'})
-      // }
   
       if(req.query.razorpayOrderId && req.query.retry){
         console.log('request for retry payment reached herer', req.query)
@@ -294,11 +254,27 @@ exports.updateCart = async (req, res) => {
       await newOrder.save();
       const orderId = newOrder.id;
       console.log('ordrid',orderId)
+          
   
       if (paymentMethod === 'COD') {
+
+        newOrder.orderItems.map(async (item) => {
+          const product = await Product.findById(item.productId);
+          if (!product) {
+            throw new Error(`Product not found: ${item.productId}`);
+          }
+          if (product.stock < item.quantity) {
+            throw new Error(`Insufficient stock for product: ${product.name}`);
+          }
+          product.stock -= item.quantity;
+          await product.save();
+          console.log(`Updated stock for product ${product.productName}: ${product.stock}`);
+        })
+        
         newOrder.paymentStatus = 'COD';
         newOrder.orderStatus = 'Processed';
         await newOrder.save();
+        
         return res.status(200).send('Order placed successfully with COD');
       } else if (paymentMethod === 'Online') {
         // Create Razorpay order
@@ -342,6 +318,20 @@ exports.updateCart = async (req, res) => {
           { _id: orderId },
           { $set: { paymentStatus: 'Success', orderStatus: 'Processed' } }
         ); 
+        const orderData = await Order.findById(orderId);
+        orderData.orderItems.map(async (item) => {
+          const product = await Product.findById(item.productId);
+          if (!product) {
+            throw new Error(`Product not found: ${item.productId}`);
+          }
+          if (product.stock < item.quantity) {
+            throw new Error(`Insufficient stock for product: ${product.productName}`);
+          }
+          product.stock -= item.quantity;
+          await product.save();
+          console.log(`Updated stock for product ${product.productName}: ${product.stock}`);
+        })
+
         console.log(updatedata)
         res.status(200).json({ message: "Payment verified successfully" });
       } else {
@@ -413,13 +403,11 @@ exports.updateCart = async (req, res) => {
       res.status(200).json({
           success: false,
           message: "Your Payment has failed. Please try again .",
-          errorDetails,// Optionally include error details for debugging (avoid sensitive info)
+          errorDetails,
          razorpayOrderId,
       });
 
-      // Optionally, send a notification to the user/admin
-      // e.g., send an email to the user or log the issue for further investigation
-
+     
   } catch (error) {
       console.error("Error handling payment failure:", error);
 
@@ -453,21 +441,16 @@ exports.paymentCancel  =async(req,res)=>{
         reason: error.reason || "Unknown reason",
         metadata: error.metadata || {},
     };
-// const updatedata = await Order.updateOne(
-//       { _id: orderId },
-//       { $set: { paymentStatus: 'cancelld', orderStatus: 'Pending' } }
-//     );
+
     console.error("Payment  cancelled Details:", errorDetails);
 
     res.status(200).json({
       success: false,
       message: "Your Payment has cancelled.",
-      errorDetails,// Optionally include error details for debugging (avoid sensitive info)
+      errorDetails,
   });
 
-    // Optionally, send a notification to the user/admin
-    // e.g., send an email to the user or log the issue for further investigation
-
+   
 } catch (err) {
     console.error("Error handling payment failure:", err);
 
@@ -488,90 +471,4 @@ exports.paymentCancel  =async(req,res)=>{
 
 
   
-  // exports.verifypayment = async(req,res)=>{
-    
-  //     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
-  //     console.log("varify payment",razorpay_order_id)
-  // try {
-  // const generatedSignature = crypto
-  //   .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET) // Replace with your Key Secret
-  //   .update(`${razorpay_order_id}|${razorpay_payment_id}`)
-  //   .digest('hex');
-
-  // if (generatedSignature === razorpay_signature) {
-  //   res.status(200).json({ success: true, message: 'Payment verified successfully' });
-  // } else {
-  //   res.status(400).json({ success: false, message: 'Invalid signature, payment verification failed' });
-  // }
-  //   } catch (error) {
-  //     console.log("payment failed",error)
-  //     res.status(500).send("Order payment failed");
-  //   }
-  // }
-
-
-
-
-
-
-  // exports.verifyPayment = async(req,res)=>{
-  //   const { paymentId, orderId, signature } = req.body;
-  //   console.log("Verify Payment Body:", req.body);
-  //   try {
-  //     const generatedSignature = crypto
-  //   .createHmac('sha256', )
-  //   .update(orderId + '|' + paymentId)
-  //   .digest('hex');
-
-  // if (generatedSignature === signature) {
-  //   // Save order details to the database
-  //   res.json({ success: true, message: 'Payment verified and order placed successfully.' });
-  // } else {
-  //   res.status(400).json({ success: false, message: 'Payment verification failed.' });
-  // }
-      
-  //   } catch (error) {
-  //     console.log("payment failed",error)
-  //     res.status(500).send("Order payment failed");
-  //   }
-  // }
-
-  // exports.postOrderSummary = async(req,res)=>{
-  //   try {
-  //       const { selectedAddress, finalAmount, cartProducts } = req.body;
-  //       const userId =req.session.user;
-  //       const userData = await User.findOne({_id:userId})
-  //       // Validate inputs
-  //       if (!selectedAddress || !finalAmount || !cartProducts) {
-  //         return res.status(400).send("Missing order details");
-  //       }
-  //       const orderItems = cartProducts.map(item => {
-  //         if (!item.productId || !item.quantity) {
-  //           throw new Error(`Invalid cart item: ${JSON.stringify(item)}`);
-  //         }
-  //         return {
-  //           productId: item.productId,
-  //           quantity: item.quantity,
-  //         };
-  //       });
-  //       const{productId, quantity}= cartProducts;
-  //       console.log("cart",cartProducts)
-  //       // Create a new order
-  //       const newOrder = new Order({
-  //         userId: userData._id, // Assuming user is authenticated
-  //         address: selectedAddress,
-  //         totalAmount: finalAmount,
-  //         finalAmount:finalAmount,
-  //         orderItems, // Expecting an array of products with quantity
-  //         status: "Pending",
-  //       });
-        
-    
-  //       await newOrder.save(); // Save order to the database
-    
-  //       res.status(200).send("Order placed successfully!");
-  //     } catch (error) {
-  //       console.error("Error placing order:", error);
-  //       res.status(500).send("An error occurred while placing the order");
-  //     }    
-  // }
+  

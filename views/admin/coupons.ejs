@@ -18,7 +18,7 @@
          <h2>Product List</h2>
         <div class="list-header">  
            <div class="search-add">
-               <!-- <input type="text" placeholder="Search offers..." /> -->
+               
                <button class="add-new"><a class="nav-link" href="/admin/addCoupon">Add New</a></button>
            </div>
         </div>
@@ -41,7 +41,6 @@
                 <td><%=coupon[i].description%></td>
                 <td><%=coupon[i].code%></td>
                 <td><%=coupon[i].discount%></td>
-                <!-- <td><%=new Date(coupon[i].startDate).toLocaleDateString()%></td> -->
                 <td><%=new Date(coupon[i].expireDate).toLocaleDateString()%></td>
                    <td>
                     <button class="edit-btn"><a class="nav-link" href="/admin/editCoupen/<%=coupon[i]._id%>">Edit</a></button>

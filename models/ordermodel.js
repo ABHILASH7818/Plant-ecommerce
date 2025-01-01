@@ -15,7 +15,6 @@ const orderSchema = new mongoose.Schema({
     finalAmount : {type:Number,required:true},
     couponCode: {type:String},
     address :  {type: mongoose.Schema.Types.ObjectId,ref:"Address",required:true},
-    // payment : {type:String,enum:["Pending","Success","Failed"]},
     invoiceDate : {type:Date,default: Date.now,required:true},
     paymentStatus: {type:String, enum:["COD","Success","Failed","Pending"], required:true},
     orderStatus : {type:String,required:true, enum:["Pending","Processed","Shipped", "Delivered", "Cancelled","Return requested","Returned"]},

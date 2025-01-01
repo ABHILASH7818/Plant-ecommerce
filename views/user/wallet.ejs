@@ -1,8 +1,7 @@
 <%- include('../../views/partials/header') %>
 <style>
   .content {
-            /* width: 75%; */
-            /* margin-left: 5%; */
+            
             padding: 8px;
            
         }
@@ -67,18 +66,25 @@
     <h3>Manage My Account</h3>
     <ul>
       <li><a href="/profile"><i class="fas fa-user"></i> My Profile</a></li>
-      <li><a href="/address" class="active"><i class="fas fa-map-marker-alt"></i> Address</a></li>
+      <li><a href="/address"><i class="fas fa-map-marker-alt"></i> Address</a></li>
       <li><a href="/change-password"><i class="fas fa-lock"></i> Change Password</a></li>
       <li><a href="/order"><i class="fas fa-shopping-cart"></i> Orders</a></li>
-      <li><a href="#"><i class="fas fa-tags"></i> Coupons</a></li>
-      <li><a href="#"><i class="fas fa-wallet"></i> Wallet</a></li>
+      <li><a href="/user-coupon"><i class="fas fa-tags"></i> Coupons</a></li>
+      <li><a href="/wallet" class="active"><i class="fas fa-wallet"></i> Wallet</a></li>
     </ul>
   </aside>
 
   <section class="profile-section">
     <%if(wallet.length<=0){%>
-    <div class="alert alert-primary" role="alert">
-      A simple primary alert—check it out!
+      <div class="content">
+        <div class="wallet-header">
+            <h2>Wallet</h2>
+            <div class="balance">Balance: &#8377;<%=totalprice%></div>
+        </div>
+        <div class="actions">
+            <button class="add-wallet">Add Wallet</button>
+            <a href="/walletTransactions" class="nav-link"><button class="transactions" >Transactions</button></a>
+        </div>
     </div>
     <%}else{%>
     <div class="content">

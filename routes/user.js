@@ -17,6 +17,11 @@ router.get('/signup',userController.getsignup)
 // router.get('/otp',userController.getotpverification)
 router.post('/verify-otp',userController.verifyotp)
 router.post("/resend-otp",userController.resendOtp)
+router.get("/forgot-password",userController.forgotPassword)
+router.post("/forgot-password",userController.postForgotPassword)
+router.post("/forgot-verify-otp",userController.forgotVerifyOtp)
+router.post("/update-password",userController.updatePassword)
+router.get("/pagenotfound",userController.pageNotFound)
 
 //signup with google
 router.get("/auth/google",passport.authenticate('google',{scope:['profile','email']}))
@@ -72,7 +77,6 @@ router.post("/addToWishlist",userAuth,wishlistController.addToWishlist)
 router.post("/wishlist-delete/:id",userAuth,wishlistController.deleteWishlist)
 
 //order-management
-
 router.get("/order-summary",userAuth,cartController.getOrderSummary)
 router.post("/saveAddress",userAuth,cartController.addNewAddress)
 router.post("/placeOrder",userAuth,cartController.postOrderSummary)

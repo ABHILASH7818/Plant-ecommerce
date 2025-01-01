@@ -9,6 +9,11 @@
     margin: 20px auto;
   }
   
+  .profile-order-container {
+    display: flex;
+    max-width: 1112px;
+    margin: 20px auto;
+  }
   .sidebar {
     width: 24%;
     padding: 20px;
@@ -94,6 +99,7 @@
   
   .edit-btn {
     padding: 8px 16px;
+    margin-bottom: 6px;
     font-size: 14px;
     background-color: #007bff;
     color: #fff;

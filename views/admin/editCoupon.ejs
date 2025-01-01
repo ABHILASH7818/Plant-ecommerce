@@ -2,14 +2,14 @@
 <div class="side">
     <aside>
         <ul>
-            <li><a href="/admin/dashboard">Dashboard</a></li>
-            <li><a href="/admin/Products">Products</a></li>
-            <li><a href="/admin/Users">Users</a></li>
-            <li><a href="#">Coupons</a></li>
-            <li><a href="#">Order</a></li>
-            <li><a href="/admin/Offers">Offers</a></li>
-            <li class="active"><a href="/admin/category">Category</a></li>
-            <li class="sign-out">Sign Out</li>
+          <li ><a href="/admin/dashboard">Dashboard</a></li>
+          <li><a href="/admin/Products">Products</a> </li>
+          <li><a href="/admin/Users">Users</a></li>
+          <li class="active"><a href="/admin/Coupons">Coupons</a></li>
+          <li><a href="/admin/order">Order</a></li>
+          <li><a href="/admin/Offers">Offers</a></li>
+          <li><a href="/admin/category">Category</a></li>
+          <li><a href="/admin/salesreport">Sales report</a></li>
         </ul>
     </aside>
     <main>
@@ -142,7 +142,7 @@
         isValid = false;
         showError(usageLimit, 'Enter minimum parchase amount.');
       }
-      if(expireDate.value.trim()===''){
+      if(expireDate.value.trim()===' '){
         isValid =false;
         showError(expireDate,"Enter Expiry Date.")
       }

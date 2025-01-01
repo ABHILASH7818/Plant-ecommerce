@@ -9,7 +9,7 @@
         <h2> Addresses</h2>
         <%if(userAddress === null){%>
           <div class="alert alert-primary" role="alert">
-           you have no adrees 
+            No Address Found,Please Add a new Address 
           </div>
           <%}else{%>
         <div class="saved-addresses">
@@ -34,9 +34,7 @@
                   </label>
                 </div>
                 <div>
-                  <!-- <a href="/editAddress/<%= address._id %>">
-                    <i class="fa-regular fa-pen-to-square"></i>
-                  </a> -->
+                 
                 </div>
               </div>
               <% }) %>
@@ -242,15 +240,6 @@
       input.parentElement.appendChild(error);
     }
 
-    //display cart-list 
-//     document.getElementById('save-address-btn').addEventListener('click', () => {
-//   const selectedAddress = document.querySelector('input[name="selectedAddress"]:checked');
-//   if (!selectedAddress) {
-//     alert("Please select an address to continue.");
-//     return;
-//   }
-//   document.querySelector('.cart-list').classList.remove('hidden');
-// });
 
 //coupon
     const applyCouponButton = document.getElementById('applyCoupon');
@@ -261,9 +250,9 @@
     const removeCoupon = document.getElementById('removeCoupon');
     const deliveryCharge =document.getElementById('deliveryCharge');
     let couponDiscount;
-
+   
     //Delivery-charge
-    
+   
 
  applyCouponButton.addEventListener('click', async () => {
   const couponCode = couponCodeInput.value.trim();
@@ -292,11 +281,11 @@
 
     const { message, couponDiscountAmount } = await response.json();
 
-    // Update the UI with the discount
+    
     couponDiscount = couponDiscountAmount;
     //  discountAmount = discountAmount+couponDiscount;
     // console.log("discount",discountAmount);
-    // alert(discountAmount)
+    
     const finalAmount = totalPrice - couponDiscount;
     discountAmountElement.textContent = `${couponDiscount}.00`;
     finalAmountElement.textContent = `₹${finalAmount}.00`;
@@ -316,7 +305,7 @@ removeCoupon.addEventListener('click', async () => {
   const couponDiscount = parseFloat(discountAmount); // Ensure this value is derived correctly
 
   // Calculate the new amounts
-  // alert(couponDiscount)
+ 
   const finalAmount = finalPrice + couponDiscount;
   const newDiscountAmount = discountAmount - couponDiscount;
 
@@ -371,11 +360,12 @@ document.querySelector('.checkout-btn').addEventListener('click', async () => {
     paymentMethod,
   };
   if(paymentMethod === "COD"){
-    if (finalAmount<1000){
+    if (finalAmount>1000){
       Swal.fire({
         icon:'warning',
         title: 'Can not apply Cash On Payment',
-        text: 'Parches amount will more than 1000,  Please select an alternate payment method',
+        text: "Cash on Delivery only for amounts less than 1000"
+        // text: 'Parches amount will less than 1000,  Please select an alternate payment method',
         // timer: 1500,
         // confirmButton : false,
       })
@@ -532,8 +522,7 @@ document.querySelector('.checkout-btn').addEventListener('click', async () => {
       Swal.fire({
          icon:'info',
          title:'Payment Cancelled',
-         // showConfirmButton:false,
-         // timer:1600
+        
       })
         console.error("Payment failed:", data.errorDetails);
     })
@@ -551,7 +540,7 @@ document.querySelector('.checkout-btn').addEventListener('click', async () => {
         
       }); 
          const retrypayOrder = await response.json();
-        // alert(order.id)
+       
         // Initialize Razorpay payment form
         const options = {
           key: 'rzp_test_4MBYamMKeUifHI', // Replace with your Razorpay Key ID
@@ -562,7 +551,7 @@ document.querySelector('.checkout-btn').addEventListener('click', async () => {
          image: 'https://your-logo-url.com/logo.png', // Optional logo
          order_id: retrypayOrder.id, // Razorpay order ID
           handler: async function (response) {
-            // alert(order.id)
+            
             // Verify the payment on the server
             console.log("retryPayOrder",retrypayOrder.amount);
             const verifyResponse = await fetch(`/verify-payment?orderId=${retrypayOrder. receipt}`, {

@@ -85,7 +85,7 @@ exports.editCategory = async (req,res)=>{
             
         });
        
-    //   await  Category.findByIdAndUpdate(req.params.id,req.body);
+    
         if(updateCategory){
             
            return res.redirect('/admin/category')

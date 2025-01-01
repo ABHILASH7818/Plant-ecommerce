@@ -240,44 +240,33 @@ function validateAndSubmit(){
         isValid = false;
     }
 
-    // Email Validation
+    
     if (!validateName(description.value)) {
         showError('description-error', 'Email is required');
         isValid = false;
-    // } 
-    // else if (!validateEmail(email.value)) {
-    //     showError('emailError', 'Please enter a valid email');
-    //     isValid = false;
+    
     }
 
-    // Phone Number Validation
+    
     if (!price.value.trim()) {
         showError('price-error', 'price is required');
         isValid = false;
-    // } else if (!validatePhone(phone.value)) {
-    //     showError('phone-error', 'Phone Number must be at least 10 digits');
-    //     isValid = false;
+    
     }
 
-    // Password Validation
+    
     if (!quantity.value.trim()) {
         showError('quantity-error', 'Password is required');
         isValid = false;
     }
-    // } else if (!validatePassword(password.value)) {
-    //     showError('password-error', 'Password must be at least 8 characters long, include letter, at least one digit, and one special character (e.g., @, $, !, %, *, ?, &).');
-    //     isValid = false;
-    // }
+    
 
-    // Confirm Password Validation
+    
     if (!color.value.trim()) {
         showError('color-error', 'Confirm Password is required');
         isValid = false;
     }
-    // } else if (password.value !== confirmPassword.value) {
-    //     showError('confirm-error', 'Passwords do not match');
-    //     isValid = false;
-    // }
+   
 
 
 const formData = new FormData(this);
@@ -294,20 +283,6 @@ const formData = new FormData(this);
         document.getElementById('productform').submit();
     }
 
-  
-
-        
-
-        // fetch("/admin/add-product", {
-        //     method: "POST",
-        //     body: formData,
-        // })
-            // .then((response) => response.json())
-            // .then((data) => {
-            //     alert("Product added successfully!");
-            //     // Optional: Reset form or navigate
-            // })
-            // .catch((error) => console.error("Error:", error));
     });
 
 
@@ -350,101 +325,6 @@ function validatePassword(password){
     return passwordRegex.test(password);
 }
 
-
-
-
-
-
-
-
-//     function validateForm() {
-//               clearErrorMessages();
-//               const name = document.getElementsByName('productName')[0].value;
-//               const description = document.getElementById('descriptionid').value;
-//               const brand = document.getElementsByName('brand')[0].value;
-//               const price = document.getElementsByName('regularPrice')[0].value;
-//               const saleprice = document.getElementsByName('salePrice')[0].value;
-//               const color = document.getElementsByName('color')[0].value;
-//               const category = document.getElementsByName('category')[0].value;
-//               const images = document.getElementById('input1')
-//               const quantity=document.getElementsByName('quantity')
-//               let isValid = true
-//               if (name.trim() === "") {
-//       displayErrorMessage('productName-error', 'Please enter a product name.');
-//       isValid = false;
-//    } else if (!/^[a-zA-Z\s]+$/.test(name.trim())) {
-//       displayErrorMessage('productName-error', 'Product name should contain only alphabetic characters.');
-//       isValid = false;
-//    }
-            
-//    if (description.trim() === "") {
-//       displayErrorMessage('description-error', 'Please enter a product description.');
-//       isValid = false;
-//    } else if (!/^[a-zA-Z\s]+$/.test(description.trim())) {
-//       displayErrorMessage('description-error', 'Product description should contain only alphabetic characters.');
-//       isValid = false;
-//    }
-  
-  
-           
-  
-  
-//               if ( parseInt(quantity) < 0) {
-//                   displayErrorMessage('quantity-error', 'Please enter a valid non-negative quantity.');
-//                   isValid = false;
-//               }
-  
-  
-  
-  
-//               if (!/^\d+(\.\d{1,2})?$/.test(price) || parseFloat(price) < 0) {
-//                   displayErrorMessage('regularPrice-error', 'Please enter a valid non-negative price.');
-//                   isValid = false;
-//               }
-  
-  
-  
-  
-//               if (!/^\d+(\.\d{1,2})?$/.test(saleprice) || parseFloat(saleprice) < 0) {
-//                   displayErrorMessage('salePrice-error', 'Please enter a valid non-negative price.');
-//                   isValid = false;
-//               }
-//               if (parseFloat(price) <= parseFloat(saleprice)) {
-//       displayErrorMessage('regularPrice-error', 'Regular price must be greater than sale price.');
-//       isValid = false;
-//    }
-  
-  
-//               if (color.trim() === "") {
-//                   displayErrorMessage('color-error', 'Please enter a color.');
-//                   isValid = false;
-//               }
-  
-  
-//               if (images.files.length === 0) {
-//                   displayErrorMessage("images-error",'Please select an image.');
-//                   isValid = false;
-//               }
-//               return isValid;
-//           }
-
-
-//           function displayErrorMessage(elementId, message) {
-//               var errorElement = document.getElementById(elementId);
-//               errorElement.innerText = message;
-//               errorElement.style.display = "block";
-//           }
-  
-  
-//           function clearErrorMessages() {
-//               const errorElements = document.getElementsByClassName('error-message');
-//               Array.from(errorElements).forEach(element => {
-//                   element.innerText = '';
-//               });
-//               const errorMessage = document.getElementById('errorMessage');
-  
-  
-//           } 
 
 </script>
 <%- include('../../views/partials/adminfooter') %>

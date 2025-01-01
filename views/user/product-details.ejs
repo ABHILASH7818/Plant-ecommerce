@@ -241,19 +241,14 @@
     </div>
 
     <div class="product-info">
-        <h1>Golden Money Plant<%=product.productName%></h1>
-        <!-- <p class="rating">⭐⭐⭐⭐⭐ <span>(150 Reviews)</span></p> -->
+        <h1><%=product.productName%></h1>
         <p class="price">₹<%=product.salePrice%></p>
         <p class="status">In Stock</p>
-        <p class="description">One of the most popular houseplants, and our all-time bestseller, this easy-growing plant with its heart-shaped leaves is loved for its beautiful fenestrations.</p>
-
+        <p class="description"><%=product.description%></p>
       
       <div class="Cart-actions">
-        <!-- <button onclick="decreaseQuantity()">-</button>
-        <input id="quantity" name="quantity" type="text" value="2" readonly />
-        <button onclick="increaseQuantity()">+</button> -->
         <form action="/add-to-cart/<%=product._id%>" method="post"><button class="add-to-cart"> <i class="fa-solid fa-cart-shopping"></i></button></form>   
-        <button class="wishlist" onclick="addToWishlist('<%=product._id%>')">wishlist</button>
+        <button class="wishlist"  onclick="addToWishlist('<%=product._id%>')">wishlist</button>
       </div>
 
       <div class="delivery-info">
@@ -285,13 +280,7 @@
        <%}%>
       <div class="card-body">
        <h5 class="card-title"> <%=products[i].productName%></h5>
-       <h6> Rating  -  <%=products[i].rating%>/5</h6>
-       <!-- <h6><i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-        <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-        <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-        <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-        <i class="fa-regular fa-star-half-stroke" style="color: #FFD43B;"></i></h6> -->
-       
+       <h6> Rating  -  <%=products[i].rating%>/5</h6>       
         <%if(products[i].productOffer > 0){%>
           <span class="card-text">Price ₹<%=products[i].salePrice%> </span>
             <span class="original-price">₹<%=products[i].regularPrice%></span>
@@ -313,7 +302,42 @@
 </div>
 
 <script>
+  function addToWishlist(productId) {
+  fetch("/addToWishlist", {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ productId }),
+  })
+    .then((response) => response.json()) // Parse the response JSON
+    .then((data) => {
+      if (data.status) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Wishlist Updated',
+          text: 'Product has been added to your wishlist',
+          timer: 2000,
+        });
+      } else {
+        Swal.fire({
+          icon: 'info',
+          title: 'Product Already in Wishlist!',
+          text: data.message,
+          timer: 2000,
+        });
+      }
+    })
+    .catch((error) => {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'An error occurred. Please try again.',
+        timer: 2000,
+      });
+      console.error('Error:', error);
+    });
+}
     document.addEventListener('DOMContentLoaded', () => {
+      
         const imageZoom = document.getElementById('imageZoom');
         const zoomedImage = document.getElementById('zoomedImage');
     
@@ -339,22 +363,6 @@
     // Hide the zoom effect when the mouse leaves
     imageZoom.style.setProperty('--display', 'none');
   });
-
-
-    
-        // imageZoom.addEventListener('mousemove', (event) => {
-        //     imageZoom.style.setProperty('--display', 'block');
-        //     const pointer = {
-        //         x: (event.offsetX * 100) / imageZoom.offsetWidth,
-        //         y: (event.offsetY * 100) / imageZoom.offsetHeight,
-        //     };
-        //     imageZoom.style.setProperty('--zoom-x', pointer.x + '%');
-        //     imageZoom.style.setProperty('--zoom-y', pointer.y + '%');
-        // });
-    
-        // imageZoom.addEventListener('mouseout', () => {
-        //     imageZoom.style.setProperty('--display', 'none');
-        // });
     
         window.changeMainImage = changeMainImage; // Expose the function to be used in the onclick attributes.
     
@@ -375,87 +383,11 @@
                 quantityInput.value = currentQuantity - 1;
             }
         };
-        function addToWishlist(productId) {
-     fetch("/addToWishlist", {
-       method: 'POST',
-       headers: { 'Content-Type': 'application/json' },
-       body: JSON.stringify({ productId }),
-     })
-       .then((response) => response.json()) // Parse the response JSON
-       .then((data) => {
-         if (data.status) {
-           Swal.fire({
-             icon: 'success',
-             title: 'Wishlist Updated',
-             text: 'Product has been added to your wishlist',
-             timer: 2000,
-           });
-         } else {
-           Swal.fire({
-             icon: 'info',
-             title: 'Product Already in Wishlist!',
-             text: data.message,
-             timer: 2000,
-           });
-         }
-       })
-       .catch((error) => {
-         Swal.fire({
-           icon: 'error',
-           title: 'Error',
-           text: 'An error occurred. Please try again.',
-           timer: 2000,
-         });
-         console.error('Error:', error);
-       });
-   }
+
+        
     });
     </script>
     
-
-
-
-
-  <!-- <script>
-
-function changeMainImage(imageSrc) {
-    const zoomedImage = document.getElementById('zoomedImage');
-    const imageZoom = document.getElementById('imageZoom');
-    zoomedImage.src = imageSrc;
-    imageZoom.style.setProperty('--url', `url(${imageSrc})`);
-}
-let imageZoom = document.getElementById('imageZoom');
-        imageZoom.addEventListener('mousemove', (event) => {
-            imageZoom.style.setProperty('--display', 'block');
-            let pointer = {
-                x:  (event.offsetX * 100) / imageZoom.offsetWidth,
-                y:  (event.offsetY * 100) / imageZoom.offsetHeight
-            }
-            imageZoom.style.setProperty('--zoom-x', pointer.x + '%');
-            imageZoom.style.setProperty('--zoom-y', pointer.y + '%');
-        })
-        imageZoom.addEventListener('mouseout', () => {
-            imageZoom.style.setProperty('--display', 'none');
-        })
-
-        function increaseQuantity() {
-    const quantityInput = document.getElementById('quantity');
-    let currentQuantity = parseInt(quantityInput.value);
-    if (currentQuantity< '<%=product.stock%>') {
-        quantityInput.value = currentQuantity + 1;
-    }
-}
-
-// Decrease product quantity
-function decreaseQuantity() {
-  const quantityInput = document.getElementById('quantity');
-  let currentQuantity = parseInt(quantityInput.value);
-  if (currentQuantity > 1) {
-    quantityInput.value = currentQuantity - 1;
-  }
-}
-
-  </script> -->
   <%- include('../../views/partials/footer') %>
 
 

@@ -11,6 +11,10 @@
         <p><strong>Order ID:</strong> <%= order.orderId %></p>
         <p><strong>Date:</strong> <%= new Date(order.createAT).toLocaleDateString() %></p>
         <p><strong>Payment Method:</strong> <%=order.paymentMethod%></p>
+        <p><strong>Coupon:</strong> <%=order.couponApplied%></p>
+        <%if(order.couponCode !==" "){%>
+          <p><strong>Coupon Code:</strong> <%=order.couponCode %></p>
+        <%}%>
       </div>
       <div>
         <h3>Billing Address</h3>
@@ -48,6 +52,10 @@
           </tbody>
           
         <tfoot>
+          <tr>
+            <td colspan="2">Discount</td>
+            <td><%=order.discount %></td>
+          </tr>
           <tr>
             <td colspan="2"><strong>Grand Total</strong></td>
             <td><strong>₹<%= order.finalAmount %></strong></td>

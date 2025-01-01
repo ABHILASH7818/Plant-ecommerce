@@ -60,8 +60,10 @@
                 <th>Payment Method</th>
                 <!-- <th>Quantity</th> -->
                 <!-- <th>Regular Total Price</th> -->
-                <th>Discount</th>
+                
                 <th>Date</th>
+                <th>sale Price</th>
+                <th>Discount</th>
                 <th>Sold Price</th>
                </tr>
            </thead>
@@ -70,8 +72,10 @@
                 <tr>
                  <td><%=order[i].orderId %></td>
                  <td><%=order[i].paymentMethod%></td>
-                 <td><%=order[i].discount%></td>
+                
                  <td><%= new Date(order[i].createAT).toLocaleDateString() %></td>
+                 <td><%= order[i].finalAmount + order[i].discount %></td>
+                  <td><%=order[i].discount%></td>
                  <td><%=order[i].finalAmount%></td>
                     <td>
               <%}%>
@@ -80,16 +84,20 @@
        <!-- Pagination -->
        <div class="pagination">
         <% if (currentPage > 1) { %>
-             <a href="?page=<%= currentPage - 1 %>">&laquo; Previous</a>
-               <% } %> <% for (let i = 1; i <= totalPages; i++) { %> <% if (i ===
-                currentPage) { %>
-               <span class="current-page"><%= i %></span>
-               <% } else { %>
-               <a href="?page=<%= i %>"><%= i %></a>
-               <% } %> <% } %> <% if (currentPage < totalPages) { %>
-               <a href="?page=<%= currentPage + 1 %>">Next &raquo;</a>
-               <% } %>
-   </div>
+            <a href="?page=<%= currentPage - 1 %>&filterType=<%= filterType %>&startDate=<%= startDate %>&endDate=<%= endDate %>">&laquo; Previous</a>
+        <% } %>
+        <% for (let i = 1; i <= totalPages; i++) { %>
+            <% if (i === currentPage) { %>
+                <span class="current-page"><%= i %></span>
+            <% } else { %>
+                <a href="?page=<%= i %>&filterType=<%= filterType %>&startDate=<%= startDate %>&endDate=<%= endDate %>"><%= i %></a>
+            <% } %>
+        <% } %>
+        <% if (currentPage < totalPages) { %>
+            <a href="?page=<%= currentPage + 1 %>&filterType=<%= filterType %>&startDate=<%= startDate %>&endDate=<%= endDate %>">Next &raquo;</a>
+        <% } %>
+    </div>
+    
    </main>
 </div>
 <script>
@@ -137,18 +145,6 @@ document.addEventListener('DOMContentLoaded', () => {
         excelForm.endDate.value = endDate.value;
     });
 });
-
-
-// document.getElementById('report-type').addEventListener('change', (e) => {
-//     const dateFields = document.getElementById('date-fields');
-//     if (e.target.value === 'custom-date') {
-//         dateFields.style.display = 'inline';
-//     } else {
-//         dateFields.style.display = 'none';
-//     }
-// });
-
-
 
 
   </script>

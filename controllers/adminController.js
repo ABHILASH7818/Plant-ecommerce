@@ -39,48 +39,6 @@ exports.postlogin= async(req,res)=>{
     }
 }
 
-// exports.getadminpanel =async(req,res)=>{
-//     try {
-//         if(req.session.admin){
-//             const filterType = req.query.filterType || 'yearly'; // Default to 'yearly' if no filter is selected
-//     const now = new Date();
-//     let startDate;
-
-//     // Determine the start date based on filterType
-//     if (filterType === 'yearly') {
-//       startDate = new Date(now.getFullYear(), 0, 1); // January 1st of the current year
-//     } else if (filterType === 'monthly') {
-//       startDate = new Date(now.getFullYear(), now.getMonth(), 1); // First day of the current month
-//     } else if (filterType === 'weekly') {
-//       const startOfWeek = now.getDate() - now.getDay(); // Calculate the start of the week
-//       startDate = new Date(now.getFullYear(), now.getMonth(), startOfWeek);
-//     } else {
-//       return res.status(400).send('Invalid filter type');
-//     }
-
-//     // Fetch orders based on the startDate
-//     const orders = await Order.find({ createdAt: { $gte: startDate } });
-
-//     // Example data for chart
-//     const chartData = {
-//       labels: ['Order 1', 'Order 2', 'Order 3'], // Replace with actual labels
-//       data: orders.map(order => order.totalPrice), // Replace with actual data
-//     };
-
-//     res.render('admin/adminhome', {
-//       orders,
-//       chartData,
-//       filterType,
-//     });
-//         }else{
-//             return res.redirect('/admin')
-//         }
-        
-//     } catch (error) {
-//         console.log("adminpanel page not found");
-//         res.status(404).send("page not found")
-//     }
-// }
 
 exports.getadminpanel = async (req, res) => {
     try {
@@ -187,7 +145,7 @@ exports.getadminpanel = async (req, res) => {
             $sort: { totalQuantity: -1 }
           },
           {
-            $limit: 4
+            $limit: 5
           }
         ]);
           
@@ -233,7 +191,7 @@ exports.getadminpanel = async (req, res) => {
               $sort: { totalQuantity: -1 } // Sort by totalQuantity in descending order
           },
           {
-              $limit: 4 // Limit to top 4 categories
+              $limit: 5 // Limit to top 4 categories
           }
       ]);
       

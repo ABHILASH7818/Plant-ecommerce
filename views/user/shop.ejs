@@ -21,23 +21,18 @@
         </div>
 
         <!-- Price Filter -->
-        <div class="filter-group">
+         <div class="filter-group">
+        
           <label>Price</label>
-          <select name="minPrice" class="form-select">
-            <option value="">Min Price</option>
-             <option value="0">₹0</option>
-              <option value="100">₹100</option>
-              <option value="200">₹200</option>
-          </select>
-          <br>
-          <select name="maxPrice" class="form-select">
-            <option value="">Max Price</option>
-            <!-- <option value="">Max Price</option> -->
-            <option value="100">₹100</option>
-            <option value="300">₹300</option>
-            <option value="500">₹500</option>
-          </select>
-        </div>
+            <input type="text" name="minPrice" placeholder="minPrice.."  >
+            <br>
+            <input type="text" name="maxPrice" placeholder="maxPrice.."  >
+          
+       
+      </div>
+
+        
+          
 
         <!-- Reset and Submit -->
         <div>
@@ -94,8 +89,8 @@
                   <h6>Rating - <%= product[i].rating %>/5</h6>
                   
                   <%if(product[i].productOffer > 0){%>
-                    <p>Price:  <span class="discount-price"> ₹ <%=item.productId.salePrice%></span>
-                      <span class="original-price">₹<%=item.productId.regularPrice%></span>
+                    <p>Price:  <span class="discount-price"> ₹ <%=product[i].salePrice%></span>
+                      <span class="original-price">₹<%=product[i].regularPrice%></span>
                       <span class="offer">( <%=product[i].productOffer%>% Off)</span>
                       </p>
                   <%} else if (product[i].category.categoryOffer > 0 ) {%>

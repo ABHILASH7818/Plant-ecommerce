@@ -11,13 +11,6 @@
         <div class="mb-3" id="otp1">
              <!-- <label for="otp">Enter OTP:</label> -->
                     <input type="text" id="otp" name="otp" class="form-control " required maxlength="6" pattern="\d*" />
-
-            <!-- <input type="text" maxlength="1" required>
-            <input type="text" maxlength="1" required>
-            <input type="text" maxlength="1" required>
-            <input type="text" maxlength="1" required>
-            <input type="text" maxlength="1" required>
-            <input type="text" maxlength="1" > -->
         </div> 
       
         <button type="submit" class="verify-button" onclick="validateOtp()" >Verify</button>
@@ -28,83 +21,10 @@
     </div>
     <form action="/resend-otp" method="post">
     <button  type="submit" id="resend-button" class="resend-button" disabled>Resend OTP</button></form>
-    <!-- <button id="resend-button" class="resend-button"  ><a class="nav-link" href="">Resend OTP</a></button> -->
+    <script src="/script/otp.js"></script>
 </div>
 </div>
-<!-- onclick="resendOTP()" -->
-<!-- <script>
-    function validateOtp(){
-//         Swal.fire({
-//   position: "top-end",
-//   icon: "success",
-//   title: "Your work has been saved",
-//   showConfirmButton: false,
-//   timer: 1500
-// });
-        const otpInput = document.getElementById('otp').value;
-        axios.post('/verify-otp', { otpInput })
-                .then(response => {
-                    if (response.data.success) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Success',
-                            timer: 3000,
-                            text: response.data.message
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            timer: 3000,
-                            text: response.data.message
-                        });
-                    }
-                })
-                .catch(error => {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: 'Something went wrong!'
-                    });
-                });
-         -->
-      
-        <!-- // $.ajax({
-        //     type:"post",
-        //     url: "/verify-otp",
-        //     data: {otp:oupInput},
-        //     success: function(response){
-        //         if(response.success){
-        //             swal.fire({
-        //                 icon:"success",
-        //                 title: "OTP varified successfully",
-        //                 showCofirmButtom : false,
-        //                 timer :1500,
-        //             }).then(()=>{
-        //                 window.location.href = response.redirectUrl;
-        //             })
-        //         }else{
-        //             swal.fire({
-        //                 icon: 'error',
-        //                 title : "Error",
-        //                 text: response.message,
-
-        //             })
-        //         }
-        //     },
-        //     error: function(){
-        //         swal.fire({
-        //                 icon: 'error',
-        //                 title : "Invalid Otp",
-        //                 text: "please try again",
-
-        //             })
-        //     }
-        // })
-        // return false;
-    }
-
 
    
-</script> -->
+
 <%- include('../../views/partials/footer') %>

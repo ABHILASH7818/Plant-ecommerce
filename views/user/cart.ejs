@@ -27,7 +27,8 @@
             <h6><%= item.productId.productName %></h6>
             <p>Color: <strong><%= item.productId.color %></strong></p>
             <p>Category: <Strong><%=item.productId.category.name%></Strong></p>
-            <p>Stock Status: <strong style="color: green;"> In Stock</strong></p>
+            <p class="hidden" id="stock"><%= item.productId.stock %></p>
+            <p>Stock Status: <strong style="color: green;" > In Stock</strong></p>
             <%if( item.productId.category.categoryOffer > 0 ){%>
               <p>Product Price:  <span class="discount-price"> ₹ <%=item.productId.salePrice%></span>
               <span class="original-price">₹<%=item.productId.regularPrice%></span>
@@ -61,11 +62,10 @@
         <hr>
         <p >Price : <strong  id="totalAmount">₹<%=totalprice%>.00</strong></p>
         <p>Discount: <strong style="color: rgb(241, 59, 59);">– 0</strong></p>
-        <!-- <p>Platform Fee: <strong>₹3</strong></p> -->
+        
         <p>Delivery Charges: <strong style="text-decoration: line-through;"></strong> <strong style="color: green;">Free</strong></p>
         <hr>
         <p  style="font-size: 1.2em;">Total Amount:<strong id="finalAmount"> ₹<%=totalprice%>.00</strong></p>
-        <!-- <p style="color: green; font-weight: bold;">You will save ₹5,727 on this order</p> -->
      <form action="/checkout" method="post"> <button class="checkout-btn">Proceed to Checkout</button></form>
     </div>
   </div>
@@ -77,7 +77,8 @@
     const priceElements = document.querySelectorAll(".discount-price");
     const totalAmountElement = document.getElementById("totalAmount");
     const totaldiscountElement= document.getElementById("finalAmount");
-  
+    const stock= document.getElementById("stock").textContent;
+  console.log("stock",stock)
     decreaseButtons.forEach((btn, index) => {
       btn.addEventListener("click", () => {
         let quantity = parseInt(quantityInputs[index].value);
@@ -91,7 +92,14 @@
     increaseButtons.forEach((btn, index) => {
       btn.addEventListener("click", () => {
         let quantity = parseInt(quantityInputs[index].value);
-        if(quantity<10){
+        if (stock <=quantity) {
+          swal.fire({
+          icon: 'error',
+          title: 'Insufficient stock for product!',
+          confirmButtonText: 'OK',
+        });
+          }else if(quantity<10){
+        
             quantityInputs[index].value = quantity + 1;
         updatePrices();
         }

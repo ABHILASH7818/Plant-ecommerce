@@ -10,11 +10,6 @@
         <% for(let i=0;i<offer.length;i++){%>
           <img src="/uploads/<%=offer[i].image%>" alt="offer Image" class="slide">
        <% }%>
-        <!-- <img src="41f+uG+cjjL._SY300_SX300_.jpg" alt="Image 1" class="slide">
-        <img src="516eLyYOXFL._SL1100_.jpg" alt="Image 2" class="slide">
-        <img src="81y0AfTTd6L._SX679_.jpg" alt="Image 3" class="slide">
-        <img src="5364d3cc-8220-4d1a-a3d1-0879d80a0b49._CR0,0,3000,600_SX1920_.jpg" alt="Image 3" class="slide"> -->
-        <!-- Add more images as needed -->
       </div>
       <button class="arrow left-arrow" onclick="prevSlide()">&#10094;</button>
       <button class="arrow right-arrow" onclick="nextSlide()">&#10095;</button>
@@ -42,11 +37,6 @@
         <div class="card-body">
          <h5 class="card-title"> <%=products[i].productName%></h5>
          <h6> Rating  -  <%=products[i].rating%>/5</h6>
-         <!-- <h6><i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-          <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-          <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-          <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-          <i class="fa-regular fa-star-half-stroke" style="color: #FFD43B;"></i></h6> -->
           <%if(products[i].productOffer > 0){%>
             <span class="card-text">Price ₹<%=products[i].salePrice%> </span>
               <span class="original-price">₹<%=products[i].regularPrice%></span>
@@ -58,116 +48,22 @@
           <%} else {%>
             <span class="card-text">Price ₹<%=products[i].salePrice%> </span>
           <%}%>
-          <a  href="#" class=" class btn btn-primary  cart-btn"> <i class="fa-solid fa-cart-shopping"></i></a>
+          <form action="/add-to-cart/<%= products[i]._id %>" method="post">
+            <button class="btn btn-primary cart-btn">
+              <i class="fa-solid fa-cart-shopping"></i>
+            </button>
+          </form>
         </div>
       </div>
        
 
-      <!-- <div class="card" >
-        <img src="71iRMuC+-KL._SL1500_.jpg" class="card-img-top" alt="...">
-        <div class="card-body">
-          <h5 class="card-title">Card title</h5>
-          <h6><i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-            <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-            <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-            <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-            <i class="fa-regular fa-star-half-stroke" style="color: #FFD43B;"></i></h6>
-          <span class="card-text"> Price</span>
-          <a  href="#" class="cart btn btn-primary"><i class="fa-solid fa-cart-shopping"></i> </a>
-        </div>
-      </div>
-      <div class="card" >
-        <img src="51hE8+XEUBL._SL1080_.jpg" class="card-img-top" alt="...">
-        <div class="card-body">
-          <h5 class="card-title">Card title</h5>
-          <h6><i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-            <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-            <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-            <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-            <i class="fa-regular fa-star-half-stroke" style="color: #FFD43B;"></i></h6>
-          <span class="card-text">Price</span>
-          <a href="#" class="btn btn-primary"><i class="fa-solid fa-cart-shopping"></i></a>
-        </div>
-      </div>
-      <div class="card">
-        <img src="41f+uG+cjjL._SY300_SX300_.jpg" class="card-img-top" alt="...">
-        <div class="card-body">
-          <h5 class="card-title">Card title</h5>
-          <h6><i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-            <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-            <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-            <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-            <i class="fa-regular fa-star-half-stroke" style="color: #FFD43B;"></i></h6>
-          <span class="card-text">Price.</span>
-          <a href="#" class="btn btn-primary"><i class="fa-solid fa-cart-shopping"></i></a>
-        </div>
-      </div> --><%}%>
+     <%}%>
      <a href="/shop"> <button type="button" class="btn btn-outline-success">View All</button></a>
        </div>
       
     </section>
 
-    <!-- Indoor Plants -->
-   
-    <!-- Outdoor Plants -->
-    <!-- <section class="product-category">
-      <h2>Outdoor Plants</h2>
-      <div class="product container">
-      <div class="card" >
-        <img src="61cnDvsRnOL._SL1000_ (1).jpg" class="card-img-top" alt="...">
-        <div class="card-body">
-          <h5 class="card-title">Card title</h5>
-         <h6><i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-          <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-          <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-          <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-          <i class="fa-regular fa-star-half-stroke" style="color: #FFD43B;"></i></h6>
-          <span class="card-text">Price </span>
-          <a  href="#" class=" class btn btn-primary"> <i class="fa-solid fa-cart-shopping"></i></a>
-        </div>
-      </div>
-      <div class="card" >
-        <img src="71iRMuC+-KL._SL1500_.jpg" class="card-img-top" alt="...">
-        <div class="card-body">
-          <h5 class="card-title">Card title</h5>
-          <h6><i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-            <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-            <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-            <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-            <i class="fa-regular fa-star-half-stroke" style="color: #FFD43B;"></i></h6>
-          <span class="card-text"> Price</span>
-          <a  href="#" class="cart btn btn-primary"><i class="fa-solid fa-cart-shopping"></i> </a>
-        </div>
-      </div>
-      <div class="card" >
-        <img src="51hE8+XEUBL._SL1080_.jpg" class="card-img-top" alt="...">
-        <div class="card-body">
-          <h5 class="card-title">Card title</h5>
-          <h6><i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-            <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-            <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-            <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-            <i class="fa-regular fa-star-half-stroke" style="color: #FFD43B;"></i></h6>
-          <span class="card-text">Price</span>
-          <a href="#" class="btn btn-primary"><i class="fa-solid fa-cart-shopping"></i></a>
-        </div>
-      </div>
-      <div class="card">
-        <img src="41f+uG+cjjL._SY300_SX300_.jpg" class="card-img-top" alt="...">
-        <div class="card-body">
-          <h5 class="card-title">Card title</h5>
-          <h6><i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-            <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-            <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-            <i class="fa-sharp fa-solid fa-star" style="color: #FFD43B;"></i>
-            <i class="fa-regular fa-star-half-stroke" style="color: #FFD43B;"></i></h6>
-          <span class="card-text">Price.</span>
-          <a href="#" class="btn btn-primary"><i class="fa-solid fa-cart-shopping"></i></a>
-        </div>
-      </div>
-      <button type="button" class="btn btn-outline-success">View All</button>
-      </div>
-    </section> -->
+    
   </main>
 
 

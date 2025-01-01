@@ -129,10 +129,10 @@ exports.getProductDetails = async(req,res)=>{
     const userId = req.session.user; 
     const userData = await User.findOne({_id:userId})
   //  console.log(product)
-    res.render("user/product-details",{user:userData,product:product,category:category, products:products})
+    return res.render("user/product-details",{user:userData,product:product,category:category, products:products})
   } catch (error) {
-    console.log("error getting product-details");
-    return res.redirect("/pageerror");
+    console.log("error getting product-details",error);
+    return res.redirect("/pagenotfound");
   }
 }
 
@@ -147,17 +147,7 @@ exports.postEditProduct = async(req,res)=>{
       const newImages = req.files.map((file) => file.filename); // Uploaded images
       const updatedImages = [...existingImages, ...newImages]; // Combine old and new images
 
-      
-      
-  
-      
-      
-      // for (let i = 0; i < images.length; i++) {
-      //   imgarr.push(images[i].filename);
-      // }
-  
-      
-      // console.log("Uploaded images:", imgarr);
+    
 
       const categoryId = await Category.findOne({name:product.category});
              if(!product.category){

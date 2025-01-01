@@ -79,7 +79,7 @@ exports.postAddOffer = async(req,res)=>{
     res.redirect("/admin/offers")
     } catch (error) {
         console.error(error);
-    res.status(500).send('An error occurred while adding the offer.')
+    res.status(500).send('An error occurred while adding the offer.',error)
     }
 }
 
@@ -132,11 +132,7 @@ exports.postEditOffer = async (req,res)=>{
         const id = req.params.id;
         const { name, discount, type, typeId, startDate, expireDate } = req.body;
         const image = req.file ;
-        // const existCategory = await Category.findOne({name:req.name});
        
-        // if(existCategory){
-        //    return res.render("admin/edit-category",{message:" not exist category"})
-        // }
         const updateoffer  = await Offer.findByIdAndUpdate(id,{
             name:name,
             discount:discount,
@@ -150,7 +146,7 @@ exports.postEditOffer = async (req,res)=>{
         });
 
        
-    //   await  Category.findByIdAndUpdate(req.params.id,req.body);
+    
         if(updateoffer){
             
             if (type === 'category') {
@@ -180,7 +176,7 @@ exports.postEditOffer = async (req,res)=>{
         // return res.redirect('/admin/category');
     } catch (error) {
         console.log("change is not added");
-        res.status(404).send({error:"Internal server error"})        
+        res.status(404).send({error:"Internal server error",})        
     }
 }
 
