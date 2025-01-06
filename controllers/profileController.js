@@ -290,7 +290,7 @@ exports.getorder = async (req, res) => {
     const totalOrder = await Order.countDocuments();
     const totalPages = Math.ceil(totalOrder / limit);
     // console.log("product",orderData[1].products)
-    res.render("user/orderlist", {
+    res.render("user/orderList", {
       order: orderData,
       user: userData,
       currentPage: page,
