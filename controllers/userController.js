@@ -142,7 +142,7 @@ exports.verifyotp = async (req, res) => {
       });
       await newUser.save();
 
-      res.render("user/login");
+      res.redirect("/login");
     } else {
       res.render("user/verify-otp", {
         message: "Invalid Otp",

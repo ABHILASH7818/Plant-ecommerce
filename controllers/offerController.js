@@ -32,7 +32,7 @@ exports.getAddOffer = async(req,res)=>{
     try {
         const category = await Category.find({status:true})
         const product = await Product.find({})
-        res.render('admin/addOffer',{category:category,product:product})
+        res.render('admin/addoffer',{category:category,product:product})
     } catch (error) {
         console.log("add offer error",error);
         res.redirect('/pagenotfound')
