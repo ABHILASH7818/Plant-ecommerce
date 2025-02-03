@@ -26,14 +26,20 @@
        
         <a href="/productDetails/<%= products[i]._id %>"   >
           <img src="/uploads/<%=products[i].images[0]%>" class="card-img-top" alt="...">
-        </a>
-        <%if(products[i].inWishList === false){%>
-          <span class="wish-list-icon" onclick="addToWishlist('<%= products[i]._id %>')">
-            <i class="fa-regular fa-heart"></i>
+        </a> 
+        <%if( !locals.user ){%>
+          <span class="wish-list-icon" onclick="addToWishlist('<%=products[i]._id%>')" > <i class="fa-regular fa-heart"></i></span>
+          <%} else{%>
+            <%if(wishlist === null){%>
+              <span class="wish-list-icon" onclick="addToWishlist('<%=products[i]._id%>')" > <i class="fa-regular fa-heart"></i></span>
+        <% } else if (wishlist.products.some((pro) => pro._id.toString() === products[i]._id.toString())){%>
+          <span class="wish-list-icon" onclick="addToWishlist('<%= products[i]._id %>')">❤️
+
           </span>
           <%}else{%>
-          <span class="wish-list-icon" onclick="addToWishlist('<%=products[i]._id%>')" >❤️</span>
-         <%}%>
+          <span class="wish-list-icon" onclick="addToWishlist('<%=products[i]._id%>')" > <i class="fa-regular fa-heart"></i></span>
+          <%}%>
+          <%}%>
         <div class="card-body">
          <h5 class="card-title"> <%=products[i].productName%></h5>
          <h6> Rating  -  <%=products[i].rating%>/5</h6>
@@ -75,15 +81,17 @@
        headers: { 'Content-Type': 'application/json' },
        body: JSON.stringify({ productId }),
      })
-       .then((response) => response.json()) // Parse the response JSON
-       .then((data) => {
-         if (data.status) {
-           Swal.fire({
-             icon: 'success',
-             title: 'Wishlist Updated',
-             text: 'Product has been added to your wishlist',
-             timer: 2000,
-           });
+     .then((response) => response.json()) // Parse the response JSON
+    .then((data) => {
+      if (data.status) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Wishlist Updated',
+          text: 'Product has been added to your wishlist',
+          timer: 2000,
+        }).then(() => {
+          location.reload(); // Reload page after alert is dismissed
+        });
          } else {
            Swal.fire({
              icon: 'info',

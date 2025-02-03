@@ -27,14 +27,14 @@ exports.postlogin= async(req,res)=>{
         }
         const checkPassword = await bcrypt.compare(password ,findadmin.password)
        if( !checkPassword){
-        console.log("password wrong")
+        //console.log("password wrong")
        return res.render("admin/login",{message:"Incorrect password"})
        }
        req.session.admin=findadmin._id;
        res.redirect('/admin/dashboard')
         
     } catch (error) {
-        console.error("login found",error);
+       // console.error("login found",error);
         res.render("admin/login",{message:"login failed, please try again later "})
     }
 }
@@ -111,9 +111,7 @@ exports.getadminpanel = async (req, res) => {
           data = aggregatedData.map((item) => item.count);
         }
   
-        console.log("Labels:", labels);
-        console.log("Data:", data);
-  
+       
 
         const aggregateProductData = await Order.aggregate([
           {
@@ -219,7 +217,6 @@ exports.getadminpanel = async (req, res) => {
   
     const totalUsers = await User.countDocuments();
     const totalOrder = await Order.countDocuments();
- console.log("result",totalSales)
         res.render('admin/adminhome', {
           chartData: { labels, data },
           filterType,

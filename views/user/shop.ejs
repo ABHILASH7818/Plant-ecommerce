@@ -77,12 +77,18 @@
                 <a href="/productDetails/<%= product[i]._id %>">
                   <img src="/uploads/<%= product[i].images[0] %>" class="card-img-top" alt="...">
                 </a>
-                <%if(product[i].inWishList === false){%>
-                <span class="wish-list-icon" onclick="addToWishlist('<%= product[i]._id %>')">
-                  <i class="fa-regular fa-heart"></i>
+                <%if(!locals.user){%>
+                  <span class="wish-list-icon" onclick="addToWishlist('<%=product[i]._id%>')" > <i class="fa-regular fa-heart"></i></span>
+                  <%} else{%>
+                    <%if(wishlist === null){%>
+                      <span class="wish-list-icon" onclick="addToWishlist('<%=product[i]._id%>')" > <i class="fa-regular fa-heart"></i></span>
+                <% } else if (wishlist.products.some((pro) => pro._id.toString() === product[i]._id.toString())){%>
+                <span class="wish-list-icon" onclick="addToWishlist('<%= product[i]._id %>')">❤️
+     
                 </span>
                 <%}else{%>
-                <span class="wish-list-icon" onclick="addToWishlist('<%=product[i]._id%>')" >❤️</span>
+                <span class="wish-list-icon" onclick="addToWishlist('<%=product[i]._id%>')" > <i class="fa-regular fa-heart"></i></span>
+                <%}%>
                 <%}%>
                 <div class="card-body">
                   <h5 class="card-title"><%= product[i].productName %></h5>
@@ -156,6 +162,8 @@
           title: 'Wishlist Updated',
           text: 'Product has been added to your wishlist',
           timer: 2000,
+        }).then(() => {
+          location.reload(); // Reload page after alert is dismissed
         });
       } else {
         Swal.fire({
@@ -164,7 +172,7 @@
           text: data.message,
           timer: 2000,
         });
-      }
+      }     
     })
     .catch((error) => {
       Swal.fire({

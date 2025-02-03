@@ -86,7 +86,7 @@ exports.postEditProfile = async (req, res) => {
     req.session.userData = { name, email, phone };
 
     res.render("user/profile-update-otp");
-    console.log("OTP Sent", otp);
+   // console.log("OTP Sent", otp);
   } catch (error) {
     console.log("signup error", error);
     res.status(404).redirect("/pagenotfound");
@@ -238,7 +238,7 @@ exports.postEditAddress = async (req, res) => {
         },
       }
     );
-    console.log("address :", Address.address);
+   // console.log("address :", Address.address);
     res.redirect("/address");
   } catch (error) {
     console.log("address not update", error);

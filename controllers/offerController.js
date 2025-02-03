@@ -44,7 +44,7 @@ exports.postAddOffer = async(req,res)=>{
         try {
             const { name, discount, type, typeId, startDate, expireDate } = req.body;
             const image = req.file ;
-           console.log("image",image)
+           //console.log("image",image)
     
     const newOffer = new Offer({
       name,
@@ -88,7 +88,7 @@ exports.deleteOffer = async(req,res)=>{
     try {
         const offerId =req.params.id;
         const offerData = await Offer.findById(offerId);
-        console.log("offerdata",offerData.typeId,offerData.type)
+        //console.log("offerdata",offerData.typeId,offerData.type)
         if(offerData.type == "category"){
             await Category.findByIdAndUpdate(offerData.typeId, { categoryOffer: 0 });
             const category =await Category.findById(offerData.typeId)

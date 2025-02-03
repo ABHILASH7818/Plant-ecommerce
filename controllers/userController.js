@@ -1,5 +1,6 @@
 const User = require("../models/usermodel");
 const Product = require("../models/productmodel");
+const Wishlist = require("../models/wishlistmodel");
 const Category = require("../models/categorymodel");
 const Offer = require("../models/offermodel");
 const mongoose = require("mongoose");
@@ -22,9 +23,11 @@ exports.loadHome = async (req, res) => {
     productData = productData.slice(0, 4);
     if (req.session.user) {
       const userId = req.session.user;
+      let wishlist = await Wishlist.findOne({ userId }).populate('products');
       const userData = await User.findOne({ _id: userId });
       res.render("user/index", {
         user: userData,
+        wishlist: wishlist,
         products: productData,
         offer: offer,
       });
@@ -108,7 +111,7 @@ exports.postsignup = async (req, res) => {
 
     res.render("user/verify-otp");
 
-    console.log("OTP Sent", otp);
+    //console.log("OTP Sent", otp);
   } catch (error) {
     console.log("signup error", error);
     res.status(404).redirect("/pageNoteFound");
@@ -126,7 +129,7 @@ const hashedPassword = async function (password) {
 exports.verifyotp = async (req, res) => {
   try {
     const { otp } = req.body;
-    console.log(otp);
+    //console.log(otp);
 
     if (otp == req.session.userOtp) {
       const user = req.session.userData;
@@ -164,7 +167,7 @@ exports.resendOtp = async (req, res) => {
     const emailSent = await sendVerificationEmail(email, otp);
     if (emailSent) {
       req.session.userOtp = otp;
-      console.log("Resend OTP :", otp);
+     // console.log("Resend OTP :", otp);
       res.render("user/verify-otp", { message: "otp send success" });
     } else {
       res.render("user/verify-otp", { message: "failed to sent otp" });
@@ -203,7 +206,7 @@ exports.postForgotPassword = async (req, res) => {
     req.session.email = email;
     res.render("user/forgot-password-otp");
 
-    console.log("OTP Sent", otp);
+    //console.log("OTP Sent", otp);
   } catch (error) {
     console.log("Forgot Password  otp page not found", error);
     res.status(404).send("page not found");
@@ -288,10 +291,10 @@ exports.logout = async (req, res) => {
   try {
     req.session.destroy((err) => {
       if (err) {
-        console.log("session destruction error", err.message);
+        //console.log("session destruction error", err.message);
         return res.redirect("/pagenotefound");
       }
-      console.log("logout");
+     // console.log("logout");
       return res.redirect("/login");
     });
   } catch (error) {
@@ -304,36 +307,9 @@ exports.logout = async (req, res) => {
 exports.getShopPage = async (req, res) => {
   try {
     const { category, minPrice, maxPrice, search, sort } = req.query;
-    if (!req.query) {
-      const categoryData = await Category.find({ status: true });
-      const userId = req.session.user;
-      const userData = await User.findOne({ _id: userId });
-      const page = parseInt(req.query.page) || 1;
-      const limit = 6;
-      const skip = (page - 1) * limit;
-
-      // Fetch the paginated category data
-      const productData = await Product.find({})
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(limit)
-        .populate("category")
-        .exec();
-
-      const totalProducts = await Product.countDocuments({ stock: { $gt: 0 } });
-      const totalPages = Math.ceil(totalProducts / limit);
-
-      return res.render("user/shop", {
-        user: userData,
-        product: productData,
-        category: categoryData,
-        currentPage: page,
-        totalPages: totalPages,
-        totalProducts: totalProducts,
-      });
-    }
     if (req.query) {
       const userId = req.session.user;
+      let wishlist = await Wishlist.findOne({ userId }).populate('products');
       const categories = await Category.find({ status: true });
       const page = parseInt(req.query.page) || 1; // Current page
       const limit = 6; // Items per page
@@ -398,6 +374,7 @@ exports.getShopPage = async (req, res) => {
       res.render("user/shop", {
         product: products,
         category: categories,
+        wishlist: wishlist,
         selectedCategory: category || "",
         user: userId,
         currentPage: page,
@@ -411,69 +388,3 @@ exports.getShopPage = async (req, res) => {
   }
 };
 
-exports.getShopFilterPage = async (req, res) => {
-  try {
-    const { category, minPrice, maxPrice, search, sort } = req.query;
-    const userId = req.session.user;
-    const categories = await Category.find({ status: true });
-    let filter = {};
-    let sortOption = {};
-
-    // Category Filtering
-    if (category) {
-      const categoryDoc = await Category.findOne({ name: category });
-      if (categoryDoc) {
-        filter.category = categoryDoc._id;
-      }
-    }
-
-    // Price Filtering
-    if (minPrice || maxPrice) {
-      filter.salePrice = {};
-      if (minPrice) filter.salePrice.$gte = parseFloat(minPrice);
-      if (maxPrice) filter.salePrice.$lte = parseFloat(maxPrice);
-    }
-
-    // Search Filtering
-    if (search) {
-      filter.productName = { $regex: search, $options: "i" }; // Case-insensitive search
-    }
-
-    // Sorting
-    if (sort) {
-      switch (sort) {
-        case "price-asc":
-          sortOption.salePrice = 1;
-          break;
-        case "price-desc":
-          sortOption.salePrice = -1;
-          break;
-        case "name-asc":
-          sortOption.productName = 1;
-          break;
-        case "name-desc":
-          sortOption.productName = -1;
-          break;
-        case "new":
-          sortOption.createdAt = -1;
-          break;
-        default:
-          break;
-      }
-    }
-
-    // Fetch and Render Products
-    const products = await Product.find(filter)
-      .populate("category")
-      .sort(sortOption);
-
-    res.render("user/shop", {
-      product: products,
-      category: categories,
-      user: userId,
-    });
-  } catch (error) {
-    console.error("Error in getShopFilterPage:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-};

@@ -183,11 +183,11 @@ exports.updateCart = async (req, res) => {
   exports.postOrderSummary =  async (req, res) => {
   
       if(req.query.razorpayOrderId && req.query.retry){
-        console.log('request for retry payment reached herer', req.query)
-        console.log('request for retry payment reached here order id differnciated', req.query.razorpayOrderId)
+       // console.log('request for retry payment reached herer', req.query)
+       // console.log('request for retry payment reached here order id differnciated', req.query.razorpayOrderId)
         //find the failed order user try to success
         const retryOrder = await Order.findOne({_id:req.query.razorpayOrderId})
-        console.log("retry retry-order",retryOrder)
+       // console.log("retry retry-order",retryOrder)
         //create a new razorpay order
         try {
           const options = {
@@ -304,10 +304,10 @@ exports.updateCart = async (req, res) => {
     exports.verifypayment =  async (req, res) => {
       const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
       const orderId = req.query.orderId;
-    console.log("verify",req.query.orderId)
+   // console.log("verify",req.query.orderId)
     try {
   
-      console.log("razorpay orderid" , razorpay_order_id)
+     // console.log("razorpay orderid" , razorpay_order_id)
       const generatedSignature = crypto
         .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
         .update(`${razorpay_order_id}|${razorpay_payment_id}`)
@@ -329,7 +329,7 @@ exports.updateCart = async (req, res) => {
           }
           product.stock -= item.quantity;
           await product.save();
-          console.log(`Updated stock for product ${product.productName}: ${product.stock}`);
+          //console.log(`Updated stock for product ${product.productName}: ${product.stock}`);
         })
 
         console.log(updatedata)
@@ -371,7 +371,7 @@ exports.updateCart = async (req, res) => {
     try {
       const { error } = req.body; // Razorpay sends the error details in the request body
       const razorpayOrderId = req.query.orderId;
-      console.log("orderid :",razorpayOrderId)
+      //console.log("orderid :",razorpayOrderId)
 
       if (!error) {
           return res.status(400).json({
@@ -397,7 +397,7 @@ exports.updateCart = async (req, res) => {
         { _id: razorpayOrderId },
         { $set: { paymentStatus: 'Failed', orderStatus: 'Pending' } }
       );
-      console.log(updatedata)
+     // console.log(updatedata)
      
       // Respond to the user with a friendly message
       res.status(200).json({
@@ -423,7 +423,7 @@ exports.paymentCancel  =async(req,res)=>{
   try {
     const { error } = req.body; // Razorpay sends the error details in the request body
     const orderId = req.query.orderId;
-    console.log("orderid :",orderId)
+    //console.log("orderid :",orderId)
 
     if (!error) {
         return res.status(400).json({
@@ -442,7 +442,7 @@ exports.paymentCancel  =async(req,res)=>{
         metadata: error.metadata || {},
     };
 
-    console.error("Payment  cancelled Details:", errorDetails);
+   // console.error("Payment  cancelled Details:", errorDetails);
 
     res.status(200).json({
       success: false,

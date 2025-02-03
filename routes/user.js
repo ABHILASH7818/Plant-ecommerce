@@ -36,7 +36,7 @@ router.get('/logout',userController.logout)
 
 //productlist management
 router.get('/shop',userController.getShopPage)
-router.get('/shopfilter',userController.getShopFilterPage)
+
 
 //product management
 router.get("/productDetails/:id",productController.getProductDetails)

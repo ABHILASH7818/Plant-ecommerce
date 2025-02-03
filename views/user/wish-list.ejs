@@ -10,6 +10,10 @@
 </head>
 <body>
   <div class="wishlist-container">
+    <%if(wishlist === null){%>
+      <h2>My Wishlist</h2>
+      <span>(No product in whishlist)</span>
+      <%} else{%>
     <h1>My Wishlist <span>(<%=wishlist.products.length%>)</span></h1>
   </div>
   <table>
@@ -44,7 +48,7 @@
       <% }) %>
     </tbody>
   </table>
-
+<%}%>
   <script>
     document.querySelectorAll('.delete-btn').forEach(button => {
       button.addEventListener('click', (event) => {

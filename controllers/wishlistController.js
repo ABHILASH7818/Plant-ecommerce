@@ -74,7 +74,7 @@ exports.deleteWishlist = async (req, res) => {
     // console.log("productid",productId)
     const findProduct = await Wishlist.findOne({ products: productId });
     if (!findProduct) {
-      console.log("product not found");
+      //console.log("product not found");
       return res.status(404).send("Product not found");
     }
     await Wishlist.updateOne(

@@ -1,4 +1,5 @@
 const Product = require("../models/productmodel");
+const Wishlist = require("../models/wishlistmodel");
 const Category = require("../models/categorymodel");
 const User = require("../models/usermodel");
 const sharp = require("sharp");
@@ -120,16 +121,16 @@ exports.getEditProduct =  async (req,res)=>{
 //user side
 exports.getProductDetails = async(req,res)=>{
   try {
+    const userId = req.session.user; 
+    const userData = await User.findOne({_id:userId})
     const productId =req.params.id; 
     const product = await Product.findById(productId);
     const category = product.category;
-    console.log("product category",category)
+     let wishlist = await Wishlist.findOne({ userId }).populate('products');
     const products =await Product.find({category:category}).populate('category');
-    console.log("similar product",products)
-    const userId = req.session.user; 
-    const userData = await User.findOne({_id:userId})
+    
   //  console.log(product)
-    return res.render("user/product-details",{user:userData,product:product,category:category, products:products})
+    return res.render("user/product-details",{user:userData,wishlist:wishlist,product:product,category:category, products:products})
   } catch (error) {
     console.log("error getting product-details",error);
     return res.redirect("/pagenotfound");

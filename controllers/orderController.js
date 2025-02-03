@@ -27,9 +27,9 @@ exports.getOrderSuccess = async (req, res) => {
         model: "Product",
       });
     const orderId = orderData.id;
-    console.log("orderrid", orderId);
+   // console.log("orderrid", orderId);
     
-    console.log(" adressss", orderData.address);
+   // console.log(" adressss", orderData.address);
 
     
     const addressId = orderData.address;
@@ -88,7 +88,7 @@ exports.approve = async (req, res) => {
   try {
     const orderId = req.params.id;
     const order = await Order.findById(orderId);
-    console.log("order", order);
+    //console.log("order", order);
     if (order.orderStatus === "Processed") {
       await Order.findByIdAndUpdate(orderId, { orderStatus: "Shipped" }); // Update status to 'Processed'
       return res.redirect("/admin/order"); // Redirect back to the order page
@@ -117,9 +117,9 @@ exports.cancel = async (req, res) => {
 exports.couponsValidate = async (req, res) => {
   try {
     const { couponCode, totalAmount } = req.body;
-    console.log("values", couponCode);
+    //console.log("values", couponCode);
     const coupon = await Coupon.findOne({ code: couponCode });
-    console.log("vcoupon", coupon);
+    //console.log("vcoupon", coupon);
     if (!coupon) {
       return res.status(400).json({ message: "Invalid coupon code." });
     }
@@ -246,11 +246,11 @@ exports.orderReturn = async (req, res) => {
       ["Processed", "Shipped", "Pending"].includes(orderData.orderStatus)
     ) {
       orderData.orderStatus = "Cancelled";
-      console.log("orderstatus pending change");
+      //console.log("orderstatus pending change");
       await orderData.save();
       return res.redirect("/order");
     }
-    console.log("orderstatus  change");
+    //console.log("orderstatus  change");
   } catch (error) {
     console.log("Order return failed", error);
     res.redirect("/pagenotfound");
@@ -411,7 +411,7 @@ exports.getSalesReportpdf = async (req, res) => {
       const today = new Date();
       filterCriteria.createAT = { $gte: today.setMonth(today.getMonth() - 1) };
     }
-    console.log("filterCriteria", filterCriteria);
+    //console.log("filterCriteria", filterCriteria);
 
     const orders = await Order.find(filterCriteria); // Replace with your database query logic
 
