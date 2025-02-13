@@ -38,13 +38,14 @@
                         <label class="input-group-text" for="inputGroupSelect">Type</label>
                         <select class="form-select" id="Select-type" name="type">
                           <option value="<%=offer.type%>">Choose...</option>
-                          <option value="category">Category Offer</option>
-                          <option value="product">Product Offer</option>
+                          <option value="category" <%= offer.type === 'category' ? 'selected' : '' %>>Category Offer</option>
+                          <option value="product" <%= offer.type === 'product' ? 'selected' : '' %>>Product Offer</option>
+                      </select>
                          
-                        </select>
+                        
                       </div>
                     
-                      <div id="dynamicField" name="typeId" class="input-group mb-3" style="display: none;" ></div>
+                      <div id="dynamicField" name="typeId" class="input-group mb-3"></div>
                    
                               
              <div class="form-group">     
@@ -82,42 +83,53 @@
 </div>
 
 <script>
-    document.getElementById('Select-type').addEventListener('change', function () {
-        const dynamicField = document.getElementById('dynamicField');
-        dynamicField.innerHTML = ''; // Clear any existing dynamic field
+    document.addEventListener("DOMContentLoaded", function () {
+    const dynamicField = document.getElementById("dynamicField");
+    const selectType = document.getElementById("Select-type");
 
-        if (this.value === 'category') {
+    function showOfferSubtype(type) {
+        dynamicField.innerHTML = ''; // Clear existing content
+        if (type === 'category') {
             dynamicField.innerHTML = `
                 <div class="input-group mb-3" id="category-select">
                     <label class="input-group-text" for="categoryInput">Category</label>
                     <select class="form-select" id="categoryInput" name="typeId">
                         <% for (let i = 0; i < category.length; i++) { %>
-                            <option value="<%= category[i]._id %>">
+                            <option value="<%= category[i]._id %>" <%= offer.typeId === category[i]._id.toString() ? 'selected' : '' %>>
                                 <%= category[i].name %>
                             </option>
                         <% } %>
                     </select>
                 </div>
             `;
-            dynamicField.style.display = 'block';
-        } else if (this.value === 'product') {
+            dynamicField.style.display = "block";
+        } else if (type === 'product') {
             dynamicField.innerHTML = `
                 <div class="input-group mb-3" id="product-select">
                     <label class="input-group-text" for="productInput">Product</label>
                     <select class="form-select" id="productInput" name="typeId">
                         <% for (let i = 0; i < product.length; i++) { %>
-                            <option value="<%= product[i]._id %>">
+                            <option value="<%= product[i]._id %>" <%= offer.typeId === product[i]._id.toString() ? 'selected' : '' %>>
                                 <%= product[i].productName %>
                             </option>
                         <% } %>
                     </select>
                 </div>
             `;
-            dynamicField.style.display = 'block';
+            dynamicField.style.display = "block";
         } else {
-            dynamicField.style.display = 'none';
+            dynamicField.style.display = "none";
         }
+    }
+
+    // Load the correct subtype on page load
+    showOfferSubtype(selectType.value);
+
+    // Update subtype dropdown when type changes
+    selectType.addEventListener("change", function () {
+        showOfferSubtype(this.value);
     });
+});
 
     const offerForm = document.getElementById('offerForm');
     const name = document.getElementById("name");
