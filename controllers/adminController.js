@@ -215,7 +215,7 @@ exports.getadminpanel = async (req, res) => {
 ]);
 
   
-    const totalUsers = await User.countDocuments();
+    const totalUsers = await User.countDocuments({ isAdmin: false });
     const totalOrder = await Order.countDocuments();
         res.render('admin/adminhome', {
           chartData: { labels, data },

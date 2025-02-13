@@ -28,6 +28,7 @@ router.get("/unblockCustomer",adminAuth,customerController.unblockUser)
 router.get("/order",adminAuth,orderController.getOrderList)
 router.get("/approve/:id",adminAuth,orderController.approve)
 router.post("/cancel/:id",adminAuth,orderController.cancel)
+router.get("/orderview/:id",adminAuth,orderController.getOrderview)
 // category management
 router.get("/category",adminAuth,categoryController.categoryInfo)
 router.get("/addcategory",adminAuth,categoryController.getaddCategory)

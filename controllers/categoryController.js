@@ -72,11 +72,13 @@ exports.getEditCategory = async (req,res)=>{
 exports.editCategory = async (req,res)=>{
     try {
         const id = req.params.id;
+        const category = await Category.findById(req.params.id);
         const {name,description,status} = req.body;
-        const existCategory = await Category.findOne({name:req.name});
-       
+        //const existCategory = await Category.findOne({name:req.name});
+        const existCategory = await Category.findOne({name});
         if(existCategory){
-           return res.render("admin/edit-category",{message:" not exist category"})
+            if(name !== category.name)
+           return res.render("admin/edit-category",{category,message:"Category already exists"})
         }
         const updateCategory  = await Category.findByIdAndUpdate(id,{
             name:name,
@@ -93,7 +95,7 @@ exports.editCategory = async (req,res)=>{
         else{
             return res.render("admin/edit-category",{message:"category not found"})
         }
-        return res.redirect('/admin/category');
+        
     } catch (error) {
         console.log("change is not added");
         res.status(404).send({error:"Internal server error"})        

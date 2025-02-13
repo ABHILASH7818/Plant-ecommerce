@@ -26,6 +26,7 @@
            <thead>
                <tr>
                 <th>User Name</th>
+                <th>Product Name</th>
                 <th>payment Method</th>
                 <th>Total Price</th>
                 <th>Date</th>
@@ -37,15 +38,25 @@
             <%for (let i=0;i<order.length;i++){%>
                <tr>
                 <td><%=order[i].userId.name %></td>
+                <td>
+                    <ol>
+                     <% order[i].orderItems.forEach((item,index) =>{ %>
+                        <li><%= item.productId.productName  %></li>
+                     <%})%>
+                    </ol>
+                </td>
                 <td><%=order[i].paymentMethod%></td>
                 <td><%=order[i].finalAmount%></td>
                 <td><%= new Date(order[i].createAT).toLocaleDateString() %></td>
                 <td><%=order[i].orderStatus%></td>
                    <td>
+                    <% if (order[i].orderStatus !== "Cancelled" && order[i].orderStatus !== "Returned") { %>
                     <button class="edit-btn"><a class="nav-link" href="/admin/approve/<%=order[i]._id%>">aprove</a></button>
                        <form action="/admin/Cancel/<%=order[i]._id%>" method="POST" class="cancel-form" style="display:inline;">
                         <button  class="delete-btn">Cancel</button>
                        </form>
+                     <%}%>
+                       <button class="btn btn-primary"><a class="nav-link" href="/admin/orderview/<%=order[i]._id%>">Details</a></button>
                    </td>
                </tr>
               <%}%>

@@ -27,6 +27,7 @@ const orderSchema = new mongoose.Schema({
     invoiceDate : {type:Date,default: Date.now,required:true},
     paymentStatus: {type:String, enum:["COD","Success","Failed","Pending"], required:true},
     orderStatus : {type:String,required:true, enum:["Pending","Processed","Shipped", "Delivered", "Cancelled","Return requested","Returned"]},
+    returnReason :{type:String},
     createAT: {type:Date,default: Date.now,required:true},
     couponApplied : {type:String,enum:["Coupon Applied","No Coupon Applied"],default:"No Coupon Applied"},
     razorpayOrderId:{type:String},

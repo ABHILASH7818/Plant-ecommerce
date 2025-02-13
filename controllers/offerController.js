@@ -1,6 +1,7 @@
 const Product = require("../models/productmodel");
 const Category = require("../models/categorymodel");
-const Offer = require("../models/offermodel")
+const Offer = require("../models/offermodel");
+const { render } = require("ejs");
 
 
 exports.getoffersList = async(req,res)=>{
@@ -39,12 +40,16 @@ exports.getAddOffer = async(req,res)=>{
     }
 }
 exports.postAddOffer = async(req,res)=>{
-    // try {
-    //     const { name, discount, type, typeId, startDate, expireDate } = req.body;
+
         try {
+            const category = await Category.find({status:true})
+            const product = await Product.find({})
             const { name, discount, type, typeId, startDate, expireDate } = req.body;
             const image = req.file ;
-           //console.log("image",image)
+           const existOffer =await Offer.findOne({name});
+           if(existOffer){
+            return res.render('admin/addoffer',{category:category,product:product,message: "Offer already exists"})
+           }
     
     const newOffer = new Offer({
       name,
@@ -132,7 +137,16 @@ exports.postEditOffer = async (req,res)=>{
         const id = req.params.id;
         const { name, discount, type, typeId, startDate, expireDate } = req.body;
         const image = req.file ;
-       
+        const offer = await Offer.findById(req.params.id);
+        const category = await Category.find({status:true})
+        const product = await Product.find({})
+
+        const existOffer =await Offer.findOne({name});
+           if(existOffer){
+            if(name !==offer.name)
+            return res.render('admin/editOffer',{offer:offer,category:category,product:product,message: "Offer already exists"})
+           }
+
         const updateoffer  = await Offer.findByIdAndUpdate(id,{
             name:name,
             discount:discount,

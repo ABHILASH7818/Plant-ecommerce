@@ -41,7 +41,11 @@ exports.getAddCoupon = async(req,res)=>{
  exports.postAddCoupon = async(req,res)=>{
     try {
         const { name, description, code, minPurchase, discount, maxDiscount, usageLimit,  expireDate } = req.body;
-    
+        const existCoupon = await Coupon.findOne({name});
+            if(existCoupon){
+                return res.render("admin/addCoupon",{message:" Coupon already exists"})
+            }
+
         const newCoupon = new Coupon({
           name,
           description,
@@ -76,11 +80,13 @@ exports.getAddCoupon = async(req,res)=>{
     try {
         const id = req.params.id;
         const { name, description, code, minPurchase, discount, maxDiscount, usageLimit,  expireDate } = req.body;
-        // const existCoupon = await Category.findOne({name:req.name});
+        const coupon = await Coupon.findById(req.params.id);
+        const existCoupon = await Coupon.findOne({name});
        
-        // if(existCoupon){
-        //    return res.render("admin/edit-category",{message:" not exist category"})
-        // }
+        if(existCoupon){
+            if(name !== coupon.name)
+            return res.render("admin/editCoupon",{coupon,message:" Coupon already exists"})
+         }
         const updateCoupon  = await Coupon.findByIdAndUpdate(id,{
             name:name,
             description:description,

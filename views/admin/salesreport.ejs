@@ -58,7 +58,7 @@
                <tr>
                 <th>Order ID</th>
                 <th>Payment Method</th>
-                <!-- <th>Quantity</th> -->
+                <th>Product Name</th>
                 <!-- <th>Regular Total Price</th> -->
                 
                 <th>Date</th>
@@ -72,7 +72,13 @@
                 <tr>
                  <td><%=order[i].orderId %></td>
                  <td><%=order[i].paymentMethod%></td>
-                
+                 <td>
+                    <ol>
+                     <% order[i].orderItems.forEach((item,index) =>{ %>
+                        <li><%= item.productId.productName  %></li>
+                     <%})%>
+                    </ol>
+                </td>
                  <td><%= new Date(order[i].createAT).toLocaleDateString() %></td>
                  <td><%= order[i].finalAmount + order[i].discount %></td>
                   <td><%=order[i].discount%></td>

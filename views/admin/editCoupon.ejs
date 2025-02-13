@@ -14,7 +14,7 @@
     </aside>
     <main>
         <!-- Header Navigation Bar -->
-        <h2>Add Coupon</h2>
+        <h2>Edit Coupon</h2>
         <section class="new-form-section">
             <form action="/admin/editCoupon/<%=coupon._id%>" method="post" class="coupon-form" id="couponForm">
                 <% if (typeof message !== 'undefined') { %>
@@ -68,7 +68,7 @@
 
                 <div class="form-group"> 
                     <label for="expireDate">Expire Date</label>
-                <input type="date" id="expireDate" name="expireDate" value="<%=coupon.expireDate%>">
+                <input type="date" id="expireDate" name="expireDate" value="<%= new Date(coupon.expireDate).toISOString().split('T')[0] %>">
                 <small class="error-message"></small>
                 </div>
                 
@@ -107,11 +107,11 @@
       }
       if(description.value.trim()===''){
         isValid =false;
-        showError(description,'description is required')
+        showError(description,'Description is required')
       }
       if (code.value.trim() === '') {
         isValid = false;
-        showError(code, 'Name is required.');
+        showError(code, 'coupon code is required.');
       }
 
       if (minPurchase.value.trim() === '') {
@@ -126,22 +126,28 @@
     }   
       if (!/^\d+(\.\d+)?$/.test(discount.value.trim())) {
         isValid = false;
-        showError(discount, 'Enter Discount persentage.');
-      } else if(discount<=0){
+        showError(discount, 'Enter Discount percentage.');
+      } else if(parseFloat(discount.value.trim()) <= 0 || parseFloat(discount.value.trim()) >= 81 ){
         isValid = false;
-        showError(discount,"Enter  a valid discount")
-      }
+        showError(discount,"Enter  a valid discount percentage between 1 to 80")
+      }      
       if (maxDiscount.value.trim() === '') {
         isValid = false;
-        showError(maxDiscount, 'Name is required.');
+        showError(maxDiscount, 'Maximum Discount is required.');
       }else  if (!/^\d+(\.\d+)?$/.test(maxDiscount.value.trim())) {
         isValid = false;
-        showError(maxDiscount, 'Enter minimum parchase amount.');
-      }
+        showError(maxDiscount, 'Enter Maximum Discount amount.');
+      }else if (parseFloat(maxDiscount.value.trim()) >= 300) {
+      isValid = false;
+      showError(maxDiscount, 'Maximum Discount amount should be less than 300/-.');
+    }   
       if(!/^\d+(\.\d+)?$/.test(usageLimit.value.trim())) {
         isValid = false;
-        showError(usageLimit, 'Enter minimum parchase amount.');
-      }
+        showError(usageLimit, 'Enter usage limit.');
+      }else if (parseFloat(usageLimit.value.trim()) >= 11) {
+      isValid = false;
+      showError(usageLimit, 'Maximum Usage limit is 10. ');
+    }   
       if(expireDate.value.trim()===' '){
         isValid =false;
         showError(expireDate,"Enter Expiry Date.")

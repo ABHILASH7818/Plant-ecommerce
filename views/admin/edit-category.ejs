@@ -17,31 +17,34 @@
         <!-- Header Navigation Bar -->
          <h2> Edit Category</h2>
          <section class="new-form-section">
-            <form action="/admin/edit-Category/<%=category._id%>" method="post" class="category-form">   
+            <form action="/admin/edit-Category/<%=category._id%>" method="post" class="category-form" id="categoryForm">   
 
                 <% if (typeof message!== 'undefined') { %>
                     <p class="text-center m-auto" style="color:red;font-size:16px;"><%= message%></p>
                 <% } %> 
                            
                 <label for="name">Category Name</label>
-                <input type="text" id="name" name="name" placeholder="Enter category name" value="<%=category.name%>" required>
-
+                <input type="text" id="name" name="name" placeholder="Enter category name" value="<%=category.name%>">
+                <small id="nameError" style="color: red; display: none;">Category name must be at least 3 characters long.</small>
+                
                 <label for="description">Description</label>
-              
                 <textarea 
                 id="description" 
                 name="description" 
                 placeholder="Enter category description" 
-                required><%= category.description %></textarea>
+                ><%= category.description %></textarea>
+                <small id="descriptionError" style="color: red; display: none;">Description must be at least 10 characters long.</small>
 
                 <div class="input-group mb-3">
                     <label class="input-group-text" for="inputGroupSelect01">Status</label>
-                    <select class="form-select" id="inputGroupSelect01" name="status" required>
+                    <select class="form-select" id="inputGroupSelect01" name="status" >
                       <option selected>Choose...</option>
-                      <option value=true>Active</option>
-                      <option value=false>Inactive</option>
+                      <option value="true" <%= category.status === true ? 'selected' : '' %>>Active</option>
+                      <option value="false" <%= category.status === false ? 'selected' : '' %>>Inactive</option>
                     </select>
                   </div>
+                  <small id="statusError" style="color: red; display: none;">Please select  status.</small>
+
                 <div class="form-buttons">
                     <button type="button" class="cancel-button">Cancel</button>
                     <button type="submit" class="submit-button">Save Change</button>
@@ -51,3 +54,22 @@
    </main>
 </div>
 <%- include('../../views/partials/adminfooter') %>
+
+<script>
+    document.getElementById("categoryForm").addEventListener("submit", function(event) {
+        let valid = true;
+
+        const name = document.getElementById("name").value.trim();
+        const description = document.getElementById("description").value.trim();
+        const status = document.getElementById("inputGroupSelect01").value;
+
+        document.getElementById("nameError").style.display = name.length >= 3 ? "none" : "block";
+        document.getElementById("descriptionError").style.display = description.length >= 10 ? "none" : "block";
+        document.getElementById("statusError").style.display = status !== "Choose..." ? "none" : "block";
+
+        if (name.length < 3 || description.length < 10 || status === "Choose...") {
+            event.preventDefault();
+        }
+    });
+</script>
+

@@ -111,7 +111,7 @@
       }
       if (code.value.trim() === '') {
         isValid = false;
-        showError(code, 'Name is required.');
+        showError(code, 'Coupon code is required.');
       }
 
       if (minPurchase.value.trim() === '') {
@@ -126,21 +126,24 @@
     }   
       if (!/^\d+(\.\d+)?$/.test(discount.value.trim())) {
         isValid = false;
-        showError(discount, 'Enter Discount persentage.');
-      } else if(discount<=0){
+        showError(discount, 'Enter Discount percentage.');
+      } else if(discount<=0 || discount>=80){
         isValid = false;
         showError(discount,"Enter  a valid discount")
       }
       if (maxDiscount.value.trim() === '') {
         isValid = false;
-        showError(maxDiscount, 'Name is required.');
+        showError(maxDiscount, 'Maximum Discount is required.');
       }else  if (!/^\d+(\.\d+)?$/.test(maxDiscount.value.trim())) {
         isValid = false;
         showError(maxDiscount, 'Enter minimum parchase amount.');
-      }
+      }else if (parseFloat(maxDiscount.value.trim()) >= 300) {
+      isValid = false;
+      showError(maxDiscount, 'Maximum Discount amount should be less than 300/-.');
+    }   
       if(!/^\d+(\.\d+)?$/.test(usageLimit.value.trim())) {
         isValid = false;
-        showError(usageLimit, 'Enter minimum parchase amount.');
+        showError(usageLimit, 'Enter usagelimit');
       }
       // if(expireDate.value.trim()){
       //   isValid =false;

@@ -7,21 +7,24 @@ passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     callbackURL:"/auth/google/callback",
+    passReqToCallback: true, // Pass the request object to store session
 },
-async(accessToken,refreshToken,profile,done)=>{
+async(req,accessToken,refreshToken,profile,done)=>{
     try {
         let user =await User.findOne({googleId:profile.id})
-        if(user){
-            return done(null,user)
-        }else{
+        if (!user) {
             user = new User({
-                name:profile.displayName,
-                email:profile.emails[0].value,
-                googleId:profile.id
+              name: profile.displayName,
+              email: profile.emails[0].value,
+              googleId: profile.id,
             });
             await user.save();
-            return done(null,user)
-        }
+          }
+  
+          // Store user details in session
+          req.session.user = user;
+  
+          return done(null, user)
     } catch (err) {
         return done(err,null)
     }

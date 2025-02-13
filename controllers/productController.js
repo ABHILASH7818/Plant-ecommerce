@@ -68,8 +68,13 @@ exports.addProduct = async (req, res) => {
       for (let i = 0; i < images.length; i++) {
         imgarr.push(images[i].filename);
       }
-  
-      
+      const category = await Category.find({status:true})
+     const existsProduct = await Product.findOne({productName:product.name})
+     if(existsProduct){
+      return res.status(400).render('admin/product-add',{
+        cat:category,message: "Product already exists"})
+     }
+
       // console.log("Uploaded images:", imgarr);
 
       const categoryId = await Category.findOne({name:product.category});
@@ -148,7 +153,14 @@ exports.postEditProduct = async(req,res)=>{
       const newImages = req.files.map((file) => file.filename); // Uploaded images
       const updatedImages = [...existingImages, ...newImages]; // Combine old and new images
 
-    
+      const products = await Product.findById(req.params.id) .populate('category');
+      const category = await Category.find({status:true})
+      const existsProduct = await Product.findOne({productName:product.name})
+      if(existsProduct){
+        if(product.name!==products.productName)
+       return res.status(400).render('admin/edit-product',{
+        product:products,cat:category,message: "Product already exists"})
+      }
 
       const categoryId = await Category.findOne({name:product.category});
              if(!product.category){

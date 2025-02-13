@@ -1,5 +1,28 @@
 <%- include('../../views/partials/header') %>
-
+<style>
+  /* Modal Styles */
+  .modal {
+    display: none; 
+    position: fixed;
+    z-index: 1; 
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.4);
+  }
+  
+  .modal-content {
+    background-color: white;
+    margin: 15% auto;
+    padding: 20px;
+    width: 30%;
+    border-radius: 10px;
+    text-align: center;
+  }
+  
+ 
+  </style>
 <div class="container username-section d-flex">
   <p>Welcome <span style="color: red;"><%= user.name %></span></p>
 </div>
@@ -48,11 +71,10 @@
             <td><%= item.finalAmount %></td>
             <td>
               <button class="edit-btn"><a class="nav-link" href="/orderview/<%= item._id %>">View</a></button>
-              <% if(item.orderStatus === "Delivered"){ %>
-                <form action="/orderReturn/<%= item._id %>" method="POST" style="display:inline;" class="action-form">
-                  <button class="delete-btn" onclick="removeButton(event, this)">Return</button>
-                 
-                </form>
+              
+                <% if(item.orderStatus === "Delivered"){ %>
+                  <button class="delete-btn" onclick="openReturnDialog('<%= item._id %>')">Return</button>
+                
                  
               <% } else if((["Processed", "Shipped", "Pending"].includes(item.orderStatus))) { %>
                 <form action="/orderReturn/<%= item._id %>" method="POST" style="display:inline;" class="action-form">
@@ -64,6 +86,20 @@
         <% }) %>
       </tbody>
     </table>
+</div>
+<div id="returnModal" class="modal">
+  <div class="modal-content">
+    <h3>Return Order</h3>
+    <p>Enter the reason for returning this product:</p>
+    <div class="form-floating mb-2">
+      <textarea class="form-control" name="returnReason" id="returnReason"  placeholder="Enter your reason here"  style="height: 100px"></textarea>
+      <label for="floatingTextarea2">Enter your reason here</label> 
+    </div>
+    <div class="d-grid gap-2">
+      <button type="button" class="btn btn-primary" onclick="submitReturnRequest()">Submit</button>
+      <button class="btn btn-danger" onclick="closeReturnDialog()" type="button">Cancel</button>
+    </div>
+  </div>
 </div>
 <div class="pagination">
   <% if (currentPage > 1) { %>
@@ -100,6 +136,46 @@
       console.error("Form submission failed", err);
     });
   }
-  
+  let currentOrderId = null;
+
+  function openReturnDialog(orderId) {
+      currentOrderId = orderId;
+      document.getElementById("returnModal").style.display = "block";
+  }
+
+  function closeReturnDialog() {
+      document.getElementById("returnModal").style.display = "none";
+  }
+
+  function submitReturnRequest() {
+      const reason = document.getElementById("returnReason").value.trim();
+      
+      if (!reason) {
+          alert("Please enter a return reason.");
+          return;
+      }
+
+      fetch(`/orderReturn/${currentOrderId}`, {
+          method: "POST",
+          headers: {
+               "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ returnReason: reason })
+      }).then(response => response.json())
+        .then(data => {
+           
+            Swal.fire({
+              icon: 'success',
+              title: data.message,
+              confirmButtonText: 'OK',
+            }).then(()=>{
+              closeReturnDialog();
+            window.location.reload();
+            });            
+        })
+        .catch(error => {
+            console.error("Error submitting return request:", error);
+        });
+  }
 </script>
 <%- include('../../views/partials/footer') %>

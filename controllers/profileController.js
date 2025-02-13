@@ -144,10 +144,20 @@ exports.postChangePasword = async (req, res) => {
     if (!checkPassword) {
       return res.render("user/change-password", {
         user: userId,
-        message: "wrong password",
+        message: "current password is wrong ",
       });
     }
     const passwordhash = await hashedPassword(newpassword);
+    const checknewPassword = await bcrypt.compare(
+      newpassword,
+      finduser.password
+    );
+    if (checknewPassword) {
+      return res.render("user/change-password", {
+        user: userId,
+        message: "current password and new password is same",
+      });
+    }
     await User.findOneAndUpdate({ _id: userId }, { password: passwordhash });
     return res.redirect("/profile");
   } catch (error) {
@@ -287,7 +297,7 @@ exports.getorder = async (req, res) => {
       })),
     }));
 
-    const totalOrder = await Order.countDocuments();
+    const totalOrder = await Order.countDocuments({ userId: userId });
     const totalPages = Math.ceil(totalOrder / limit);
     // console.log("product",orderData[1].products)
     res.render("user/orderList", {

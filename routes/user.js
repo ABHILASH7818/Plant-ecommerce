@@ -26,7 +26,8 @@ router.get("/pagenotfound",userController.pageNotFound)
 //signup with google
 router.get("/auth/google",passport.authenticate('google',{scope:['profile','email']}))
 router.get("/auth/google/callback",passport.authenticate('google',{failureRedirect: '/signup'}),(req,res)=>{
-res.redirect('/');
+    req.session.user = req.user;
+    res.redirect('/');
 })
 
 //loginlogout

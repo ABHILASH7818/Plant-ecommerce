@@ -40,15 +40,8 @@ exports.getOrderSuccess = async (req, res) => {
     const addressData = addressArray.find((address) => {
       return (address._id = new mongoose.Types.ObjectId(addressId));
     });
-    //
-    //  console.log("find address",findAddress)
-    // console.log("Populated Order Data:", JSON.stringify(orderData, null, 2));
-
-    // if (!orderData) {
-    //   return res.status(404).render("user/noOrders", {
-    //     message: "No recent orders found.",
-    //   });
-    // }
+    
+    
 
     res.render("user/orderSuccess", { order: orderData, address: addressData });
   } catch (error) {
@@ -60,14 +53,18 @@ exports.getOrderSuccess = async (req, res) => {
 exports.getOrderList = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
-    const limit = 4;
+    const limit = 5;
     const skip = (page - 1) * limit;
 
     const orderData = await Order.find({})
       .sort({ createAT: -1 })
       .skip(skip)
       .limit(limit)
-      .populate("userId");
+      .populate("userId")
+      .populate({
+        path: "orderItems.productId",
+        model: "Product",
+      });
 
     const totalOrder = await Order.countDocuments();
     const totalPages = Math.ceil(totalOrder / limit);
@@ -97,6 +94,27 @@ exports.approve = async (req, res) => {
       await Order.findByIdAndUpdate(orderId, { orderStatus: "Delivered" });
       return res.redirect("/admin/order");
     }
+    if (order.orderStatus === "Return requested") {
+      await Order.findByIdAndUpdate(orderId, { orderStatus: "Returned" });
+      if (
+        order.paymentMethod === "Online" &&
+        order.finalAmount > 0 &&
+        order.paymentStatus === "Success"
+      ) {
+        // Create or update wallet balance
+        // let wallet = await Wallet.findOne({ userId: userData._id });
+        
+        const  wallet = new Wallet({
+            userId: order.userId,
+            Amount: order.finalAmount,
+            transactionType:"Refund",
+          });
+       
+          // wallet.Amount += orderData.finalAmount;
+        await wallet.save();
+      }
+      return res.redirect("/admin/order");
+    }
    res.redirect("/admin/order");
   } catch (error) {
     console.error(error);
@@ -111,6 +129,41 @@ exports.cancel = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).send("Error canceling the order");
+  }
+};
+
+exports.getOrderview = async (req, res) => {
+  try {
+    const orderId = req.params.id;
+
+    // Fetch order details by ID
+    const order = await Order.findById(orderId)
+      .populate("orderItems.productId")
+      .exec();
+
+    if (!order) {
+      return res.status(404).send("Order not found").redirect("/pagenotfound");
+    }
+
+    const addressId = order.address;
+    const addressDoc = await Address.findOne({
+      address: { $elemMatch: { _id: addressId } },
+    }).lean();
+    const addressArray = addressDoc.address;
+    const addressData = addressArray.find((address) => {
+      return (address._id = new mongoose.Types.ObjectId(addressId));
+    });
+    // Render the order success page
+    res.render("admin/orderDetails", {
+      order: order, // Pass order data
+      address: addressData,
+      // products: order.items, // Pass order items (product details, quantity, etc.)
+      // billingAddress: order.billingAddress, // Assuming order has a `billingAddress` field
+      // finalAmount: order.totalAmount, // Assuming order has `totalAmount`
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Internal Server Error");
   }
 };
 
@@ -204,7 +257,8 @@ exports.orderReturn = async (req, res) => {
   try {
     const orderId = req.params.id;
     const userId = req.session.user;
-    console.log("orderstatus ", orderId);
+    const {returnReason}=req.body;
+    
 
     const orderData = await Order.findById(orderId);
     if (!orderData) {
@@ -218,36 +272,40 @@ exports.orderReturn = async (req, res) => {
       return res.redirect("/pagenotfound");
     }
 
-    if (
-      orderData.paymentMethod === "Online" &&
-      orderData.finalAmount > 0 &&
-      orderData.paymentStatus === "Success"
-    ) {
-      // Create or update wallet balance
-      // let wallet = await Wallet.findOne({ userId: userData._id });
-      
-      const  wallet = new Wallet({
-          userId: userData._id,
-          Amount: orderData.finalAmount,
-        });
-     
-        // wallet.Amount += orderData.finalAmount;
-      
-      console.log("orderstatus wallet change");
-      await wallet.save();
-    }
+   
 
     // Update order status
     if (orderData.orderStatus === "Delivered") {
-      orderData.orderStatus = "Returned";
+      orderData.orderStatus = "Return requested";
+      orderData.returnReason = returnReason;
       await orderData.save();
-      return res.redirect("/order");
+      return res.status(200).json({message:'Return requested successfully '});
+      //return res.redirect("/order");
     } else if (
       ["Processed", "Shipped", "Pending"].includes(orderData.orderStatus)
     ) {
       orderData.orderStatus = "Cancelled";
       //console.log("orderstatus pending change");
       await orderData.save();
+      if (
+        orderData.paymentMethod === "Online" &&
+        orderData.finalAmount > 0 &&
+        orderData.paymentStatus === "Success"
+      ) {
+        // Create or update wallet balance
+        // let wallet = await Wallet.findOne({ userId: userData._id });
+        
+        const  wallet = new Wallet({
+            userId: userData._id,
+            Amount: orderData.finalAmount,
+            transactionType:"Refund",
+          });
+       
+          // wallet.Amount += orderData.finalAmount;
+        
+       // console.log("orderstatus wallet change");
+        await wallet.save();
+      }
       return res.redirect("/order");
     }
     //console.log("orderstatus  change");
@@ -262,30 +320,26 @@ exports.getSalesReport = async (req, res) => {
     const { startDate, endDate, filterType } = req.query;
 
     // Initialize date filter
-    let dateFilter = {};
+    let dateFilter = {orderStatus:"Delivered"};
     if (startDate && endDate) {
-      dateFilter = {
-        createAT: {
-          $gte: new Date(startDate),
-          $lte: new Date(endDate),
-        },
+      dateFilter.createAT = {
+        $gte: new Date(startDate),
+        $lte: new Date(endDate),
       };
     } else if (filterType === "1-day") {
       const today = new Date();
-      dateFilter = {
-        createAT: {
-          $gte: new Date(today.setHours(0, 0, 0, 0)),
-          $lte: new Date(today.setHours(23, 59, 59, 999)),
-        },
+      dateFilter.createAT = {
+        $gte: new Date(today.setHours(0, 0, 0, 0)),
+        $lte: new Date(today.setHours(23, 59, 59, 999)),
       };
     } else if (filterType === "1-week") {
       const lastWeek = new Date();
       lastWeek.setDate(lastWeek.getDate() - 7);
-      dateFilter = { createAT: { $gte: lastWeek, $lte: new Date() } };
+      dateFilter.createAT = { $gte: lastWeek, $lte: new Date() };
     } else if (filterType === "1-month") {
       const lastMonth = new Date();
       lastMonth.setMonth(lastMonth.getMonth() - 1);
-      dateFilter = { createAT: { $gte: lastMonth, $lte: new Date() } };
+      dateFilter.createAT = { $gte: lastMonth, $lte: new Date() };
     }
 
     const page = parseInt(req.query.page) || 1;
@@ -298,7 +352,11 @@ exports.getSalesReport = async (req, res) => {
     const orders = await Order.find(dateFilter)
       .skip(skip)
       .limit(limit)
-      .sort({ createAT: -1 });
+      .sort({ createAT: -1 })
+      .populate({
+        path: "orderItems.productId",
+        model: "Product",
+      });
 
     res.render("admin/salesreport", {
       order: orders,
@@ -319,7 +377,7 @@ exports.getsalesReportexcel = async (req, res) => {
     const { filterType, startDate, endDate } = req.query;
 
     // Fetch the filtered data from the database
-    const filterCriteria = {};
+    let filterCriteria = {orderStatus:"Delivered"};
     if (filterType === "custom-date" && startDate && endDate) {
       filterCriteria.createAT = {
         $gte: new Date(startDate),
@@ -327,21 +385,29 @@ exports.getsalesReportexcel = async (req, res) => {
       };
     } else if (filterType === "1-day") {
       const today = new Date();
-      filterCriteria.createAT = { $gte: today.setDate(today.getDate() - 1) };
+      filterCriteria.createAT = {
+        $gte: new Date(today.setHours(0, 0, 0, 0)),
+        $lte: new Date(today.setHours(23, 59, 59, 999)),
+      };
     } else if (filterType === "1-week") {
-      const today = new Date();
-      filterCriteria.createAT = { $gte: today.setDate(today.getDate() - 7) };
+      const lastWeek = new Date();
+      lastWeek.setDate(lastWeek.getDate() - 7);
+      filterCriteria.createAT = { $gte: lastWeek, $lte: new Date() };
     } else if (filterType === "1-month") {
-      const today = new Date();
-      filterCriteria.createAT = { $gte: today.setMonth(today.getMonth() - 1) };
+      const lastMonth = new Date();
+      lastMonth.setMonth(lastMonth.getMonth() - 1);
+      lastMonth.setHours(0, 0, 0, 0);
+
+      filterCriteria.createAT = { $gte: lastMonth, $lte: new Date() };
     }
 
-    const orders = await Order.find(filterCriteria); // Replace with your database query logic
+    const orders = await Order.find(filterCriteria).populate({ path: "orderItems.productId", select: "productName" }); // Replace with your database query logic
 
     // Transform data for Excel
     const data = orders.map((order) => ({
       "Order ID": order.orderId,
       "Payment Method": order.paymentMethod,
+      "Product Name": order.orderItems.map((item) => item.productId.productName).join(", "),
       Discount: order.discount,
       Date: new Date(order.createAT).toLocaleDateString(),
       "Sold Price": order.finalAmount,
@@ -392,9 +458,7 @@ exports.getsalesReportexcel = async (req, res) => {
 exports.getSalesReportpdf = async (req, res) => {
   try {
     const { filterType, startDate, endDate } = req.query;
-
-    // Fetch the filtered data from the database based on query parameters
-    const filterCriteria = {};
+    const filterCriteria = { orderStatus: "Delivered" };
 
     if (filterType === "custom-date" && startDate && endDate) {
       filterCriteria.createAT = {
@@ -411,12 +475,13 @@ exports.getSalesReportpdf = async (req, res) => {
       const today = new Date();
       filterCriteria.createAT = { $gte: today.setMonth(today.getMonth() - 1) };
     }
-    //console.log("filterCriteria", filterCriteria);
 
-    const orders = await Order.find(filterCriteria); // Replace with your database query logic
+    const orders = await Order.find(filterCriteria).populate({
+      path: "orderItems.productId",
+      select: "productName",
+    });
 
-    // Create a PDF document
-    const doc = new PDFDocument();
+    const doc = new PDFDocument({ margin: 30 });
     res.setHeader(
       "Content-Disposition",
       "attachment; filename=sales-report.pdf"
@@ -424,15 +489,14 @@ exports.getSalesReportpdf = async (req, res) => {
     res.setHeader("Content-Type", "application/pdf");
     doc.pipe(res);
 
-    // Add the title
     doc.fontSize(18).text("Sales Report", { align: "center" }).moveDown(1.5);
 
-    // Define table positions and sizes
-    const tableTop = 100;
-    const rowHeight = 25;
-    const columnWidths = [150, 100, 80, 120, 100]; // Width for each column
-    const columnPositions = [50, 200, 300, 380, 500]; // Starting positions for each column
-    // Calculate summary data
+     // Define table positions and sizes
+     const tableTop = 100;
+     const rowHeight = 30;
+     const columnWidths = [80, 100, 150, 70, 70,80]; // Width for each column
+     const columnPositions = [110, 210, 360, 430, 500,580]; // Starting positions for each column
+
     const totalOrders = orders.length;
     const totalOnlinePayments = orders.filter(
       (order) => order.paymentMethod === "Online"
@@ -445,104 +509,67 @@ exports.getSalesReportpdf = async (req, res) => {
       0
     );
 
-    // Add the summary to the end of the PDF
     function addSummary(doc, currentY) {
-      const summaryTop = currentY + 50; // Add some spacing before the summary
-      const summaryLeft = 50;
-
-      doc
-        .font("Helvetica-Bold")
-        .fontSize(14)
-        .text("Orders Summary", summaryLeft, summaryTop);
-
+      doc.font("Helvetica-Bold").fontSize(14).text("Orders Summary", 30, currentY + 50);
       doc.font("Helvetica").fontSize(12);
-      doc.text(`Total Orders: ${totalOrders}`, summaryLeft, summaryTop + 30);
-      doc.text(
-        `Number of Online Payments: ${totalOnlinePayments}`,
-        summaryLeft,
-        summaryTop + 50
-      );
-      doc.text(
-        `Number of COD Payments: ${totalCODPayments}`,
-        summaryLeft,
-        summaryTop + 70
-      );
-      doc.text(
-        `Total Sales Amount: ₹${totalSalesAmount.toFixed(2)}`,
-        summaryLeft,
-        summaryTop + 90
-      );
+      doc.text(`Total Orders: ${totalOrders}`, 30, currentY + 80);
+      doc.text(`Number of Online Payments: ${totalOnlinePayments}`, 30, currentY + 100);
+      doc.text(`Number of COD Payments: ${totalCODPayments}`, 30, currentY + 120);
+      doc.text(`Total Sales Amount: ₹${totalSalesAmount.toFixed(2)}`, 30, currentY + 140);
     }
 
-    // Add Table Heading (Styled Header)
-    doc.font("Helvetica-Bold").fontSize(12); // Bold font for header
-    doc
-      .rect(
-        columnPositions[0],
-        tableTop,
-        columnWidths.reduce((a, b) => a + b, 0),
-        rowHeight
-      ) // Draw a shaded rectangle for the header background
+    doc.font("Helvetica-Bold").fontSize(12);
+    doc.rect(30, tableTop, columnPositions[columnPositions.length - 1] - 30, rowHeight)
       .fill("#f2f2f2")
       .stroke("#000");
 
-    // Draw Table Header Text
-    const headers = [
-      "Order ID",
-      "Payment Method",
-      "Discount",
-      "Date",
-      "Sold Price",
-    ];
+    const headers = ["Order ID", "Payment Method", "Product Name", "Discount", "Date", "Sold Price"];
 
     headers.forEach((header, index) => {
-      doc
-        .fill("#000") // Black font color
-        .text(header, columnPositions[index], tableTop + rowHeight / 4, {
-          width: columnWidths[index],
-          align: "center",
-        });
+      doc.fill("#000").text(header, columnPositions[index] - columnWidths[index], tableTop + 8, {
+        width: columnWidths[index],
+        align: "center",
+      });
     });
 
-    // Reset font to normal for table rows
     doc.font("Helvetica").fontSize(10);
 
-    // Draw Table Rows
     let currentY = tableTop + rowHeight;
 
     orders.forEach((order) => {
       if (currentY + rowHeight > doc.page.height - 50) {
         doc.addPage();
-        currentY = tableTop;
+        currentY = 50;
       }
 
       const rowData = [
         order.orderId,
         order.paymentMethod,
-        order.discount ? order.discount : "N/A",
+        order.orderItems.map((item) => item.productId.productName).join(", "),
+        order.discount || "N/A",
         new Date(order.createAT).toLocaleDateString(),
-        order.finalAmount,
+        order.finalAmount.toFixed(2),
       ];
 
-      // Draw each row cell
       rowData.forEach((data, colIndex) => {
-        doc.text(data, columnPositions[colIndex], currentY, {
+        doc.text(data, columnPositions[colIndex] - columnWidths[colIndex], currentY + 8, {
           width: columnWidths[colIndex],
           align: "center",
         });
       });
 
-      // Draw borders for the row
       columnPositions.forEach((pos, colIndex) => {
-        doc.rect(pos, currentY, columnWidths[colIndex], rowHeight).stroke();
+        doc.rect(pos - columnWidths[colIndex], currentY, columnWidths[colIndex], rowHeight).stroke();
       });
 
       currentY += rowHeight;
     });
-    if (currentY + 150 > doc.page.height) { // Check if there's enough space for the summary
+
+    if (currentY + 150 > doc.page.height) {
       doc.addPage();
       currentY = 50;
     }
+
     addSummary(doc, currentY);
     doc.end();
   } catch (error) {
@@ -550,6 +577,7 @@ exports.getSalesReportpdf = async (req, res) => {
     res.redirect("/pagenotfound");
   }
 };
+
 
 exports.getSalesFilter = async (req, res) => {
   try {
